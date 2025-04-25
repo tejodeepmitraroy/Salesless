@@ -1,25 +1,26 @@
 version: '3.8'
-
 services:
   db:
     container_name: postgres_db
     image: postgres:latest
+    restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "ecom"
     ports:
-      - ${DB_PORT}:5432
+      - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
   
   adminer:
     image: adminer:latest
+    restart: always
     container_name: adminer
-    posts:
+    ports:
     - "8080:8080"
     depends_on:
-      - postgres_db
+      - 'db'
 
 volumes:
   postgres_data: 
