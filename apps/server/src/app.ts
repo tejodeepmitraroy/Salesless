@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import express, { Application } from "express";
 import cookieParser from "cookie-parser";
 // import authRouter from "./routes/auth.routes";
-// import userRouter from "./routes/user.routes";
+import userRouter from "./routes/user.routes";
 // import donationRouter from './routes/donation.routes';
 // import paymentRouter from "./routes/payment.routes";
 // import uploadRouter from "./routes/upload.routes";
@@ -54,7 +54,7 @@ app.enable("trust proxy");
 
 // Routes Declaration
 // app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/user", userRouter);
+app.use("/api/v1/user", userRouter);
 // app.use("/api/v1/event", eventsRouter);
 // app.use("/api/v1/booking", bookingRouter);
 // app.use("/api/v1/payment", paymentRouter);
