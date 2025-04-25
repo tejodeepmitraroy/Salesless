@@ -1,5 +1,5 @@
 {
-  "name": "saas-ecom-crm-tool",
+  "name": "salessync-ecommerce-crm",
   "private": true,
   "scripts": {
     "build": "turbo run build",
