@@ -1,41 +1,36 @@
-import { Router } from 'express';
+import { Router } from "express";
 import {
-	// forgetPassword,
-	// onboardUser,
-	registerUser,
-	// resetLink,
-	// updateUserProfile,
-	// userIsOnboarded,
-	// userProfile,
-	// userAccount,
-	// updateUserAccount,
-	// userDetails,
-	// createNewUser,
-	// deleteUserAccount,
-} from '../controllers/user.controllers';
-
-// import { jwtAuthMiddleware } from '../middleware/auth.middleware';
+  deleteUserProfile,
+  forgetPassword,
+  getUserNotification,
+  getUserSettings,
+  registerClient,
+  resetLink,
+  updateUserProfile,
+  updateUserSettings,
+  userProfile,
+} from "../controllers/user.controllers";
+import { jwtAuthMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.route('/register').post(registerUser);
-// router.route('/onboard').post(jwtAuthMiddleware, onboardUser);
-// router.route('/isOnboarded').get(jwtAuthMiddleware, userIsOnboarded);
-// router
-// 	.route('/profile')
-// 	.get(jwtAuthMiddleware, userProfile)
-// 	.put(jwtAuthMiddleware, updateUserProfile);
-// router
-// 	.route('/account')
-// 	.get(jwtAuthMiddleware, userAccount)
-// 	.put(jwtAuthMiddleware, updateUserAccount)
-// 	.delete(deleteUserAccount);
+//Register routes
+router.route("/register").post(registerClient);
 
-// ///For Admin Users
-// router.route('/').get(userDetails);
-// router.route('/createNewUser').post(createNewUser);
+router
+  .route("/profile")
+  .get(jwtAuthMiddleware, userProfile)
+  .put(jwtAuthMiddleware, updateUserProfile)
+  .delete(jwtAuthMiddleware, deleteUserProfile);
 
-// router.route('/forget-password').post(forgetPassword);
-// router.route('/reset-link').put(resetLink);
+router
+  .route("/settings")
+  .get(jwtAuthMiddleware, getUserSettings)
+  .put(jwtAuthMiddleware, updateUserSettings);
+
+router.route("/notification").get(jwtAuthMiddleware, getUserNotification);
+router.route("/forget-password").post(forgetPassword);
+router.route("/reset-link").post(resetLink);
+
 
 export default router;

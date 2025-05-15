@@ -4,7 +4,17 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+
+  // Loading component for suspense fallback
+  const Loading = () => (
+    <div className="h-screen w-screen flex items-center justify-center">
+      <div className="flex flex-col items-center">
+        <Loader className="animate-spin h-10 w-10 text-vsphere-primary mb-4" />
+        <p className="text-lg font-medium">Loading...</p>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -29,7 +39,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
 export default App

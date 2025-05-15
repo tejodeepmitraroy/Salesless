@@ -1,18 +1,19 @@
 import * as dotenv from "dotenv";
 import express, { Application } from "express";
 import cookieParser from "cookie-parser";
-// import authRouter from "./routes/auth.routes";
+import authRouter from "./routes/auth.routes";
 import userRouter from "./routes/user.routes";
-// import donationRouter from './routes/donation.routes';
+// import storeRouter from "./routes/store.routes";
 // import paymentRouter from "./routes/payment.routes";
 // import uploadRouter from "./routes/upload.routes";
 // import eventsRouter from "./routes/events.routes";
 // import bookingRouter from "./routes/booking.routes";
 import cors from "cors";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import passport from "passport";
 
 import session from "express-session";
+import { initializePassportStrategies } from "./config/passport.config";
 // import { initializePassportStrategies } from "./config/passport.config";
 
 dotenv.config();
@@ -32,8 +33,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json({ limit: "16kb" })); //accept JSON data
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
@@ -47,15 +48,15 @@ app.use(
     cookie: { secure: false, httpOnly: true, maxAge: 12000000 },
   })
 );
-// initializePassportStrategies();
+initializePassportStrategies();
 app.use(passport.initialize());
 app.use(passport.session());
 app.enable("trust proxy");
 
 // Routes Declaration
-// app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
-// app.use("/api/v1/event", eventsRouter);
+// app.use("/api/v1/store", storeRouter);
 // app.use("/api/v1/booking", bookingRouter);
 // app.use("/api/v1/payment", paymentRouter);
 // app.use("/api/v1/upload", uploadRouter);

@@ -13,7 +13,6 @@
   },
   "include": [
     "src/**/*",
-    
     "build/types/**/*.ts",
     "prisma",
     "src/emails"
