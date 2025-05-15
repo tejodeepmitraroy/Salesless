@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,7 +72,7 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-xs text-vsphere-primary hover:underline">
+                <Link to="/forgot-password" className="text-xs  text-vsphere-primary hover:underline">
                   Forgot password?
                 </Link>
               </div>
