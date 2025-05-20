@@ -13,4 +13,6 @@ const nodemailer_config = {
 	senderFrom: process.env.NODEMAILER_SENDER_FROM,
 };
 
+// console.log("nodemailer_config", nodemailer_config);
+
 export default nodemailer_config;

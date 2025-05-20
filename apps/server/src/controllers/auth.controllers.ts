@@ -103,13 +103,13 @@ export const loginUser = asyncHandler(
         // httpOnly: true,
         secure: true,
         maxAge: 15 * 60 * 1000, // 15 minutes
-        sameSite: "none",
+        sameSite: "strict",
       });
 
       response.cookie("refresh_token", user.refreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: "none",
+        sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 

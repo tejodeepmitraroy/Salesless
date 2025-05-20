@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
+// import { useToast } from '@/hooks/use-toast';
 
 type Theme = 'dark' | 'light';
 
 export function useThemeMode() {
-  const { toast } = useToast();
+  // const { toast } = useToast();
   const [theme, setTheme] = useState<Theme>(() => {
     // Check if theme exists in localStorage
     if (typeof window !== 'undefined') {
@@ -26,8 +27,7 @@ export function useThemeMode() {
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    toast({
-      title: `${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} mode enabled`,
+    toast(`${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} mode enabled`,{
       description: `The application theme has been changed to ${newTheme} mode.`,
     });
   };

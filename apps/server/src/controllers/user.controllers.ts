@@ -215,7 +215,9 @@ export const forgetPassword = asyncHandler(
       if (!userProfile) {
         response.status(400).json({ error: "Email is not registered" });
       } else {
+        // console.log("User Profile", userProfile);
         const token = generateResetPasswordToken(userProfile.id);
+        console.log("Token", token);
 
         const emailInfo = await forgotPasswordEmail({
           receiverEmail: email,

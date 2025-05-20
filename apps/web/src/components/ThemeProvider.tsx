@@ -1,7 +1,6 @@
-
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { createContext, useContext, } from "react";
-
+import { Toaster } from "./ui/sonner";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -25,10 +24,11 @@ export function ThemeProvider({
   const { theme, toggleTheme } = useThemeMode();
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }} {...props}>
-      {children}
-    </ThemeContext.Provider>
-  );
+		<ThemeContext.Provider value={{ theme, toggleTheme }} {...props}>
+			<Toaster />
+			{children}
+		</ThemeContext.Provider>
+	);
 }
 
 export const useTheme = () => {

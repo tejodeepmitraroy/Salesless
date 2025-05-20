@@ -15,6 +15,20 @@
       "when": 1747056349139,
       "tag": "0001_flimsy_james_howlett",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747734691087,
+      "tag": "0002_wet_the_hood",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1747734826966,
+      "tag": "0003_nebulous_the_anarchist",
+      "breakpoints": true
     }
   ]
 }

@@ -6,12 +6,12 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { customer, user } from "./user";
 import { relations } from "drizzle-orm";
+import { user, customer } from "./user";
+import { role } from "./role";
 import { product } from "./product";
 import { category } from "./category";
 import { cart } from "./cart";
-import { role } from "./role";
 
 export const store = pgTable("store", {
   id: serial("id").primaryKey(),
@@ -20,12 +20,12 @@ export const store = pgTable("store", {
   country: varchar("country").notNull(),
   address1: varchar("address1").notNull(),
   address2: varchar("address2"),
-  zip: integer("zip").notNull(),
+  zip: integer("zip"),
   city: varchar("city"),
   phone: varchar("phone").notNull(),
-  countryCode: varchar("country_code").notNull(),
+  countryCode: varchar("country_code"),
   timezone: varchar("timezone").notNull(),
-  moneyFormat: varchar("money_format").notNull(),
+  moneyFormat: varchar("money_format"),
   domain: varchar("domain"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
@@ -37,7 +37,15 @@ export const storeRelations = relations(store, ({ many }) => ({
   carts: many(cart),
   customerStores: many(customerStore),
   userStore: many(userStore),
+  users: many(userStore, {
+    relationName: 'storeUsers',
+  }),
+  roles: many(userStore, {
+    relationName: 'storeRoles',
+  }),
 }));
+
+
 
 export const userStore = pgTable(
   "user_store",

@@ -32,8 +32,7 @@ export const forgotPasswordEmail = async ({
 		const info = await transporter.sendMail({
 			from: nodemailer_config.senderFrom, // sender address
 			to: receiverEmail, // list of receivers
-			subject: 'DDKKHAA Password Reset Request', // Subject line
-			// html: `<h1>Your reset LInk</h1> <br><a href='http://localhost:3000/reset-password/${token}'><span>Reset LInk</span></a>`,
+			subject: 'Salesless Password Reset Request', // Subject line
 			html: await render(ForgetPassportEmail({ token, userFirstName })),
 		});
 
