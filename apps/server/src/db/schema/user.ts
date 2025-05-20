@@ -1,63 +1,98 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
-  pgEnum,
   pgTable,
   real,
   serial,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { customerStore, userStore } from "./store";
+import { order } from "./order";
+import { transaction } from "./transaction";
+import { cart } from "./cart";
 
-export const statusEnum = pgEnum("status",["offline"])
-
-
-
-export const employee = pgTable("employee", {
-  id: integer().notNull().primaryKey().generatedAlwaysAsIdentity(),
+export const user = pgTable("user", {
+  id: serial("id").primaryKey(),
   firstName: varchar("first_name", { length: 255 }).notNull(),
   lastName: varchar("last_name", { length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
-  password: varchar({ length: 20 }),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  phone: varchar({ length: 255 }),
+  phoneVerified: boolean("phone_verified").notNull().default(false),
+  password: varchar(),
   googleId: varchar("google_id"),
-  avatar: varchar(),
-  age: integer().notNull(),
-  phone: varchar({ length: 14 }).notNull(),
+  avatar: varchar("avatar"),
+  gender: varchar("gender"),
+  age: integer("age"),
   isActive: boolean("is_active").notNull().default(true),
   isBan: boolean("is_ban").notNull().default(false),
-  joinDate: timestamp("join_date", { mode: "string" }).notNull().defaultNow(),
-  note: varchar({ length: 200 }),
+  refreshToken: varchar("refresh_token"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
-
+export const userRelations = relations(user, ({ many }) => ({
+  userStore: many(userStore),
+}));
 
 export const customer = pgTable("customer", {
-  id: integer().notNull().primaryKey().generatedAlwaysAsIdentity(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   firstName: varchar("first_name", { length: 255 }).notNull(),
   lastName: varchar("last_name", { length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  phone: varchar({ length: 255 }),
+  phoneVerified: boolean("phone_verified").notNull().default(false),
   password: varchar({ length: 20 }),
   googleId: varchar("google_id"),
-  avatar: varchar(),
-  age: integer().notNull(),
-  phone: varchar({ length: 14 }).notNull(),
-  currency: varchar({length:5}),
-  orderCount: serial("order_count").notNull(),
-  verifiedEmail:boolean("verified_email").notNull().default(false),
+  avatar: varchar("avatar"),
+  age: integer("age"),
+  orderCount: integer("order_count").notNull().default(0),
   totalSpend: real("total_spend").notNull().default(0.0),
-  note :varchar("note", { length: 255 }),
-  taxExempt:boolean("tax_exempt").notNull().default(false),
+  note: varchar("note", { length: 255 }),
+  taxExempt: boolean("tax_exempt").notNull().default(false),
+  refreshToken: varchar("refresh_token"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
 
-export const customer2 = pgTable("customer2", {
-  id: integer().notNull().primaryKey().generatedAlwaysAsIdentity(),
+export const customerRelations = relations(customer, ({ many }) => ({
+  address: many(customerAddress),
+  orders: many(order),
+  transactions: many(transaction),
+  customerStores: many(customerStore),
+  carts: many(cart),
+}));
+
+export const customerAddress = pgTable("customer_address", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customer_id")
+    .notNull()
+    .references(() => customer.id),
   firstName: varchar("first_name", { length: 255 }).notNull(),
   lastName: varchar("last_name", { length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
- 
-  
+  company: varchar("company"),
+  address1: varchar("address1").notNull(),
+  address2: varchar("address2"),
+  city: varchar("city").notNull(),
+  province: varchar("province").notNull(),
+  provinceCode: varchar("province_code").notNull(),
+  country: varchar("country").notNull(),
+  countryCode: varchar("country_code").notNull(),
+  zipcode: integer("zipcode").notNull(),
+  phone: varchar({ length: 255 }).notNull(),
+  isDefault: boolean("is_default").notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });
 
+export const customerAddressRelations = relations(
+  customerAddress,
+  ({ one }) => ({
+    customer: one(customer, {
+      fields: [customerAddress.customerId],
+      references: [customer.id],
+    }),
+  })
+);

@@ -1,15 +1,21 @@
-import { WithAuthProp } from '@clerk/express';
-import { Request } from 'express';
+
+// import { Request } from 'express';
 
 interface AuthenticatedRequest extends Request {
-	auth?: WithAuthProp<ClerkUser>;
+	user
 }
 
 interface PassportUser {
-	id: string;
-	username: string;
-	email: string;
-	role: string;
+  id: string;
+  username: string;
+  email: string;
+  role: string;
+  refreshToken: string;
+}
+interface User {
+  id: string;
+  email: string;
+  refreshToken: string;
 }
 
 // declare global {
