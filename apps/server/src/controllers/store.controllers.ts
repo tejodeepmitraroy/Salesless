@@ -7,31 +7,6 @@ import { store, user, userStore } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
-// interface StoreWithRole {
-// 	store: InferSelectModel<typeof store>;
-// 	role: InferSelectModel<typeof role>;
-// }
-
-// interface UserStoreWithRelations {
-// 	store: StoreWithRole['store'];
-// 	role: StoreWithRole['role'];
-// }
-
-// interface StoreRequestBody {
-// 	name: string;
-// 	address: string;
-// 	contactNumber: string;
-// 	email: string;
-// }
-
-// interface StoreSettings {
-// 	currency: string;
-// 	timezone: string;
-// 	language: string;
-// 	theme: string;
-// 	notifications: boolean;
-// }
-
 export const createStore = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof user>;
@@ -45,7 +20,7 @@ export const createStore = asyncHandler(
 				.where(eq(store.name, name));
 
 			if (storeExists.length > 0) {
-				response.status(200).json(new ApiResponse(200, 'Store already exists'));
+				response.status(400).json(new ApiError(400, 'Store already exists'));
 			}
 			const newStore = await db
 				.insert(store)

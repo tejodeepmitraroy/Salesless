@@ -80,7 +80,7 @@ const LoginPage = () => {
 			<Card className="w-full max-w-md">
 				<CardHeader className="space-y-1">
 					<CardTitle className="text-center text-2xl font-bold">
-						<span className="text-vsphere-primary">Vendor</span>
+						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</CardTitle>
 					<CardDescription className="text-center">
@@ -158,7 +158,7 @@ const LoginPage = () => {
 							</div>
 							<Button
 								type="submit"
-								className="w-full bg-pink-400"
+								className="w-full "
 								disabled={isLoading}
 							>
 								{isLoading ? (

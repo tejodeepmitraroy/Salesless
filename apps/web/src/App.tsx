@@ -9,6 +9,7 @@ import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
 import AppLauncher from './pages/app/Dashboard/AppLauncher';
+import ProductDetails from './pages/app/Products/ProductDetails';
 
 function App() {
 	// Animation configurations for page transitions
@@ -27,6 +28,24 @@ function App() {
 	const ProtectedRoute = React.lazy(
 		() => import('./pages/auth/ProtectedRoute')
 	);
+	const Settings = React.lazy(
+		() => import('./pages/settings/settings/Settings')
+	);
+	const ProductManagement = React.lazy(
+		() => import('./pages/app/Products/ProductManagement')
+	);
+	const OrderManagement = React.lazy(
+		() => import('./pages/app/Orders/OrderManagement')
+	);
+	const InventoryManagement = React.lazy(
+		() => import('./pages/app/Inventory/InventoryManagement')
+	);
+	const Notifications = React.lazy(
+		() => import('./pages/settings/notifications/Notifications')
+	);
+	const CustomerManagement = React.lazy(
+		() => import('./pages/app/Customer/CustomerManagement')
+	);
 
 	const Loading = () => (
 		<div className="flex h-screen w-screen items-center justify-center">
@@ -44,16 +63,6 @@ function App() {
 				<Suspense fallback={<Loading />}>
 					<Routes>
 						{/* Public routes */}
-						<Route
-							path="/dashboard"
-							element={
-								<ProtectedRoute>
-									<AdminLayout>
-										<AdminDashboard />
-									</AdminLayout>
-								</ProtectedRoute>
-							}
-						/>
 
 						<Route path="/login" element={<Login />} />
 						<Route path="/signup" element={<SignUp />} />
@@ -83,6 +92,85 @@ function App() {
 								<ProtectedRoute>
 									<AdminLayout>
 										<AppLauncher />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/dashboard"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<AdminDashboard />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/products"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<ProductManagement />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/><Route
+							path="/products/:id"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<ProductDetails />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/orders"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<OrderManagement />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/inventory"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<InventoryManagement />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/settings"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<Settings />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/notifications"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<Notifications />
+									</AdminLayout>
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/customers"
+							element={
+								<ProtectedRoute>
+									<AdminLayout>
+										<CustomerManagement />
 									</AdminLayout>
 								</ProtectedRoute>
 							}

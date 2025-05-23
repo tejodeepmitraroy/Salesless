@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// import { useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -12,17 +13,29 @@ import {
 	Filter,
 	ArrowUpDown,
 	Download,
+	Image as ImageIcon,
+	Layers,
 } from 'lucide-react';
 // import { Separator } from '@/components/ui/separator';
+// import { useToast } from '@/hooks/use-toast';
+
 import { Input } from '@/components/ui/input';
 import { useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
 import { motion } from 'framer-motion';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import ProductModal from '@/features/Products/components/ProductModal';
 
 const ProductManagement = () => {
 	// const { toast } = useToast();
+	// const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [currentProduct, setCurrentProduct] = useState(null);
@@ -75,9 +88,9 @@ const ProductManagement = () => {
 
 		setProducts(products.filter((p) => p.id !== productId));
 
-		toast('Product Deleted', {
+		toast('Product Deleted',{
 			description: `${productToDelete.name} has been successfully removed.`,
-			// variant: "destructive",
+			// variant: 'destructive',
 		});
 	};
 
@@ -95,9 +108,10 @@ const ProductManagement = () => {
 		const dataToExport = filteredProducts(tab);
 
 		if (dataToExport.length === 0) {
-			toast('No products to export', {
+			toast('No products to export',{
+			
 				description: 'There are no products matching your current filters.',
-				// variant: "destructive",
+				// variant: 'destructive',
 			});
 			return;
 		}
@@ -110,6 +124,7 @@ const ProductManagement = () => {
 			Price: `$${product.price.toFixed(2)}`,
 			Stock: product.stock,
 			Status: product.status,
+			Images: product.images?.length || 0,
 		}));
 
 		exportToCSV(
@@ -117,9 +132,19 @@ const ProductManagement = () => {
 			`products-${tab}-${new Date().toISOString().split('T')[0]}`
 		);
 
-		toast('Export Successful', {
+		toast({
+			title: 'Export Successful',
 			description: `${dataToExport.length} products have been exported to CSV.`,
 		});
+	};
+
+	const getFeaturedImage = (product) => {
+		if (!product.images || product.images.length === 0) return null;
+
+		// Find featured image or use the first one
+		const featuredImage =
+			product.images.find((img) => img.isFeatured) || product.images[0];
+		return featuredImage.url;
 	};
 
 	const renderProductsTable = (tabValue: string) => {
@@ -136,6 +161,7 @@ const ProductManagement = () => {
 								<th className="py-3 text-left">Vendor</th>
 								<th className="py-3 text-right">Price</th>
 								<th className="py-3 text-right">Stock</th>
+								<th className="py-3 text-center">Variants</th>
 								<th className="py-3 text-center">Status</th>
 								<th className="py-3 text-right">Actions</th>
 							</tr>
@@ -144,7 +170,7 @@ const ProductManagement = () => {
 							{filtered.length === 0 ? (
 								<tr>
 									<td
-										colSpan={7}
+										colSpan={8}
 										className="py-4 text-center text-gray-500 dark:text-gray-400"
 									>
 										No products found matching your criteria.
@@ -159,11 +185,34 @@ const ProductManagement = () => {
 										animate={{ opacity: 1, y: 0 }}
 										transition={{ duration: 0.3, delay: index * 0.02 }}
 									>
-										<td className="flex items-center gap-2 py-3">
-											<div className="bg-vsphere-light/50 dark:bg-vsphere-dark/20 rounded p-1.5">
-												<Package className="text-vsphere-primary h-4 w-4" />
+										<td className="py-3">
+											<div className="flex items-center gap-3">
+												{getFeaturedImage(product) ? (
+													<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
+														<AspectRatio ratio={1 / 1}>
+															<img
+																src={getFeaturedImage(product)}
+																alt={product.name}
+																className="h-full w-full object-cover"
+															/>
+														</AspectRatio>
+													</div>
+												) : (
+													<div className="bg-vsphere-light/50 dark:bg-vsphere-dark/20 flex h-10 w-10 items-center justify-center rounded p-1.5">
+														<Package className="text-vsphere-primary h-4 w-4" />
+													</div>
+												)}
+												<div className="flex flex-col">
+													<span>{product.name}</span>
+													{product.images?.length > 0 && (
+														<span className="flex items-center gap-1 text-xs text-gray-500">
+															<ImageIcon className="h-3 w-3" />
+															{product.images.length} image
+															{product.images.length !== 1 && 's'}
+														</span>
+													)}
+												</div>
 											</div>
-											<span>{product.name}</span>
 										</td>
 										<td className="py-3">{product.category}</td>
 										<td className="py-3">{product.vendor}</td>
@@ -171,6 +220,62 @@ const ProductManagement = () => {
 											${product.price.toFixed(2)}
 										</td>
 										<td className="py-3 text-right">{product.stock}</td>
+										<td className="py-3 text-center">
+											{product.variants && product.variants.length > 0 ? (
+												<TooltipProvider>
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<div className="flex items-center justify-center">
+																<Badge
+																	variant="outline"
+																	className="cursor-help"
+																>
+																	<Layers className="mr-1 h-3 w-3" />
+																	{product.variants.length}
+																</Badge>
+															</div>
+														</TooltipTrigger>
+														<TooltipContent className="max-w-xs">
+															<div className="space-y-1.5">
+																<p className="text-sm font-semibold">
+																	Product Variants:
+																</p>
+																<ul className="space-y-1 text-xs">
+																	{product.variants.map((variant, i) => (
+																		<li
+																			key={variant.id}
+																			className="border-t pt-1 first:border-0 first:pt-0"
+																		>
+																			<div className="flex flex-wrap gap-1">
+																				{Object.entries(variant.attributes).map(
+																					([key, value]) => (
+																						<span
+																							key={key}
+																							className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-800"
+																						>
+																							{key}: {value}
+																						</span>
+																					)
+																				)}
+																			</div>
+																			{variant.price && (
+																				<span className="mt-0.5 block text-xs">
+																					Price: ${variant.price.toFixed(2)}
+																					{variant.stock !== undefined &&
+																						` | Stock: ${variant.stock}`}
+																				</span>
+																			)}
+																		</li>
+																	))}
+																</ul>
+															</div>
+														</TooltipContent>
+													</Tooltip>
+												</TooltipProvider>
+											) : (
+												<span className="text-xs text-gray-400">None</span>
+											)}
+										</td>
 										<td className="py-3 text-center">
 											<Badge
 												className={` ${

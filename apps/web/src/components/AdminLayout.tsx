@@ -63,14 +63,14 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 						variants={mainVariants}
 						initial={false}
 						animate={sidebarOpen ? 'expanded' : 'collapsed'}
-						className={`relative h-[calc(100vh-4rem)] flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
+						className={`relative h-[calc(100vh-4rem)] flex-1 overflow-y-auto p-4 w-full  transition-all duration-300 md:p-6 md:pt-4`}
 					>
 						<motion.div
 							initial="initial"
 							animate="animate"
 							exit="exit"
 							variants={contentVariants}
-							className="h-full w-full"
+							className="h-full w-full max-w-7xl mx-auto"
 						>
 							<AnimatePresence mode="wait">
 								<motion.div

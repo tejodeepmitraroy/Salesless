@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +27,7 @@ import { signUpSchema } from '@/features/users/schema';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
-const Signup = () => {
+const SignupPage = () => {
 	const form = useForm({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
@@ -87,7 +87,7 @@ const Signup = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										<FormLabel htmlFor="name">FullName</FormLabel>
+										<FormLabel htmlFor="name">Full Name</FormLabel>
 										<FormControl>
 											<Input
 												id="name"
@@ -145,13 +145,13 @@ const Signup = () => {
 								name="password"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										{/* <FormLabel htmlFor="password">Email</FormLabel> */}
+										<FormLabel htmlFor="password">Password</FormLabel>
 										<div className="relative">
 											<FormControl>
 												<Input
 													id="password"
 													type={showPassword ? 'text' : 'password'}
-													placeholder="••••••••"
+													placeholder=""
 													{...field}
 													required
 												/>
@@ -180,13 +180,13 @@ const Signup = () => {
 								name="confirmPassword"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										{/* <FormLabel htmlFor="password">Email</FormLabel> */}
+										<FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
 										<div className="relative">
 											<FormControl>
 												<Input
 													id="confirmPassword"
 													type={showPassword ? 'text' : 'password'}
-													placeholder="••••••••"
+													placeholder=""
 													{...field}
 													required
 												/>
@@ -210,84 +210,7 @@ const Signup = () => {
 									</FormItem>
 								)}
 							/>
-							{/* <div className="space-y-2">
-								<Label htmlFor="name">Full Name</Label>
-								<div className="relative">
-									<UserCircle className="absolute top-2.5 left-2 h-5 w-5 text-gray-400" />
-									<Input
-										id="name"
-										type="text"
-										placeholder="John Doe"
-										value={name}
-										onChange={(e) => setName(e.target.value)}
-										className="pl-9"
-										required
-									/>
-								</div>
-							</div> */}
-							{/* <div className="space-y-2">
-								<Label htmlFor="email">Email</Label>
-								<div className="relative">
-									<Mail className="absolute top-2.5 left-2 h-5 w-5 text-gray-400" />
-									<Input
-										id="email"
-										type="email"
-										placeholder="john.doe@example.com"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										className="pl-9"
-										required
-									/>
-								</div>
-							</div> */}
-							{/* <div className="space-y-2">
-								<Label htmlFor="mobile">Mobile Number</Label>
-								<div className="relative">
-									<Phone className="absolute top-2.5 left-2 h-5 w-5 text-gray-400" />
-									<Input
-										id="mobile"
-										type="tel"
-										placeholder="+1 (555) 123-4567"
-										value={mobile}
-										onChange={(e) => setMobile(e.target.value)}
-										className="pl-9"
-										required
-									/>
-								</div>
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="password">Password</Label>
-								<div className="relative">
-									<Input
-										id="password"
-										type={showPassword ? 'text' : 'password'}
-										placeholder="••••••••"
-										value={password}
-										onChange={(e) => setPassword(e.target.value)}
-										required
-									/>
-									<Button
-										type="button"
-										variant="ghost"
-										size="icon"
-										className="absolute top-0 right-0"
-										onClick={toggleShowPassword}
-									>
-										{showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-									</Button>
-								</div>
-							</div>
-							<div className="space-y-2">
-								<Label htmlFor="confirmPassword">Confirm Password</Label>
-								<Input
-									id="confirmPassword"
-									type="password"
-									placeholder="••••••••"
-									value={confirmPassword}
-									onChange={(e) => setConfirmPassword(e.target.value)}
-									required
-								/>
-							</div> */}
+						
 							<Button type="submit" className="w-full" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
@@ -316,4 +239,4 @@ const Signup = () => {
 	);
 };
 
-export default Signup;
+export default SignupPage;

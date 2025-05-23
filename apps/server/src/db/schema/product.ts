@@ -19,7 +19,6 @@ export const product = pgTable("product", {
   storeId: integer("store_id")
     .notNull()
     .references(() => store.id),
-  
   title: varchar("title", { length: 255 }).notNull(),
   description: varchar("description", { length: 255 }),
   price: numeric("price"),

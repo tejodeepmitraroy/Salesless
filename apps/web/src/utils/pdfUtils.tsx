@@ -1,6 +1,6 @@
 
-import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-import { ReactNode } from 'react';
+import { Document, Page, Text, View, StyleSheet, } from '@react-pdf/renderer';
+// import { ReactNode } from 'react';
 
 // Create styles for PDF
 const styles = StyleSheet.create({
@@ -128,6 +128,13 @@ export const AnalyticsReport = ({
   metrics,
   topProducts,
   trafficSources,
+}: {
+  title: string;
+  subtitle: string;
+  dateRange: string;
+  metrics: { title: string; value: string }[];
+  topProducts: { name: string; category: string; sales: string; revenue: string }[];
+  trafficSources: { source: string; visitors: string; percentage: string }[];
 }) => (
   <Document>
     <Page size="A4" style={styles.page}>
@@ -210,6 +217,14 @@ export const MarketingReport = ({
   campaigns,
   adSets,
   keywords,
+}: {
+  title: string;
+  subtitle: string;
+  dateRange: string;
+  metrics: { title: string; value: string }[];
+  campaigns: { name: string; spend: string; clicks: string; conv: string; roas: string }[];
+  adSets: { name: string; spend: string; clicks: string; conv: string; roas: string }[];
+  keywords: { keyword: string; clicks: string; impressions: string; ctr: string; cpc: string; cost: string }[];
 }) => (
   <Document>
     <Page size="A4" style={styles.page}>
