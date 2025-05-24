@@ -1,7 +1,6 @@
-import { generateRefreshToken } from '@/utils/apis/auth-apis';
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL!;
+const baseURL = import.meta.env.VITE_API_ENDPOINT_URL;
 
 export const customAxios = axios.create({
 	baseURL: baseURL,
@@ -27,3 +26,15 @@ customAxios.interceptors.response.use(
 		return Promise.reject(error);
 	}
 );
+
+export const generateRefreshToken = async () => {
+	try {
+		await customAxios('/auth/refresh-token', {
+			withCredentials: true,
+		});
+		console.log('Get new accesstoken');
+	} catch (error) {
+		console.error(error);
+		// toast.error(error?.response?.data?.error.message);
+	}
+};

@@ -1,10 +1,48 @@
-import axios from 'axios';
+import { getToken } from '@/config/auth';
+import { customAxios } from '@/config/axios-custom';
+
 
 export const getAllStoreService = async () => {
-	const response = await axios.get(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/store/`,
+	const token = getToken();
+
+	const response = await customAxios(`/store`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+	return response;
+};
+export const createStoreService = async ({
+	name,
+	description,
+	type,
+	country,
+	address,
+	phone,
+}: {
+	name: string;
+	description?: string;
+	type?: string;
+	country: string;
+	address: string;
+	phone: string;
+}) => {
+	const token = getToken();
+
+	const response = await customAxios.post(
+		`/store`,
+		{
+			name,
+			description,
+			type,
+			country,
+			address,
+			phone,
+		},
 		{
 			headers: {
+				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
 		}
@@ -13,47 +51,14 @@ export const getAllStoreService = async () => {
 };
 
 export const getStoreDetails = async ({ storeId }: { storeId: string }) => {
-	const response = await axios.get(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/store/${storeId}`,
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-
-	return response;
-};
-
-export const forgetPassword = async (email: string) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/forget-password`,
-		{
-			email,
+	const token = getToken();
+	const response = await customAxios.get(`/store/${storeId}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
 		},
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
+	});
 
 	return response;
 };
 
-export const getUserData = async () => {
-	try {
-		const response = await axios.get(
-			`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/get-user-data`,
-			{
-				withCredentials: true,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
-		return response;
-	} catch (error) {
-		console.log(error);
-	}
-};

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, useLocation, useParams } from 'react-router';
 import { useAuth } from '@/features/users/hooks/useAuth';
 import type { UserRole } from '@/features/users/hooks/useAuth';
 
@@ -8,12 +8,11 @@ interface ProtectedRouteProps {
 	allowedRoles?: UserRole[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-	children,
-	// allowedRoles = ['admin', 'employee', 'vendor']
-}) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 	const { user, isAuthenticated, isLoading } = useAuth();
 	const location = useLocation();
+	const { storeId } = useParams<{ storeId: string }>();
+
 
 	// Show loading state if authentication status is being determined
 	if (isLoading) {
@@ -29,10 +28,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 		return <Navigate to="/login" state={{ from: location }} replace />;
 	}
 
+	// if (isAuthenticated &&!storeId) {
+	// 	return <Navigate to="/store" state={{ from: location }} replace />;
+	// }
+
 	// Check if user has required role
 	// if (user && !allowedRoles.includes(user.role)) {
 	if (!user) {
 		return <Navigate to="/unauthorized" replace />;
+	}
+
+	if (!isAuthenticated && storeId) {
+		return (
+			<Navigate to={`/store/${storeId}`} state={{ from: location }} replace />
+		);
 	}
 
 	// Render children if authenticated and authorized

@@ -6,13 +6,11 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/features/users/hooks/useAuth';
 import {
 	Save,
@@ -24,10 +22,11 @@ import {
 	Mail,
 	Lock,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const UserProfile = () => {
-	const { user, updateUserProfile } = useAuth();
-	const { toast } = useToast();
+	const { user } = useAuth();
+	// const { toast } = useToast();
 
 	const [name, setName] = useState(user?.name || '');
 	const [email, setEmail] = useState(user?.email || '');
@@ -45,18 +44,17 @@ const UserProfile = () => {
 		setIsLoading(true);
 
 		try {
-			await updateUserProfile({ name, email, mobile });
+			// await updateUserProfile({ name, email, mobile });
 
-			toast({
-				title: 'Profile updated',
+			toast('Profile updated', {
 				description: 'Your profile information has been updated successfully.',
 			});
 		} catch (error) {
-			toast({
-				title: 'Update failed',
+			console.log(error);
+			toast('Update failed', {
 				description:
 					'There was an error updating your profile. Please try again.',
-				variant: 'destructive',
+				// variant: 'destructive',
 			});
 		} finally {
 			setIsLoading(false);
@@ -67,10 +65,9 @@ const UserProfile = () => {
 		e.preventDefault();
 
 		if (newPassword !== confirmPassword) {
-			toast({
-				title: "Passwords don't match",
+			toast("Passwords don't match", {
 				description: 'New password and confirmation must match.',
-				variant: 'destructive',
+				// variant: 'destructive',
 			});
 			return;
 		}
@@ -86,16 +83,15 @@ const UserProfile = () => {
 			setNewPassword('');
 			setConfirmPassword('');
 
-			toast({
-				title: 'Password updated',
+			toast('Password updated', {
 				description: 'Your password has been changed successfully.',
 			});
 		} catch (error) {
-			toast({
-				title: 'Update failed',
+			console.log(error);
+			toast('Update failed', {
 				description:
 					'There was an error updating your password. Please try again.',
-				variant: 'destructive',
+				// variant: 'destructive',
 			});
 		} finally {
 			setIsLoading(false);

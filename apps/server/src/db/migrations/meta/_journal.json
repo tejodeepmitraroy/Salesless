@@ -29,6 +29,13 @@
       "when": 1747734826966,
       "tag": "0003_nebulous_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748005692911,
+      "tag": "0004_striped_krista_starr",
+      "breakpoints": true
     }
   ]
 }

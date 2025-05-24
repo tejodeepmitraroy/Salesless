@@ -1,4 +1,5 @@
-import axios from 'axios';
+import { getToken } from '@/config/auth';
+import { customAxios } from '@/config/axios-custom';
 
 export const loginService = async ({
 	email,
@@ -7,8 +8,8 @@ export const loginService = async ({
 	email: string;
 	password: string;
 }) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/login`,
+	const response = await customAxios.post(
+		`/auth/user/login`,
 		{
 			email,
 			password,
@@ -37,8 +38,8 @@ export const signUpService = async ({
 	mobile: string;
 	confirmPassword: string;
 }) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/register`,
+	const response = await customAxios.post(
+		`/auth/user/register`,
 		{
 			email,
 			password,
@@ -57,8 +58,8 @@ export const signUpService = async ({
 };
 
 export const forgetPassword = async (email: string) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/forget-password`,
+	const response = await customAxios.post(
+		`/auth/user/forget-password`,
 		{
 			email,
 		},
@@ -73,18 +74,27 @@ export const forgetPassword = async (email: string) => {
 };
 
 export const getUserData = async () => {
-	try {
-		const response = await axios.get(
-			`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/get-user-data`,
-			{
-				withCredentials: true,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
-		return response;
-	} catch (error) {
-		console.log(error);
-	}
+	const token = getToken();
+	const response = await customAxios(`/user/profile`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+	return response;
+};
+
+export const logoutService = async () => {
+	const response = await customAxios.post(
+		`/auth/user/logout`,
+		{},
+		{
+			withCredentials: true,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		}
+	);
+
+	return response;
 };

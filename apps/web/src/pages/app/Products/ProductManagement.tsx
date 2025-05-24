@@ -132,8 +132,7 @@ const ProductManagement = () => {
 			`products-${tab}-${new Date().toISOString().split('T')[0]}`
 		);
 
-		toast({
-			title: 'Export Successful',
+		toast('Export Successful',{
 			description: `${dataToExport.length} products have been exported to CSV.`,
 		});
 	};
@@ -241,7 +240,7 @@ const ProductManagement = () => {
 																	Product Variants:
 																</p>
 																<ul className="space-y-1 text-xs">
-																	{product.variants.map((variant, i) => (
+																	{product.variants?.map((variant, i) => (
 																		<li
 																			key={variant.id}
 																			className="border-t pt-1 first:border-0 first:pt-0"

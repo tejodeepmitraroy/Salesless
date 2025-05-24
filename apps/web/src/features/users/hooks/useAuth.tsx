@@ -4,9 +4,8 @@ import React, {
 	useState,
 	useEffect,
 	ReactNode,
+	useCallback,
 } from 'react';
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
 import Cookies from 'js-cookie';
 
 // Define user types
@@ -25,168 +24,42 @@ interface AuthContextType {
 	user: User | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	login: (email: string, password: string) => Promise<void>;
-	register: (
-		name: string,
-		email: string,
-		password: string,
-		mobile?: string
-	) => Promise<void>;
-	logout: () => void;
-	resetPassword: (email: string) => Promise<void>;
-	updateUserProfile: (userData: Partial<User>) => Promise<void>;
+	storeId: string | null;
 }
 
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Sample user data (would be replaced with actual API calls)
-// const SAMPLE_USERS = [
-// 	{
-// 		id: '1',
-// 		name: 'Admin User',
-// 		email: 'admin@example.com',
-// 		password: 'admin123',
-// 		role: 'admin' as UserRole,
-// 		mobile: '+1 (555) 123-4567',
-// 		avatar: '/placeholder.svg',
-// 	},
-// 	{
-// 		id: '2',
-// 		name: 'Employee User',
-// 		email: 'employee@example.com',
-// 		password: 'employee123',
-// 		role: 'employee' as UserRole,
-// 		mobile: '+1 (555) 987-6543',
-// 		avatar: '/placeholder.svg',
-// 	},
-// 	{
-// 		id: '3',
-// 		name: 'Vendor User',
-// 		email: 'vendor@example.com',
-// 		password: 'vendor123',
-// 		role: 'vendor' as UserRole,
-// 		mobile: '+1 (555) 456-7890',
-// 		avatar: '/placeholder.svg',
-// 	},
-// ];
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	const [user, setUser] = useState<string | null>(true);
+	const [user] = useState<User | null>(null);
+	const [storeId, setStoreId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	// const { toast } = useToast();
-	const navigate = useNavigate();
+
+	// const navigate = useNavigate();
 
 	// Check if user is already logged in (from localStorage)
-	useEffect(() => {
-		// const storedUser = localStorage.getItem('user');
-		const accessToken = Cookies.get('access_token');
-
-		// console.log('Accesstoken', accessToken);
-
-	
-
-		if (accessToken) {
-			setUser(accessToken);
+	const getUser = useCallback(async () => {
+		try {
+			// const response = await getUserData();
+			// console.log(response);
+			// setUser(true);
+		} catch (error) {
+			console.log(error);
 		}
-		setIsLoading(false);
 	}, []);
-
-	
-
-	// 	// Create user object without password
-	// 	const { password: _, ...userWithoutPassword } = foundUser;
-	// 	setUser(userWithoutPassword);
-
-	// 	// Store in localStorage
-	// 	localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-	// 	setIsLoading(false);
-
-	// 	return;
-	// };
-
-	const register = async (
-		name: string,
-		email: string,
-		password: string,
-		mobile?: string
-	) => {
-		setIsLoading(true);
-
-		// Simulate API call with delay
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		// Check if user already exists
-		const userExists = SAMPLE_USERS.some(
-			(u) => u.email.toLowerCase() === email.toLowerCase()
-		);
-
-		if (userExists) {
-			setIsLoading(false);
-			throw new Error('User already exists');
+	useEffect(() => {
+		const accessToken = Cookies.get('access_token');
+		const storeId = Cookies.get('storeId');
+		if (accessToken) {
+			getUser();
 		}
-
-		// In a real app, you would send this to an API to create a user
-		// Here we're just simulating the process
-		setIsLoading(false);
-
-		return;
-	};
-
-	const logout = () => {
-		setUser(null);
-		localStorage.removeItem('user');
-		navigate('/login');
-		toast('Logged out', {
-			description: 'You have been successfully logged out.',
-		});
-	};
-
-	// const resetPassword = async (email: string) => {
-	// 	setIsLoading(true);
-
-	// 	// Simulate API call with delay
-	// 	await new Promise((resolve) => setTimeout(resolve, 1500));
-
-	// 	// Check if user exists
-	// 	const userExists = SAMPLE_USERS.some(
-	// 		(u) => u.email.toLowerCase() === email.toLowerCase()
-	// 	);
-
-	// 	if (!userExists) {
-	// 		setIsLoading(false);
-	// 		// Don't throw error for security reasons - don't reveal if an email exists or not
-	// 	}
-
-	// 	// In a real app, you would send a reset email
-	// 	setIsLoading(false);
-
-	// 	return;
-	// };
-
-	const updateUserProfile = async (userData: Partial<User>) => {
-		setIsLoading(true);
-
-		if (!user) {
-			setIsLoading(false);
-			throw new Error('No user logged in');
+		if (storeId) {
+			setStoreId(storeId);
 		}
-
-		// Simulate API call with delay
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-
-		// Update user data
-		const updatedUser = { ...user, ...userData };
-		setUser(updatedUser);
-
-		// Update in localStorage
-		localStorage.setItem('user', JSON.stringify(updatedUser));
-
 		setIsLoading(false);
-		return;
-	};
+	}, [getUser]);
 
 	return (
 		<AuthContext.Provider
@@ -194,11 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 				user,
 				isAuthenticated: !!user,
 				isLoading,
-				// login,
-				register,
-				logout,
-				// resetPassword,
-				updateUserProfile,
+				storeId,
 			}}
 		>
 			{children}

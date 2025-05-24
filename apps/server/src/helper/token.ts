@@ -7,7 +7,7 @@ export const generateAccessToken = ({
 	id,
 	email,
 }: {
-	id: string;
+	id: number|string;
 	email: string;
 }) => {
 	const accessTokenSecretKey = process.env.ACCESS_TOKEN_SECRET!;

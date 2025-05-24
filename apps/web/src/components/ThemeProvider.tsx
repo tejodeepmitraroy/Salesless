@@ -17,8 +17,8 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({
   children,
-  defaultTheme ="system",
-  storageKey = "ui-theme",
+  // defaultTheme ="system",
+  // storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
   const { theme, toggleTheme } = useThemeMode();

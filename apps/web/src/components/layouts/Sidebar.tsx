@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
@@ -7,11 +7,6 @@ import {
 	ShoppingCart,
 	Settings,
 	LogOut,
-	BarChart,
-	Megaphone,
-	FileText,
-	UserCircle,
-	LayoutTemplate,
 	User,
 	Bell,
 	LayoutGrid,
@@ -28,6 +23,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '../ui/sheet';
+import { Label } from '../ui/label';
 
 interface SidebarProps {
 	sidebarOpen: boolean;
@@ -90,6 +86,13 @@ const SidebarLinks = [
 		collapsed: false,
 	},
 	{
+		icon: Users,
+		label: 'Vendors',
+		href: '/vendors',
+		active: false,
+		collapsed: false,
+	},
+	{
 		icon: User,
 		label: 'Customers',
 		href: '/customers',
@@ -110,11 +113,11 @@ const SidebarLinks = [
 		active: false,
 		collapsed: false,
 	},
-	
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 	const location = useLocation();
+	const { storeId } = useParams<{ storeId: string }>();
 
 	return (
 		<motion.aside
@@ -138,14 +141,15 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 							key={link.label}
 							icon={link.icon}
 							label={link.label}
-							href={link.href}
-							active={location.pathname === link.href}
+							href={`/store/${storeId}${link.href}`}
+							active={location.pathname === `/store/${storeId}${link.href}`}
 							collapsed={!sidebarOpen}
 						/>
 					))}
 				</motion.nav>
 
 				<Separator className="my-3 md:my-4" />
+				<Label className="mx-3 my-2">Store</Label>
 
 				<SidebarItem
 					icon={LogOut}
@@ -192,13 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 								active={location.pathname === '/products'}
 								// collapsed={!sidebarOpen}
 							/>
-							{/* <SidebarItem 
-            icon={Users} 
-            label="Vendors" 
-            href="/vendors" 
-            active={location.pathname === '/vendors'} 
-            collapsed={!sidebarOpen} 
-          /> */}
+
 							<SidebarItem
 								icon={ShoppingCart}
 								label="Orders"

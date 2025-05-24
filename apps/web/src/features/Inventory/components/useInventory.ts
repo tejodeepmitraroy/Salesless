@@ -92,7 +92,7 @@ export function useInventory() {
 			productId: currentItem.productId,
 			productName: currentItem.productName,
 			date: formattedDate,
-			type: adjustment.type as any,
+			type: adjustment.type,
 			quantity: adjustment.quantity,
 			reference: adjustment.reference,
 			notes: adjustment.notes,

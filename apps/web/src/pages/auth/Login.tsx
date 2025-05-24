@@ -38,8 +38,7 @@ const LoginPage = () => {
 		defaultValues: {
 			email: 'tejodeepmitraroy2002@gmail.com',
 			password: 'Tejodeep@2002',
-			// email: 'admin@example.com',
-			// password: 'admin123',
+			
 		},
 	});
 
@@ -61,7 +60,7 @@ const LoginPage = () => {
 			toast('Login successful!', {
 				description: 'Welcome back to VendorSphere',
 			});
-			navigate('/store-selection');
+			navigate(`/store`);
 		} catch (error) {
 			console.log(error);
 			toast('Login failed', {

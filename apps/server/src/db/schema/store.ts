@@ -24,7 +24,7 @@ export const store = pgTable("store", {
   city: varchar("city"),
   phone: varchar("phone").notNull(),
   countryCode: varchar("country_code"),
-  timezone: varchar("timezone").notNull(),
+  timezone: varchar("timezone"),
   moneyFormat: varchar("money_format"),
   domain: varchar("domain"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),

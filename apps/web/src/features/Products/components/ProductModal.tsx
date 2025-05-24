@@ -35,6 +35,7 @@ import {
 
 import { Product } from '@/stores/product-store';
 import ImageUpload from './ImageUpload';
+import ProductVariantManager from './ProductVariantManager';
 
 interface ProductModalProps {
 	isOpen: boolean;
