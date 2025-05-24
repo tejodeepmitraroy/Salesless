@@ -22,7 +22,7 @@ const ProductDetails = () => {
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <Package className="h-16 w-16 text-gray-400" />
         <h2 className="text-xl font-semibold text-gray-600">Product Not Found</h2>
-        <Button onClick={() => navigate('/admin/products')} variant="outline">
+        <Button onClick={() => navigate('/products')} variant="outline">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Products
         </Button>

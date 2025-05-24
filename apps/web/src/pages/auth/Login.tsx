@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { Eye, EyeOff, LogIn, Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -26,11 +26,24 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { loginService } from '@/features/users/services';
+import Cookies from 'js-cookie';
 
 const LoginPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const accessToken = Cookies.get('access_token');
+		const storeId = Cookies.get('storeId');
+		console.log(accessToken, storeId);
+		
+		if (accessToken && storeId) {
+			navigate(`/store/${storeId}`);
+		}else if(accessToken){
+			navigate('/store');
+		}
+	}, [navigate]);
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof loginPageSchema>>({
@@ -49,6 +62,7 @@ const LoginPage = () => {
 
 		try {
 			console.log(values);
+			
 			// Simulate login API call
 			const response = await loginService({
 				email: values.email,

@@ -146,7 +146,7 @@ export const logoutUser = asyncHandler(
 				await db.update(user).set({ refreshToken: null }).where(eq(user.refreshToken, token));
 
 				response.clearCookie('access_token', {
-					httpOnly: true,
+					// httpOnly: true,
 					secure: process.env.NODE_ENV === 'production', // Secure in production
 					sameSite: 'strict',
 					path: '/',

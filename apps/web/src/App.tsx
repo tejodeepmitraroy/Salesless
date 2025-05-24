@@ -11,6 +11,9 @@ import { Toaster } from './components/ui/sonner';
 import AppLauncher from './pages/app/Dashboard/AppLauncher';
 import ProductDetails from './pages/app/Products/ProductDetails';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import NotFound from './pages/NotFound';
+import Index from './pages/Index';
+import ProtectedRoute from './pages/auth/ProtectedRoute';
 
 const queryClient = new QueryClient();
 function App() {
@@ -24,9 +27,6 @@ function App() {
 		() => import('./pages/app/Store/StoreSelection')
 	);
 	const CreateStore = React.lazy(() => import('./pages/app/Store/CreateStore'));
-	const ProtectedRoute = React.lazy(
-		() => import('./pages/auth/ProtectedRoute')
-	);
 	const Settings = React.lazy(
 		() => import('./pages/settings/settings/Settings')
 	);
@@ -70,7 +70,8 @@ function App() {
 							<Route path="/signup" element={<SignUp />} />
 							<Route path="/forgot-password" element={<ForgotPassword />} />
 							<Route path="/unauthorized" element={<Unauthorized />} />
-							<Route path="/" element={<AppLauncher />} />
+							<Route path="*" element={<NotFound />} />
+							<Route path="/" element={<Index />} />
 
 							{/* Protected admin routes */}
 							<Route
@@ -120,7 +121,7 @@ function App() {
 								}
 							/>
 							<Route
-								path="/products/new"
+								path="/store/:storeId/products/create"
 								element={
 									<ProtectedRoute>
 										<AdminLayout>

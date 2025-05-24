@@ -20,7 +20,7 @@ import {
 // import { useToast } from '@/hooks/use-toast';
 
 import { Input } from '@/components/ui/input';
-import { useProductStore } from '@/stores/product-store';
+import { Product, useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
 import { motion } from 'framer-motion';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -32,13 +32,15 @@ import {
 } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 import ProductModal from '@/features/Products/components/ProductModal';
+import { useNavigate } from 'react-router';
+import { ProductImage } from '@/features/Products/schema';
 
 const ProductManagement = () => {
 	// const { toast } = useToast();
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [currentProduct, setCurrentProduct] = useState(null);
+	const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
 
 	const products = useProductStore((state) => state.products);
 	const setProducts = useProductStore((state) => state.setProducts);
@@ -73,11 +75,11 @@ const ProductManagement = () => {
 	};
 
 	const handleAddProduct = () => {
-		setCurrentProduct(null);
-		setIsModalOpen(true);
+		navigate('/products/new');
+		// setIsModalOpen(true);
 	};
 
-	const handleEditProduct = (product) => {
+	const handleEditProduct = (product: Product) => {
 		setCurrentProduct(product);
 		setIsModalOpen(true);
 	};
@@ -94,7 +96,7 @@ const ProductManagement = () => {
 		});
 	};
 
-	const handleSaveProduct = (product) => {
+	const handleSaveProduct = (product: Product) => {
 		if (currentProduct) {
 			// Update existing product
 			setProducts(products.map((p) => (p.id === product.id ? product : p)));
@@ -137,12 +139,12 @@ const ProductManagement = () => {
 		});
 	};
 
-	const getFeaturedImage = (product) => {
-		if (!product.images || product.images.length === 0) return null;
+	const getFeaturedImage = (product: Product) => {
+		if (!product.images || product.images.length === 0) return undefined;
 
 		// Find featured image or use the first one
 		const featuredImage =
-			product.images.find((img) => img.isFeatured) || product.images[0];
+			product.images.find((img: ProductImage) => img.isFeatured) || product.images[0];
 		return featuredImage.url;
 	};
 

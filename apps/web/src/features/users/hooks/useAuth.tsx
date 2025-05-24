@@ -7,6 +7,7 @@ import React, {
 	useCallback,
 } from 'react';
 import Cookies from 'js-cookie';
+import { getUserData } from '../services';
 
 // Define user types
 export type UserRole = 'admin' | 'employee' | 'vendor';
@@ -33,39 +34,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	const [user] = useState<User | null>(null);
+	
+	const [user, setUser] = useState<User | null>(null);
 	const [storeId, setStoreId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [token, setToken] = useState<string | null>(null);
 
 	// const navigate = useNavigate();
 
 	// Check if user is already logged in (from localStorage)
-	const getUser = useCallback(async () => {
+	const getUserDetails = useCallback(async () => {
 		try {
-			// const response = await getUserData();
-			// console.log(response);
-			// setUser(true);
+			const response = await getUserData();
+			console.log(response);
+			setUser(response.data);
 		} catch (error) {
 			console.log(error);
 		}
 	}, []);
+
 	useEffect(() => {
 		const accessToken = Cookies.get('access_token');
+
 		const storeId = Cookies.get('storeId');
+
 		if (accessToken) {
-			getUser();
+			setToken(accessToken);
+			getUserDetails();
 		}
 		if (storeId) {
 			setStoreId(storeId);
 		}
 		setIsLoading(false);
-	}, [getUser]);
+	}, [getUserDetails]);
 
 	return (
 		<AuthContext.Provider
 			value={{
 				user,
-				isAuthenticated: !!user,
+				isAuthenticated: !token,
 				isLoading,
 				storeId,
 			}}

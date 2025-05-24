@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { getAllStoreService } from '@/features/Store/services';
 import Cookies from 'js-cookie';
+import { useAuth } from '@/features/users/hooks/useAuth';
 
 // const storeVariants = {
 // 	hidden: { opacity: 0, y: 20 },
@@ -31,9 +32,9 @@ import Cookies from 'js-cookie';
 // };
 
 const StoreSelection: React.FC = () => {
-	// const { user } = useAuth();
+	const { user } = useAuth();
 	const navigate = useNavigate();
-	// const [stores, setStores] = useState<any[]>([]);
+	
 
 	const handleStoreSelected = (storeId: string) => {
 		Cookies.set('storeId', storeId);
@@ -48,14 +49,6 @@ const StoreSelection: React.FC = () => {
 		queryKey: ['storeData'],
 		queryFn: async () => await getAllStoreService(),
 	});
-
-	// useEffect(() => {
-	// 	if (data?.data.data) {
-	// 		setStores(data.data.data);
-	// 	}
-	// }, [data]);
-
-	// console.log(data);
 
 	return (
 		<section className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
@@ -74,7 +67,7 @@ const StoreSelection: React.FC = () => {
 							</h1>
 						</CardTitle>
 						<CardDescription>
-							Welcome back, { 'User'}! Select a store to continue.
+							Welcome back, {user?.name}! Select a store to continue.
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
