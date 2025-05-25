@@ -1,3 +1,5 @@
+import { getToken } from '@/config/auth';
+import { customAxios } from '@/config/axios-custom';
 import axios from 'axios';
 
 export const loginService = async ({
@@ -72,19 +74,14 @@ export const forgetPassword = async (email: string) => {
 	return response;
 };
 
-export const getUserData = async () => {
-	try {
-		const response = await axios.get(
-			`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/get-user-data`,
-			{
-				withCredentials: true,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
-		return response;
-	} catch (error) {
-		console.log(error);
-	}
+export const getAllProducts = async ({ storeId }: { storeId: string }) => {
+	const token = getToken();
+
+	const response = await customAxios.get(`/products/?storeId=${storeId}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+	});
+	return response;
 };

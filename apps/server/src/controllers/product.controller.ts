@@ -34,9 +34,9 @@ export const getProductById = asyncHandler(
 			const productId = parseInt(request.params.id);
 			const productDetails = await db.query.product.findFirst({
 				where: eq(product.id, productId),
-				with:{
+				with: {
 					productVariant: true,
-				}
+				},
 			});
 			if (!productDetails) {
 				response.status(404).json(new ApiError(404, 'Product not found'));
@@ -57,8 +57,20 @@ export const getProductById = asyncHandler(
 // Create new product
 export const createProduct = asyncHandler(
 	async (request: Request, response: Response) => {
-		const { storeId, title, description, price, product_type, stock_quantity } =
-			request.body;
+		const {
+			storeId,
+			title,
+			description,
+			category,
+			price,
+			comparedAtPrice,
+			stockQuantity,
+			status,
+			images,
+			seoTitle,
+			seoDescription,
+			seoKeywords,
+		} = request.body;
 		try {
 			const [result] = await db
 				.insert(product)
@@ -67,10 +79,17 @@ export const createProduct = asyncHandler(
 					title,
 					description,
 					price,
-					product_type,
-					stock_quantity,
+					comparedAtPrice,
+					category,
+					status,
+					images,
+					seoTitle,
+					seoDescription,
+					seoKeywords,
+					stockQuantity,
 				})
 				.returning();
+
 			response
 				.status(201)
 				.json(new ApiResponse(200, result, 'Product created successfully'));
@@ -85,17 +104,37 @@ export const createProduct = asyncHandler(
 // Update product
 export const updateProduct = asyncHandler(
 	async (request: Request, response: Response) => {
+		const {
+			storeId,
+			title,
+			description,
+			category,
+			price,
+			comparedAtPrice,
+			stockQuantity,
+			status,
+			images,
+			seoTitle,
+			seoDescription,
+			seoKeywords,
+		} = request.body;
 		try {
 			const productId = parseInt(request.params.id);
 			const [result] = await db
 				.update(product)
 				.set({
-					storeId: request.body.storeId,
-					title: request.body.title,
-					description: request.body.description,
-					price: request.body.price,
-					product_type: request.body.product_type,
-					stock_quantity: request.body.stock_quantity,
+					storeId,
+					title,
+					description,
+					category,
+					price,
+					comparedAtPrice,
+					stockQuantity,
+					status,
+					images,
+					seoTitle,
+					seoDescription,
+					seoKeywords,
 				})
 				.where(eq(product.id, productId))
 				.returning();

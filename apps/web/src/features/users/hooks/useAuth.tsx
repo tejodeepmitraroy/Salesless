@@ -34,45 +34,50 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	
 	const [user, setUser] = useState<User | null>(null);
 	const [storeId, setStoreId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [token, setToken] = useState<string | null>(null);
-
-	// const navigate = useNavigate();
+	const [token, setToken] = useState<string | null>(() => {
+		return Cookies.get('access_token') || null;
+	});
 
 	// Check if user is already logged in (from localStorage)
 	const getUserDetails = useCallback(async () => {
 		try {
 			const response = await getUserData();
-			console.log(response);
 			setUser(response.data);
+			setIsLoading(false);
 		} catch (error) {
-			console.log(error);
+			console.error('Failed to get user data:', error);
+			setUser(null);
+			setIsLoading(false);
 		}
 	}, []);
 
 	useEffect(() => {
-		const accessToken = Cookies.get('access_token');
+		// Initialize store ID from cookies
+		const storedStoreId = Cookies.get('storeId');
+		if (storedStoreId) {
+			setStoreId(storedStoreId);
+		}
 
-		const storeId = Cookies.get('storeId');
-
-		if (accessToken) {
-			setToken(accessToken);
+		// Only fetch user data if we have a token
+		if (token) {
 			getUserDetails();
+			setToken(token);
+		} else {
+			setIsLoading(false);
 		}
-		if (storeId) {
-			setStoreId(storeId);
-		}
-		setIsLoading(false);
-	}, [getUserDetails]);
+	}, [token, getUserDetails]);
+
+	// Update auth state when token changes
+	const isAuthenticated = !!token;
 
 	return (
 		<AuthContext.Provider
 			value={{
 				user,
-				isAuthenticated: !token,
+				isAuthenticated,
 				isLoading,
 				storeId,
 			}}

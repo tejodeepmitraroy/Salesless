@@ -3,14 +3,15 @@ import { ProductImage, ProductVariant } from '@/features/Products/schema';
 
 export type Product = {
 	id: number;
-	name: string;
-	category: string;
-	vendor: string;
-	price: number;
-	stock: number;
-	status: string;
+	storeId: number;
+	title: string;
 	description?: string;
+	price: number;
+	comparedAtPrice: number;
+	status: string;
 	images?: ProductImage[];
+	categoryId: string;
+	stockQuantity: number;
 	variants?: ProductVariant[];
 	seoTitle?: string;
 	seoDescription?: string;
@@ -41,61 +42,62 @@ interface ProductActions {
 type ProductStore = ProductState & ProductActions;
 
 const initialState: ProductState = {
-	products: [
-		{
-			id: 1,
-			name: 'Artisan Coffee Mug',
-			category: 'Home',
-			vendor: 'Artisan Crafts',
-			price: 24.99,
-			stock: 45,
-			status: 'Active',
-			images: [
-				{
-					id: 'img1',
-					url: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
-					name: 'Coffee Mug',
-					isFeatured: true,
-				},
-			],
-		},
-		{
-			id: 2,
-			name: 'Wireless Earbuds Pro',
-			category: 'Electronics',
-			vendor: 'Tech Universe',
-			price: 79.99,
-			stock: 12,
-			status: 'Active',
-		},
-		{
-			id: 3,
-			name: 'Leather Wallet',
-			category: 'Fashion',
-			vendor: 'Fashion Forward',
-			price: 49.99,
-			stock: 28,
-			status: 'Active',
-		},
-		{
-			id: 4,
-			name: 'Scented Candle Set',
-			category: 'Home',
-			vendor: 'Home Elegance',
-			price: 34.99,
-			stock: 0,
-			status: 'Out of stock',
-		},
-		{
-			id: 5,
-			name: 'Facial Serum',
-			category: 'Beauty',
-			vendor: 'Beauty Essentials',
-			price: 29.99,
-			stock: 5,
-			status: 'Low stock',
-		},
-	],
+	// products: [
+	// 	{
+	// 		id: 1,
+	// 		storeId: 1,
+	// 		title: 'Artisan Coffee Mug',
+	// 		categoryId: 'Home',
+	// 		price: 24.99,
+	// 		stock_quantity: 45,
+	// 		status: 'Active',
+	// 		images: [
+	// 			{
+	// 				id: 'img1',
+	// 				url: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
+	// 				name: 'Coffee Mug',
+	// 				isFeatured: true,
+	// 			},
+	// 		],
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		storeId: 1,
+	// 		title: 'Wireless Earbuds Pro',
+	// 		categoryId: 'Electronics',
+	// 		price: 79.99,
+	// 		stock_quantity: 12,
+	// 		status: 'Active',
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		storeId: 1,
+	// 		title: 'Leather Wallet',
+	// 		categoryId: 'Fashion',
+	// 		price: 49.99,
+	// 		stock_quantity: 28,
+	// 		status: 'Active',
+	// 	},
+	// 	{
+	// 		id: 4,
+	// 		storeId: 1,
+	// 		title: 'Scented Candle Set',
+	// 		categoryId: 'Home',
+	// 		price: 34.99,
+	// 		stock_quantity: 0,
+	// 		status: 'Out of stock',
+	// 	},
+	// 	{
+	// 		id: 5,
+	// 		storeId: 1,
+	// 		title: 'Facial Serum',
+	// 		categoryId: 'Beauty',
+	// 		price: 29.99,
+	// 		stock_quantity: 5,
+	// 		status: 'Low stock',
+	// 	},
+	// ],
+	products: [],
 	selectedProduct: null,
 	searchQuery: '',
 	filterCategory: 'all',

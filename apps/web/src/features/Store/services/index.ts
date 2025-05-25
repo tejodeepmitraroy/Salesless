@@ -1,7 +1,6 @@
 import { getToken } from '@/config/auth';
 import { customAxios } from '@/config/axios-custom';
 
-
 export const getAllStoreService = async () => {
 	const token = getToken();
 
@@ -61,4 +60,3 @@ export const getStoreDetails = async ({ storeId }: { storeId: string }) => {
 
 	return response;
 };
-

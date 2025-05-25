@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { Eye, EyeOff, LogIn, Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -33,17 +33,22 @@ const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
 
-	useEffect(() => {
+	const checkAuth = useCallback(() => {
 		const accessToken = Cookies.get('access_token');
-		const storeId = Cookies.get('storeId');
-		console.log(accessToken, storeId);
-		
-		if (accessToken && storeId) {
-			navigate(`/store/${storeId}`);
-		}else if(accessToken){
-			navigate('/store');
+		const storedStoreId = Cookies.get('storeId');
+
+		if (accessToken) {
+			if (storedStoreId) {
+				navigate(`/store/${storedStoreId}`);
+			} else {
+				navigate('/store');
+			}
 		}
 	}, [navigate]);
+	// Check authentication status only once on mount
+	useEffect(() => {
+		checkAuth();
+	}, [checkAuth]);
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof loginPageSchema>>({
@@ -51,7 +56,6 @@ const LoginPage = () => {
 		defaultValues: {
 			email: 'tejodeepmitraroy2002@gmail.com',
 			password: 'Tejodeep@2002',
-			
 		},
 	});
 
@@ -62,7 +66,7 @@ const LoginPage = () => {
 
 		try {
 			console.log(values);
-			
+
 			// Simulate login API call
 			const response = await loginService({
 				email: values.email,
@@ -169,11 +173,7 @@ const LoginPage = () => {
 									)}
 								/>
 							</div>
-							<Button
-								type="submit"
-								className="w-full "
-								disabled={isLoading}
-							>
+							<Button type="submit" className="w-full" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
 										<Lock className="h-4 w-4 animate-pulse" />
