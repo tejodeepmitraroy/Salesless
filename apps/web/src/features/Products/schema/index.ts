@@ -4,7 +4,7 @@ export const productImageSchema = z.object({
 	id: z.string(),
 	url: z.string().url(),
 	name: z.string(),
-	isFeatured: z.boolean().default(false),
+	isFeatured: z.boolean(),
 });
 
 export const productVariantSchema = z.object({
@@ -15,21 +15,22 @@ export const productVariantSchema = z.object({
 	sku: z.string().optional(),
 });
 
-export const productSchema = z.object({
+export const productFormSchema = z.object({
 	id: z.number().optional(),
+	storeId: z.number(),
 	title: z.string().min(2).max(50),
 	description: z.string().optional(),
-	category: z.string().min(2).max(50),
-	// vendor: z.string().min(2).max(50),
 	price: z.string(),
-	stock: z.string(),
-	images: z.array(productImageSchema).optional().default([]),
-	variants: z.array(productVariantSchema).optional().default([]),
+	comparedAtPrice: z.string(),
+	status: z.string(),
+	images: z.array(productImageSchema).optional(),
+	categoryId: z.string(),
+	stockQuantity: z.string(),
+	variants: z.array(productVariantSchema).optional(),
 	seoTitle: z.string().optional(),
 	seoDescription: z.string().optional(),
 	seoKeywords: z.string().optional(),
 	seoScore: z.number().optional(),
-	status: z.string().optional(),
 });
 
 export type ProductImage = z.infer<typeof productImageSchema>;

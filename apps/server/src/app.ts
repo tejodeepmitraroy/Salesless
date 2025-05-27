@@ -5,7 +5,7 @@ import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import storeRouter from './routes/store.routes';
 import productRouter from './routes/product.routes';
-// import uploadRouter from "./routes/upload.routes";
+import contentRouter from './routes/content.routes';
 // import eventsRouter from "./routes/events.routes";
 // import bookingRouter from "./routes/booking.routes";
 import cors from 'cors';
@@ -51,7 +51,7 @@ app.use('/api/v1/user', userRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/products', productRouter);
 // app.use("/api/v1/payment", paymentRouter);
-// app.use("/api/v1/upload", uploadRouter);
+app.use('/api/v1/contents', contentRouter);
 
 // app.use('/api/v1/donation', donationRouter);
 // app.use('/api/v1/projects', projectRouter);

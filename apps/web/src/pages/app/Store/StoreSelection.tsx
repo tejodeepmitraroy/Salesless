@@ -45,7 +45,7 @@ const StoreSelection: React.FC = () => {
 		navigate('/store/create');
 	};
 
-	const { data } = useQuery({
+	const { data,  } = useQuery({
 		queryKey: ['storeData'],
 		queryFn: async () => await getAllStoreService(),
 	});
@@ -72,7 +72,7 @@ const StoreSelection: React.FC = () => {
 					</CardHeader>
 					<CardContent>
 						<section className="flex w-full justify-end">
-							<Button onClick={handleCreateStore} className="w-full px-6">
+							<Button onClick={()=>handleCreateStore()} className="w-full px-6">
 								<span>Create Store</span>
 								<Plus className="ml-2 h-4 w-4" />
 							</Button>

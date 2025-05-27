@@ -70,7 +70,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 							animate="animate"
 							exit="exit"
 							variants={contentVariants}
-							className="h-full w-full max-w-7xl mx-auto"
+							className="h-full w-full  mx-auto"
 						>
 							<AnimatePresence mode="wait">
 								<motion.div

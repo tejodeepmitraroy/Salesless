@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Package, Trash2 } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Link, useNavigate } from 'react-router';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -49,15 +50,15 @@ export const productColumns: ColumnDef<Product>[] = [
 		accessorKey: 'title',
 		header: () => <div className="text-left">Product</div>,
 		cell: ({ row }) => {
-			const images = row.getValue('images') as ProductImage[];
+			const images = row.original.images as ProductImage[];
 			return (
 				<div className="flex items-center gap-2 text-left font-medium">
 					{images?.length > 0 ? (
 						<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
 							<AspectRatio ratio={1 / 1}>
 								<img
-									src={images[0].url}
-									alt={row.getValue('title')}
+									src={images[0]}
+									alt={row.original.title}
 									className="h-full w-full object-cover"
 								/>
 							</AspectRatio>
@@ -126,17 +127,17 @@ export const productColumns: ColumnDef<Product>[] = [
 	{
 		accessorKey: 'actions',
 		header: () => <div className="text-center">Actions</div>,
-		cell: () => {
+		cell: ({ row }) => {
+			const storeId = row.original.storeId;
+			const id = row.original.id;
+
 			return (
 				<div className="text-center font-medium">
-					<Button
-						variant="ghost"
-						size="icon"
-						className="h-8 w-8"
-						// onClick={() => handleEditProduct(row.getValue('id'))}
-					>
-						<Edit className="h-4 w-4" />
-					</Button>
+					<Link to={`/store/${storeId}/products/${id}`}>
+						<Button variant="ghost" size="icon" className="h-8 w-8">
+							<Edit className="h-4 w-4" />
+						</Button>
+					</Link>
 					<Button
 						variant="ghost"
 						size="icon"

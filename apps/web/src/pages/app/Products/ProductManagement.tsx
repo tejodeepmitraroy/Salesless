@@ -1,28 +1,13 @@
 import React, { useEffect, useState } from 'react';
-// import { useNavigate } from 'react-router';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-	Package,
-	Search,
-	Plus,
-	Edit,
-	Trash2,
-	Filter,
-	ArrowUpDown,
-	Download,
-	Image as ImageIcon,
-	Layers,
-} from 'lucide-react';
-
+import { Search, Plus, Filter, ArrowUpDown, Download } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Product, useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
-
 import { toast } from 'sonner';
-import ProductModal from '@/features/Products/components/ProductModal';
 import { useNavigate, useParams } from 'react-router';
 import { ProductImage } from '@/features/Products/schema';
 import { DataTable } from '@/features/Products/tables/data-table';
@@ -43,9 +28,7 @@ const ProductManagement = () => {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();
 	const [searchQuery, setSearchQuery] = useState('');
-	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-
+	
 	const products = useProductStore((state) => state.products);
 	const setProducts = useProductStore((state) => state.setProducts);
 
@@ -78,14 +61,13 @@ const ProductManagement = () => {
 	};
 
 	const handleAddProduct = () => {
-		navigate('/products/new');
-		// setIsModalOpen(true);
+		navigate(`/store/${storeId}/products/create`);
 	};
 
-	const handleEditProduct = (product: Product) => {
-		setCurrentProduct(product);
-		setIsModalOpen(true);
-	};
+	// const handleEditProduct = (product: Product) => {
+	// 	setCurrentProduct(product);
+	// 	setIsModalOpen(true);
+	// };
 
 	// const handleDeleteProduct = (productId: number) => {
 	// 	const productToDelete = products.find((p) => p.id === productId);
@@ -141,182 +123,6 @@ const ProductManagement = () => {
 		});
 	};
 
-	// const renderProductsTable = (tabValue: string) => {
-	// 	const filtered = filteredProducts(tabValue);
-
-	// 	return (
-	// 		<>
-	// 			<div className="overflow-x-auto">
-	// 				<table className="w-full">
-	// 					<thead>
-	// 						<tr className="border-b dark:border-gray-700">
-	// 							<th className="py-3 text-left">Product</th>
-	// 							<th className="py-3 text-left">Category</th>
-	// 							<th className="py-3 text-left">Vendor</th>
-	// 							<th className="py-3 text-right">Price</th>
-	// 							<th className="py-3 text-right">Stock</th>
-	// 							<th className="py-3 text-center">Variants</th>
-	// 							<th className="py-3 text-center">Status</th>
-	// 							<th className="py-3 text-right">Actions</th>
-	// 						</tr>
-	// 					</thead>
-	// 					<tbody>
-	// 						{filtered.length === 0 ? (
-	// 							<tr>
-	// 								<td
-	// 									colSpan={8}
-	// 									className="py-4 text-center text-gray-500 dark:text-gray-400"
-	// 								>
-	// 									No products found matching your criteria.
-	// 								</td>
-	// 							</tr>
-	// 						) : (
-	// 							filtered.map((product, index) => (
-	// 								<motion.tr
-	// 									key={product.id}
-	// 									className="border-b hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
-	// 									initial={{ opacity: 0, y: 10 }}
-	// 									animate={{ opacity: 1, y: 0 }}
-	// 									transition={{ duration: 0.3, delay: index * 0.02 }}
-	// 								>
-	// 									<td className="py-3">
-	// 										<div className="flex items-center gap-3">
-	// 											{getFeaturedImage(product) ? (
-	// 												<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
-	// 													<AspectRatio ratio={1 / 1}>
-	// 														<img
-	// 															src={getFeaturedImage(product)}
-	// 															alt={product.name}
-	// 															className="h-full w-full object-cover"
-	// 														/>
-	// 													</AspectRatio>
-	// 												</div>
-	// 											) : (
-	// 												<div className="bg-vsphere-light/50 dark:bg-vsphere-dark/20 flex h-10 w-10 items-center justify-center rounded p-1.5">
-	// 													<Package className="text-vsphere-primary h-4 w-4" />
-	// 												</div>
-	// 											)}
-	// 											<div className="flex flex-col">
-	// 												<span>{product.name}</span>
-	// 												{product.images?.length > 0 && (
-	// 													<span className="flex items-center gap-1 text-xs text-gray-500">
-	// 														<ImageIcon className="h-3 w-3" />
-	// 														{product.images.length} image
-	// 														{product.images.length !== 1 && 's'}
-	// 													</span>
-	// 												)}
-	// 											</div>
-	// 										</div>
-	// 									</td>
-	// 									<td className="py-3">{product.category}</td>
-	// 									<td className="py-3">{product.vendor}</td>
-	// 									<td className="py-3 text-right">
-	// 										${product.price.toFixed(2)}
-	// 									</td>
-	// 									<td className="py-3 text-right">{product.stock}</td>
-	// 									<td className="py-3 text-center">
-	// 										{product.variants && product.variants.length > 0 ? (
-	// 											<TooltipProvider>
-	// 												<Tooltip>
-	// 													<TooltipTrigger asChild>
-	// 														<div className="flex items-center justify-center">
-	// 															<Badge
-	// 																variant="outline"
-	// 																className="cursor-help"
-	// 															>
-	// 																<Layers className="mr-1 h-3 w-3" />
-	// 																{product.variants.length}
-	// 															</Badge>
-	// 														</div>
-	// 													</TooltipTrigger>
-	// 													<TooltipContent className="max-w-xs">
-	// 														<div className="space-y-1.5">
-	// 															<p className="text-sm font-semibold">
-	// 																Product Variants:
-	// 															</p>
-	// 															<ul className="space-y-1 text-xs">
-	// 																{product.variants?.map((variant, i) => (
-	// 																	<li
-	// 																		key={variant.id}
-	// 																		className="border-t pt-1 first:border-0 first:pt-0"
-	// 																	>
-	// 																		<div className="flex flex-wrap gap-1">
-	// 																			{Object.entries(variant.attributes).map(
-	// 																				([key, value]) => (
-	// 																					<span
-	// 																						key={key}
-	// 																						className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-800"
-	// 																					>
-	// 																						{key}: {value}
-	// 																					</span>
-	// 																				)
-	// 																			)}
-	// 																		</div>
-	// 																		{variant.price && (
-	// 																			<span className="mt-0.5 block text-xs">
-	// 																				Price: ${variant.price.toFixed(2)}
-	// 																				{variant.stock !== undefined &&
-	// 																					` | Stock: ${variant.stock}`}
-	// 																			</span>
-	// 																		)}
-	// 																	</li>
-	// 																))}
-	// 															</ul>
-	// 														</div>
-	// 													</TooltipContent>
-	// 												</Tooltip>
-	// 											</TooltipProvider>
-	// 										) : (
-	// 											<span className="text-xs text-gray-400">None</span>
-	// 										)}
-	// 									</td>
-	// 									<td className="py-3 text-center">
-	// 										<Badge
-	// 											className={` ${
-	// 												product.status === 'Active'
-	// 													? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-	// 													: ''
-	// 											} ${
-	// 												product.status === 'Low stock'
-	// 													? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-	// 													: ''
-	// 											} ${
-	// 												product.status === 'Out of stock'
-	// 													? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-	// 													: ''
-	// 											} `}
-	// 										>
-	// 											{product.status}
-	// 										</Badge>
-	// 									</td>
-	// 									<td className="flex justify-end gap-2 py-3">
-	// 										<Button
-	// 											variant="ghost"
-	// 											size="icon"
-	// 											className="h-8 w-8"
-	// 											onClick={() => handleEditProduct(product)}
-	// 										>
-	// 											<Edit className="h-4 w-4" />
-	// 										</Button>
-	// 										<Button
-	// 											variant="ghost"
-	// 											size="icon"
-	// 											className="h-8 w-8 text-red-500"
-	// 											onClick={() => handleDeleteProduct(product.id)}
-	// 										>
-	// 											<Trash2 className="h-4 w-4" />
-	// 										</Button>
-	// 									</td>
-	// 								</motion.tr>
-	// 							))
-	// 						)}
-	// 					</tbody>
-	// 				</table>
-	// 			</div>
-	// 		</>
-	// 	);
-	// };
-
 	const { data: productsData } = useQuery({
 		queryKey: ['products'],
 		queryFn: () => getAllProducts({ storeId: storeId! }),
@@ -324,6 +130,7 @@ const ProductManagement = () => {
 
 	useEffect(() => {
 		if (productsData?.data.data) {
+			console.log(productsData?.data.data);
 			setProducts(productsData?.data.data);
 		}
 	}, [productsData, setProducts]);
@@ -348,7 +155,7 @@ const ProductManagement = () => {
 					</Button>
 					<Button
 						className="bg-vsphere-primary hover:bg-vsphere-primary/90 text-white"
-						onClick={() => handleAddProduct}
+						onClick={() => handleAddProduct()}
 					>
 						<Plus className="mr-2 h-4 w-4" /> Add New Product
 					</Button>

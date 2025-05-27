@@ -32,6 +32,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
     onChange(variants.filter((variant) => variant.id !== id));
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updateVariant = (id: string, field: keyof ProductVariant, value: any) => {
     onChange(
       variants.map((variant) =>
@@ -66,7 +67,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
     if (!variant) return;
 
     // Create a unique key name
-    let newKey = 'attribute';
+    const newKey = 'attribute';
     let counter = 1;
     while (variant.attributes[newKey + counter]) {
       counter++;
@@ -79,6 +80,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
     onChange(
       variants.map((variant) => {
         if (variant.id === variantId) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { [key]: removed, ...remainingAttributes } = variant.attributes;
           return {
             ...variant,
@@ -91,7 +93,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ">
       <div className="flex justify-between items-center">
         <h3 className="text-sm font-medium">Product Variants</h3>
         <Button 
