@@ -9,11 +9,11 @@ import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
 import AppLauncher from './pages/app/Dashboard/AppLauncher';
-import ProductDetails from './pages/app/Products/ProductDetails';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotFound from './pages/NotFound';
-import Index from './pages/Index';
+import Index from './pages/home/Index';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
+import ProductDetails2 from './pages/app/Products/ProductDetails2';
 
 const queryClient = new QueryClient();
 function App() {
@@ -52,7 +52,7 @@ function App() {
 	const Loading = () => (
 		<div className="flex h-screen w-screen items-center justify-center">
 			<div className="flex flex-col items-center">
-				<Loader className="text-vsphere-primary mb-4 h-10 w-10 animate-spin" />
+				<Loader className="text-primary mb-4 h-10 w-10 animate-spin" />
 				<p className="text-lg font-medium">Loading...</p>
 			</div>
 		</div>
@@ -135,7 +135,7 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<AdminLayout>
-											<ProductDetails />
+											<ProductDetails2 />
 										</AdminLayout>
 									</ProtectedRoute>
 								}

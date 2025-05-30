@@ -23,7 +23,7 @@ export const uploadFileToS3 = asyncHandler(
 
 		console.log(contentType);
 		try {
-			const { uploadUrl, fileName, publicS3Url } = await uploadToS3({
+			const { uploadUrl, fileName, publicS3Url,key } = await uploadToS3({
 				fileName: uploadFileName,
 				contentType,
 			});
@@ -34,6 +34,7 @@ export const uploadFileToS3 = asyncHandler(
 					fileName,
 					contentType,
 					publicS3Url,
+					key,
 				})
 			);
 		} catch (error) {
@@ -105,6 +106,7 @@ export const listAllObjects = asyncHandler(
 
 export const deleteAObject = asyncHandler(
 	async (request: Request, response: Response): Promise<void> => {
+		
 		const { key } = request.body;
 		try {
 			const deleteFile = await deleteObject({ key });

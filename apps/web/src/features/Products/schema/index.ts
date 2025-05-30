@@ -5,6 +5,7 @@ export const productImageSchema = z.object({
 	url: z.string().url(),
 	name: z.string(),
 	isFeatured: z.boolean(),
+	key: z.string(),
 });
 
 export const productVariantSchema = z.object({
@@ -20,12 +21,15 @@ export const productFormSchema = z.object({
 	storeId: z.number(),
 	title: z.string().min(2).max(50),
 	description: z.string().optional(),
-	price: z.string(),
-	comparedAtPrice: z.string(),
+	price: z.string().transform((value) => Number(value)),
+	comparedAtPrice: z
+		.string()
+		
+		.transform((value) => Number(value)),
 	status: z.string(),
 	images: z.array(productImageSchema).optional(),
 	categoryId: z.string(),
-	stockQuantity: z.string(),
+	stockQuantity: z.string().transform((value) => Number(value)),
 	variants: z.array(productVariantSchema).optional(),
 	seoTitle: z.string().optional(),
 	seoDescription: z.string().optional(),

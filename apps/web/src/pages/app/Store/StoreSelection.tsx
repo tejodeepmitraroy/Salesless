@@ -34,7 +34,6 @@ import { useAuth } from '@/features/users/hooks/useAuth';
 const StoreSelection: React.FC = () => {
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	
 
 	const handleStoreSelected = (storeId: string) => {
 		Cookies.set('storeId', storeId);
@@ -45,7 +44,7 @@ const StoreSelection: React.FC = () => {
 		navigate('/store/create');
 	};
 
-	const { data,  } = useQuery({
+	const { data } = useQuery({
 		queryKey: ['storeData'],
 		queryFn: async () => await getAllStoreService(),
 	});
@@ -62,7 +61,7 @@ const StoreSelection: React.FC = () => {
 					<CardHeader>
 						<CardTitle>
 							<h1 className="mb-2 text-3xl font-bold">
-								<span className="text-vsphere-primary">Vendor</span>
+								<span className="text-primary">Vendor</span>
 								<span className="text-vsphere-dark">Sphere</span>
 							</h1>
 						</CardTitle>
@@ -72,7 +71,10 @@ const StoreSelection: React.FC = () => {
 					</CardHeader>
 					<CardContent>
 						<section className="flex w-full justify-end">
-							<Button onClick={()=>handleCreateStore()} className="w-full px-6">
+							<Button
+								onClick={() => handleCreateStore()}
+								className="w-full px-6"
+							>
 								<span>Create Store</span>
 								<Plus className="ml-2 h-4 w-4" />
 							</Button>
@@ -98,7 +100,7 @@ const StoreSelection: React.FC = () => {
 									</div>
 									{/* {selectedStore === store.id && (
 										<div className="ml-4">
-											<div className="bg-vsphere-primary flex h-6 w-6 items-center justify-center rounded-full">
+											<div className="bg-primary flex h-6 w-6 items-center justify-center rounded-full">
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
 													width="14"

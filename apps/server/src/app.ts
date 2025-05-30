@@ -6,13 +6,15 @@ import userRouter from './routes/user.routes';
 import storeRouter from './routes/store.routes';
 import productRouter from './routes/product.routes';
 import contentRouter from './routes/content.routes';
+import orderRouter from './routes/order.routes';
+import customerRouter from './routes/customer.routes';
+import roleRouter from './routes/role.routes';
 // import eventsRouter from "./routes/events.routes";
 // import bookingRouter from "./routes/booking.routes";
 import cors from 'cors';
 import passport from 'passport';
 import session from 'express-session';
 import { initializePassportStrategies } from './config/passport.config';
-
 dotenv.config();
 
 const app: Application = express();
@@ -47,11 +49,14 @@ app.enable('trust proxy');
 
 // Routes Declaration
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/role', roleRouter);
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/customer', customerRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/products', productRouter);
-// app.use("/api/v1/payment", paymentRouter);
+app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/contents', contentRouter);
+// app.use("/api/v1/payment", paymentRouter);
 
 // app.use('/api/v1/donation', donationRouter);
 // app.use('/api/v1/projects', projectRouter);

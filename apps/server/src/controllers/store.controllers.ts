@@ -3,7 +3,7 @@ import { db } from '../db';
 
 import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
-import { store, user, userStore } from '../db/schema';
+import { customerStore, store, user, userStore } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
@@ -14,12 +14,15 @@ export const createStore = asyncHandler(
 		const { name, description, country, address, phone, timezone } =
 			request.body;
 		try {
-			const storeExists = await db
-				.select()
-				.from(store)
-				.where(eq(store.name, name));
+			const storeExists = await db.query.userStore.findMany({
+				where: eq(userStore.userId, authUser.id),
+				with: {
+					store: true,
+				},
+			});
+			const storeName = storeExists.find((store) => store.store.name === name);
 
-			if (storeExists.length > 0) {
+			if (storeName) {
 				response.status(400).json(new ApiError(400, 'Store already exists'));
 			}
 			const newStore = await db
@@ -78,7 +81,7 @@ export const getStoreById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const getStore = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.id)),
+				where: eq(store.id, parseInt(request.params.storeId)),
 			});
 			if (!getStore) {
 				response.status(200).json(new ApiError(400, 'Store not found'));
@@ -131,7 +134,7 @@ export const deleteStore = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const getStore = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.id)),
+				where: eq(store.id, parseInt(request.params.storeId)),
 			});
 
 			if (!getStore) {
@@ -162,7 +165,104 @@ export const getStoreSettings = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const storeSettings = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.id)),
+				where: eq(store.id, parseInt(request.params.storeId)),
+			});
+
+			if (!storeSettings) {
+				response.status(404).json(new ApiError(404, 'Store not found'));
+			}
+			response
+				.status(200)
+				.json(
+					new ApiResponse(
+						200,
+						storeSettings,
+						'Store settings fetched successfully'
+					)
+				);
+		} catch (error) {
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error updating store settings', error));
+		}
+	}
+);
+export const getStoreCustomers = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = parseInt(request.params.storeId);
+		const customerId = parseInt(request.params.customerId);
+
+		try {
+			if (customerId) {
+				const customer = await db.query.customerStore.findFirst({
+					where:
+						eq(customerStore.storeId, storeId) &&
+						eq(customerStore.customerId, customerId),
+					with: {
+						customer: true,
+					},
+					columns: {
+						customerId: false,
+						storeId: false,
+						registerAt: false,
+						
+					},
+				});
+				if (!customer) {
+					response.status(404).json(new ApiError(404, 'Customer not found'));
+				}
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							customer?.customer,
+							'Customer Details fetched successfully'
+						)
+					);
+			} else {
+				const customers = await db.query.customerStore.findMany({
+					where: eq(customerStore.storeId, storeId),
+					with: {
+						customer: true,
+					},
+					columns: {
+						customerId: false,
+						storeId: false,
+						registerAt: false,
+					
+					},
+				});
+
+				if (!customers) {
+					response.status(404).json(new ApiError(404, 'Customers not found'));
+				}
+
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							customers,
+							'All Customers fetched successfully'
+						)
+					);
+			}
+		} catch (error) {
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error updating store settings', error));
+		}
+	}
+);
+
+export const getStoreOrders = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = parseInt(request.params.storeId);
+		const orderId = parseInt(request.params.orderId);
+		try {
+			const storeSettings = await db.query.store.findFirst({
+				where: eq(store.id, storeId),
 			});
 
 			if (!storeSettings) {

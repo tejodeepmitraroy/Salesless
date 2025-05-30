@@ -10,19 +10,16 @@ import {
 	User,
 	Bell,
 	LayoutGrid,
+	Store,
+	SignpostBig,
+	Phone,
+	Image,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import SidebarItem from './SidebarItem';
 import { motion } from 'framer-motion';
-import {
-	Sheet,
-	SheetContent,
-	SheetDescription,
-	SheetHeader,
-	SheetTitle,
-	SheetTrigger,
-} from '../ui/sheet';
+
 import { Label } from '../ui/label';
 
 interface SidebarProps {
@@ -85,13 +82,13 @@ const SidebarLinks = [
 		active: false,
 		collapsed: false,
 	},
-	{
-		icon: Users,
-		label: 'Vendors',
-		href: '/vendors',
-		active: false,
-		collapsed: false,
-	},
+	// {
+	// 	icon: Users,
+	// 	label: 'Vendors',
+	// 	href: '/vendors',
+	// 	active: false,
+	// 	collapsed: false,
+	// },
 	{
 		icon: User,
 		label: 'Customers',
@@ -99,20 +96,22 @@ const SidebarLinks = [
 		active: false,
 		collapsed: false,
 	},
+
 	{
-		icon: Bell,
-		label: 'Notifications',
-		href: '/notifications',
+		icon: Image,
+		label: 'Media Store',
+		href: '/media',
 		active: false,
 		collapsed: false,
 	},
-	{
-		icon: Settings,
-		label: 'Settings',
-		href: '/settings',
-		active: false,
-		collapsed: false,
-	},
+
+	// {
+	// 	icon: Settings,
+	// 	label: 'Settings',
+	// 	href: '/settings',
+	// 	active: false,
+	// 	collapsed: false,
+	// },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
@@ -125,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 			animate={sidebarOpen ? 'open' : 'closed'}
 			transition={{ duration: 0.3, ease: 'easeInOut' }}
 			className={cn(
-				'bg-background border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r md:h-[calc(100vh-4rem)]',
+				'bg-gray-100 border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r md:h-[calc(100vh-4rem)]',
 				sidebarOpen ? 'w-64' : 'w-16'
 			)}
 		>
@@ -149,8 +148,42 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 				</motion.nav>
 
 				<Separator className="my-3 md:my-4" />
-				<Label className="mx-3 my-2">Store</Label>
+				<Label className="mx-3 my-2">Sales Channels</Label>
 
+				<SidebarItem
+					icon={Store}
+					label="Website"
+					href="/"
+					collapsed={!sidebarOpen}
+				/>
+				<SidebarItem
+					icon={SignpostBig}
+					label="POS"
+					href="/"
+					collapsed={!sidebarOpen}
+				/>
+				<SidebarItem
+					icon={Phone}
+					label="WhatsApp"
+					href="/"
+					collapsed={!sidebarOpen}
+				/>
+				<Separator className="my-3 md:my-4" />
+				<Label className="mx-3 my-2">Main</Label>
+				<SidebarItem
+					icon={Bell}
+					label="Notifications"
+					href={`/store/${storeId}/notifications`}
+					active={location.pathname === `/store/${storeId}/notifications`}
+					collapsed={!sidebarOpen}
+				/>
+				<SidebarItem
+					icon={Settings}
+					label="Settings"
+					href={`/store/${storeId}/settings`}
+					active={location.pathname === `/store/${storeId}/settings`}
+					collapsed={!sidebarOpen}
+				/>
 				<SidebarItem
 					icon={LogOut}
 					label="Logout"
@@ -158,7 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 					collapsed={!sidebarOpen}
 				/>
 			</div>
-			<Sheet>
+			{/* <Sheet>
 				<SheetTrigger>Open</SheetTrigger>
 				<SheetContent side="left">
 					<SheetHeader>
@@ -217,7 +250,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
             href="/employees" 
             active={location.pathname === '/employees'} 
             collapsed={!sidebarOpen} 
-          /> */}
+          /> 
 							<SidebarItem
 								icon={User}
 								label="Customers"
@@ -232,27 +265,27 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
             active={location.pathname === '/analytics'} 
             collapsed={!sidebarOpen} 
           /> */}
-							{/* <SidebarItem 
+			{/* <SidebarItem 
             icon={Megaphone} 
             label="Marketing" 
             href="/marketing" 
             active={location.pathname === '/marketing'} 
             collapsed={!sidebarOpen} 
           /> */}
-							{/* <SidebarItem 
+			{/* <SidebarItem 
             icon={FileText} 
             label="Blog" 
             href="/blog" 
             active={location.pathname === '/blog'} 
             collapsed={!sidebarOpen} 
           /> */}
-							{/* <SidebarItem 
+			{/* <SidebarItem 
             icon={LayoutTemplate} 
             label="CMS" 
             href="/cms" 
             active={location.pathname === '/cms'} 
             collapsed={!sidebarOpen} 
-          /> */}
+          /> 
 							<SidebarItem
 								icon={Bell}
 								label="Notifications"
@@ -279,7 +312,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 						/>
 					</div>
 				</SheetContent>
-			</Sheet>
+			</Sheet> */}
 		</motion.aside>
 	);
 };

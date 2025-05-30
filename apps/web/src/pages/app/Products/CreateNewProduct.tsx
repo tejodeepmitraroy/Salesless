@@ -32,29 +32,16 @@ import { productFormSchema } from '@/features/Products/schema';
 import ImageUpload from '@/features/Products/components/ImageUpload';
 import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
 import { createProductService } from '@/features/Products/services';
-import { useParams } from 'react-router';
+import {  useNavigate, useParams } from 'react-router';
 
-// Define the form schema
-// const productFormSchema = z.object({
-// 	name: z.string().min(2, 'Name is required').max(50),
-// 	category: z.string().min(2, 'Category is required').max(50),
-// 	vendor: z.string().min(2, 'Vendor is required').max(50),
-// 	price: z.string().min(1, 'Price is required'),
-// 	stock: z.string().min(1, 'Stock is required'),
-// 	status: z.string(),
-// 	description: z.string().optional(),
-// 	images: z.array(z.unknown()).optional(),
-// 	variants: z.array(z.unknown()).optional(),
-// 	seoTitle: z.string().optional(),
-// 	seoDescription: z.string().optional(),
-// 	seoKeywords: z.string().optional(),
-// });
+
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 
 const CreateNewProduct = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { storeId } = useParams<{ storeId: string }>();
+	const navigate = useNavigate();
 
 	const form = useForm<ProductFormValues>({
 		resolver: zodResolver(productFormSchema),
@@ -62,9 +49,9 @@ const CreateNewProduct = () => {
 			title: '',
 			description: '',
 			categoryId: '',
-			price: '',
-			comparedAtPrice: '',
-			stockQuantity: '',
+			price: 0,
+			comparedAtPrice: 0,
+			stockQuantity: 0,
 			status: 'Active',
 			images: [],
 			variants: [],
@@ -87,6 +74,7 @@ const CreateNewProduct = () => {
 			// For now, we'll just show a success message
 			toast.success('Product created successfully!');
 			form.reset();
+			navigate(`/store/${storeId}/products`);
 		} catch (error) {
 			console.error('Failed to create product:', error);
 			toast.error('Failed to create product');

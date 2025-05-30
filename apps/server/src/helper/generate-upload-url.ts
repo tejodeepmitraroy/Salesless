@@ -42,7 +42,12 @@ export const uploadToS3 = async ({
 
 	const publicS3Url = `https://${aws_s3_config.bucket}.s3.${aws_s3_config.region}.amazonaws.com/products/${uniqueFileName}`;
 
-	return { uploadUrl, fileName: uniqueFileName, publicS3Url };
+	return {
+		uploadUrl,
+		fileName: uniqueFileName,
+		publicS3Url,
+		key: `products/${uniqueFileName}`,
+	};
 };
 
 export const getObjectMetaData = async ({ fileName }: { fileName: string }) => {

@@ -12,6 +12,7 @@ router.route('/upload-url').post(uploadFileToS3)
 router.get('/upload-status/:fileName', checkUploadStatus);
 
 router.route('/view').get(viewUrl);
+
 router.route('/').get(listAllObjects).delete(deleteAObject);
 
 export default router;

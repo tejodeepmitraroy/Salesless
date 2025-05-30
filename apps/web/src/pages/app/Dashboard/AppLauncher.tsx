@@ -67,7 +67,7 @@ const AppTile: React.FC<AppTileProps> = ({
 			className={`h-full `}
 		>
 			<Link to={to} className="block h-full">
-				<Card className={`${active ? '' : 'opacity-50'} hover:border-vsphere-primary h-full border-2 transition-all duration-300 hover:shadow-md`}>
+				<Card className={`${active ? '' : 'opacity-50'} hover:border-primary h-full border-2 transition-all duration-300 hover:shadow-md`}>
 					
 					<CardContent className="flex items-start h-full flex-col p-6">
 						<motion.div

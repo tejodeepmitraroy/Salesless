@@ -1,1 +1,0 @@
-ALTER TABLE "store" ALTER COLUMN "timezone" DROP NOT NULL;

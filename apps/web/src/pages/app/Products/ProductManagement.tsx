@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,7 +28,7 @@ const ProductManagement = () => {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();
 	const [searchQuery, setSearchQuery] = useState('');
-	
+
 	const products = useProductStore((state) => state.products);
 	const setProducts = useProductStore((state) => state.setProducts);
 
@@ -136,13 +136,8 @@ const ProductManagement = () => {
 	}, [productsData, setProducts]);
 
 	return (
-		// <motion.div
-		// 	initial={{ opacity: 0, y: 20 }}
-		// 	animate={{ opacity: 1, y: 0 }}
-		// 	transition={{ duration: 0.5 }}
-		// 	className="space-y-6"
-		// >
-		<div className="space-y-6">
+		
+		<div className="space-y-3">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 				<h1 className="text-2xl font-bold">Product Management</h1>
 				<div className="flex flex-wrap gap-2">
@@ -154,7 +149,7 @@ const ProductManagement = () => {
 						<Download className="h-4 w-4" /> Export to CSV
 					</Button>
 					<Button
-						className="bg-vsphere-primary hover:bg-vsphere-primary/90 text-white"
+						className="bg-primary hover:bg-primary/90 text-white"
 						onClick={() => handleAddProduct()}
 					>
 						<Plus className="mr-2 h-4 w-4" /> Add New Product

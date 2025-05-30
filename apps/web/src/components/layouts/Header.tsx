@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="bg-background text-foreground shadow-sm py-3 px-4 md:py-4 md:px-6 flex items-center justify-between sticky top-0 z-20"
+      className="bg-vsphere-dark text-foreground shadow-sm py-2 px-4 md:py-3 md:px-6 flex items-center justify-between sticky top-0 z-20"
     >
       <div className="flex items-center">
         <Button 
@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({ sidebarOpen, toggleSidebar }) => {
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
         <a href="/admin" className="flex items-center">
-          <span className="text-lg md:text-xl font-bold text-vsphere-primary">Vendor<span className="text-vsphere-dark">Sphere</span> <span className="hidden sm:inline text-gray-600 font-normal ml-2">Admin</span></span>
+          <span className="text-lg md:text-xl font-bold text-primary">Salesless<span className="text-vsphere-dark">Sphere</span></span>
         </a>
       </div>
       <div className="flex items-center gap-2">

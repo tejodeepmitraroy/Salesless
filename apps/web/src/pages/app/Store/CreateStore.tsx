@@ -87,7 +87,7 @@ const CreateStore: React.FC = () => {
 			>
 				<div className="mb-6 text-center">
 					<h1 className="mb-2 text-3xl font-bold">
-						<span className="text-vsphere-primary">Vendor</span>
+						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</h1>
 					<p className="text-lg text-gray-600">Create your new store</p>
@@ -96,8 +96,8 @@ const CreateStore: React.FC = () => {
 				<Card>
 					<CardHeader>
 						<div className="mb-3 flex items-center">
-							<div className="bg-vsphere-primary/10 mr-3 flex h-10 w-10 items-center justify-center rounded-full">
-								<Store className="text-vsphere-primary h-5 w-5" />
+							<div className="bg-primary/10 mr-3 flex h-10 w-10 items-center justify-center rounded-full">
+								<Store className="text-primary h-5 w-5" />
 							</div>
 							<div>
 								<CardTitle>Store Details</CardTitle>
@@ -174,7 +174,7 @@ const CreateStore: React.FC = () => {
 								<Button
 									type="submit"
 									disabled={isLoading}
-									className="bg-vsphere-primary hover:bg-vsphere-primary/90"
+									className="bg-primary hover:bg-primary/90"
 								>
 									{isLoading ? 'Creating...' : 'Create Store'}
 								</Button>

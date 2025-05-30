@@ -5,43 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1747049772161,
-      "tag": "0000_stormy_ted_forrester",
+      "when": 1748537691238,
+      "tag": "0000_open_zzzax",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1747056349139,
-      "tag": "0001_flimsy_james_howlett",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1747734691087,
-      "tag": "0002_wet_the_hood",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1747734826966,
-      "tag": "0003_nebulous_the_anarchist",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1748005692911,
-      "tag": "0004_striped_krista_starr",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1748196473556,
-      "tag": "0005_lonely_taskmaster",
+      "when": 1748542847589,
+      "tag": "0001_great_sway",
       "breakpoints": true
     }
   ]

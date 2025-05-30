@@ -26,17 +26,16 @@ CREATE TABLE "category" (
 );
 --> statement-breakpoint
 CREATE TABLE "customer" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "customer_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"id" serial PRIMARY KEY NOT NULL,
 	"first_name" varchar(255) NOT NULL,
 	"last_name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"phone" varchar(255),
 	"phone_verified" boolean DEFAULT false NOT NULL,
-	"password" varchar(20),
+	"password" varchar(255),
 	"google_id" varchar,
 	"avatar" varchar,
-	"age" integer,
 	"order_count" integer DEFAULT 0 NOT NULL,
 	"total_spend" real DEFAULT 0 NOT NULL,
 	"note" varchar(255),
@@ -142,8 +141,15 @@ CREATE TABLE "product" (
 	"title" varchar(255) NOT NULL,
 	"description" varchar(255),
 	"price" numeric,
-	"product_type" varchar,
+	"compared_at_price" numeric,
+	"status" varchar DEFAULT 'Active' NOT NULL,
+	"images" varchar(255)[],
+	"category" varchar(255),
 	"stock_quantity" integer,
+	"seo_title" varchar(255),
+	"seo_description" varchar(255),
+	"seo_keywords" varchar(255),
+	"seo_score" integer,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -215,12 +221,12 @@ CREATE TABLE "store" (
 	"country" varchar NOT NULL,
 	"address1" varchar NOT NULL,
 	"address2" varchar,
-	"zip" integer NOT NULL,
+	"zip" integer,
 	"city" varchar,
 	"phone" varchar NOT NULL,
-	"country_code" varchar NOT NULL,
-	"timezone" varchar NOT NULL,
-	"money_format" varchar NOT NULL,
+	"country_code" varchar,
+	"timezone" varchar,
+	"money_format" varchar,
 	"domain" varchar,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -261,7 +267,7 @@ CREATE TABLE "user" (
 	"email_verified" boolean DEFAULT false NOT NULL,
 	"phone" varchar(255),
 	"phone_verified" boolean DEFAULT false NOT NULL,
-	"password" varchar(20),
+	"password" varchar(255),
 	"google_id" varchar,
 	"avatar" varchar,
 	"gender" varchar,
@@ -275,7 +281,6 @@ CREATE TABLE "user" (
 );
 --> statement-breakpoint
 CREATE TABLE "user_store" (
-	"id" serial PRIMARY KEY NOT NULL,
 	"store_id" integer NOT NULL,
 	"user_id" integer NOT NULL,
 	"role_id" integer NOT NULL,

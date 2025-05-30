@@ -72,7 +72,7 @@ const SignupPage = () => {
 			<Card className="w-full max-w-md">
 				<CardHeader className="space-y-1">
 					<CardTitle className="text-center text-2xl font-bold">
-						<span className="text-vsphere-primary">Vendor</span>
+						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</CardTitle>
 					<CardDescription className="text-center">
@@ -180,7 +180,9 @@ const SignupPage = () => {
 								name="confirmPassword"
 								render={({ field }) => (
 									<FormItem className="space-y-2">
-										<FormLabel htmlFor="confirmPassword">Confirm Password</FormLabel>
+										<FormLabel htmlFor="confirmPassword">
+											Confirm Password
+										</FormLabel>
 										<div className="relative">
 											<FormControl>
 												<Input
@@ -210,7 +212,7 @@ const SignupPage = () => {
 									</FormItem>
 								)}
 							/>
-						
+
 							<Button type="submit" className="w-full" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
@@ -229,7 +231,7 @@ const SignupPage = () => {
 				<CardFooter className="flex flex-col space-y-2">
 					<div className="text-center text-sm">
 						Already have an account?{' '}
-						<Link to="/login" className="text-vsphere-primary hover:underline">
+						<Link to="/login" className="text-primary hover:underline">
 							Login
 						</Link>
 					</div>

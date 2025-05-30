@@ -6,3 +6,4 @@ export { category, productToCategory,productToCategoryRelations } from "./catego
 export { cart,cartItems,cartRelations } from "./cart";
 export { order,orderItems,orderRelations } from "./order";
 export { transaction,transactionRelations } from "./transaction";
+export { media } from "./media";

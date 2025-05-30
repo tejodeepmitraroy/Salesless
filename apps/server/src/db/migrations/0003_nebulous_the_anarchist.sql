@@ -1,1 +1,0 @@
-ALTER TABLE "store" ALTER COLUMN "country_code" DROP NOT NULL;

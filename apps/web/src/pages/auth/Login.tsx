@@ -130,10 +130,7 @@ const LoginPage = () => {
 							<div className="space-y-2">
 								<div className="flex justify-between">
 									<Label htmlFor="password">Password</Label>
-									<Link
-										to="/forgot-password"
-										className="text-vsphere-primary text-xs hover:underline"
-									>
+									<Link to="/forgot-password" className="text-primarynderline">
 										Forgot password?
 									</Link>
 								</div>
@@ -192,10 +189,11 @@ const LoginPage = () => {
 				<CardFooter className="flex flex-col space-y-2">
 					<div className="text-center text-sm">
 						Don't have an account?{' '}
-						<Link to="/signup" className="text-vsphere-primary hover:underline">
+						<Link to="/signup" className="text-primary hover:underline">
 							Sign up
 						</Link>
 					</div>
+					primary primary
 				</CardFooter>
 			</Card>
 		</div>
