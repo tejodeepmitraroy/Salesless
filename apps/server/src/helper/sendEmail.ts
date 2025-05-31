@@ -2,7 +2,6 @@
 import nodemailer from 'nodemailer';
 import { render } from '@react-email/components';
 
-
 import ForgetPassportEmail from '../emails/ForgetPassportEmail';
 import nodemailer_config from '../config/nodemailer.config';
 

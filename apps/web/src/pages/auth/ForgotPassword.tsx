@@ -49,7 +49,7 @@ const ForgotPasswordPage = () => {
 				description: 'Check your email for a link to reset your password.',
 			});
 		} catch (error) {
-			console.log("Super Error", error);
+			console.log('Super Error', error);
 			toast('Request failed', {
 				description: "We couldn't process your request. Please try again.",
 				// variant: "destructive",
@@ -64,7 +64,7 @@ const ForgotPasswordPage = () => {
 					<div className="flex justify-center">
 						<Link
 							to="/login"
-							className="text-vsphere-primary mb-4 flex items-center hover:underline"
+							className="text-primary mb-4 flex items-center hover:underline"
 						>
 							<ArrowLeft className="mr-1 h-4 w-4" />
 							Back to login
@@ -127,7 +127,7 @@ const ForgotPasswordPage = () => {
 					) : (
 						<div className="space-y-4 text-center">
 							<div className="flex justify-center">
-								<Mail className="text-vsphere-primary h-16 w-16" />
+								<Mail className="text-primary h-16 w-16" />
 							</div>
 							<h3 className="text-lg font-medium">Check your email</h3>
 							<p className="text-sm text-gray-500">
@@ -146,7 +146,7 @@ const ForgotPasswordPage = () => {
 				<CardFooter className="flex flex-col space-y-2">
 					<div className="text-center text-sm">
 						Remember your password?{' '}
-						<Link to="/login" className="text-vsphere-primary hover:underline">
+						<Link to="/login" className="text-primary hover:underline">
 							Login
 						</Link>
 					</div>

@@ -1,90 +1,63 @@
-import axios from 'axios';
+import { getToken } from '@/config/auth';
+import { customAxios } from '@/config/axios-custom';
 
-export const loginService = async ({
-	email,
-	password,
-}: {
-	email: string;
-	password: string;
-}) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/login`,
-		{
-			email,
-			password,
+export const getAllStoreService = async () => {
+	const token = getToken();
+
+	const response = await customAxios(`/store`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
 		},
-		{
-			withCredentials: true,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-
+	});
 	return response;
 };
 
-export const signUpService = async ({
-	email,
-	password,
+export const createStoreService = async ({
 	name,
-	mobile,
-	confirmPassword,
+	description,
+	type,
+	country,
+	address,
+	phone,
 }: {
-	email: string;
-	password: string;
 	name: string;
-	mobile: string;
-	confirmPassword: string;
+	description?: string;
+	type?: string;
+	country: string;
+	address: string;
+	phone: string;
 }) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/register`,
+	const token = getToken();
+
+	const response = await customAxios.post(
+		`/store`,
 		{
-			email,
-			password,
 			name,
-			mobile,
-			confirmPassword,
+			description,
+			type,
+			country,
+			address,
+			phone,
 		},
 		{
 			headers: {
+				Authorization: `Bearer ${token}`,
 				'Content-Type': 'application/json',
 			},
 		}
 	);
-
 	return response;
 };
 
-export const forgetPassword = async (email: string) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/forget-password`,
-		{
-			email,
+export const getStoreDetails = async ({ storeId }: { storeId: string }) => {
+	const token = getToken();
+	const response = await customAxios.get(`/store/${storeId}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+			'Content-Type': 'application/json',
 		},
-		{
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
+	});
 
 	return response;
-};
-
-export const getUserData = async () => {
-	try {
-		const response = await axios.get(
-			`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/get-user-data`,
-			{
-				withCredentials: true,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
-		return response;
-	} catch (error) {
-		console.log(error);
-	}
 };

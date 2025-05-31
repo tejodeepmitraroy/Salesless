@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { Eye, EyeOff, LogIn, Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -26,11 +26,29 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { loginService } from '@/features/users/services';
+import Cookies from 'js-cookie';
 
 const LoginPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+
+	const checkAuth = useCallback(() => {
+		const accessToken = Cookies.get('access_token');
+		const storedStoreId = Cookies.get('storeId');
+
+		if (accessToken) {
+			if (storedStoreId) {
+				navigate(`/store/${storedStoreId}`);
+			} else {
+				navigate('/store');
+			}
+		}
+	}, [navigate]);
+	// Check authentication status only once on mount
+	useEffect(() => {
+		checkAuth();
+	}, [checkAuth]);
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof loginPageSchema>>({
@@ -38,8 +56,6 @@ const LoginPage = () => {
 		defaultValues: {
 			email: 'tejodeepmitraroy2002@gmail.com',
 			password: 'Tejodeep@2002',
-			// email: 'admin@example.com',
-			// password: 'admin123',
 		},
 	});
 
@@ -50,6 +66,7 @@ const LoginPage = () => {
 
 		try {
 			console.log(values);
+
 			// Simulate login API call
 			const response = await loginService({
 				email: values.email,
@@ -61,7 +78,7 @@ const LoginPage = () => {
 			toast('Login successful!', {
 				description: 'Welcome back to VendorSphere',
 			});
-			navigate('/store-selection');
+			navigate(`/store`);
 		} catch (error) {
 			console.log(error);
 			toast('Login failed', {
@@ -80,7 +97,7 @@ const LoginPage = () => {
 			<Card className="w-full max-w-md">
 				<CardHeader className="space-y-1">
 					<CardTitle className="text-center text-2xl font-bold">
-						<span className="text-vsphere-primary">Vendor</span>
+						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</CardTitle>
 					<CardDescription className="text-center">
@@ -113,10 +130,7 @@ const LoginPage = () => {
 							<div className="space-y-2">
 								<div className="flex justify-between">
 									<Label htmlFor="password">Password</Label>
-									<Link
-										to="/forgot-password"
-										className="text-vsphere-primary text-xs hover:underline"
-									>
+									<Link to="/forgot-password" className="text-primarynderline">
 										Forgot password?
 									</Link>
 								</div>
@@ -156,11 +170,7 @@ const LoginPage = () => {
 									)}
 								/>
 							</div>
-							<Button
-								type="submit"
-								className="w-full bg-pink-400"
-								disabled={isLoading}
-							>
+							<Button type="submit" className="w-full" disabled={isLoading}>
 								{isLoading ? (
 									<span className="flex items-center gap-2">
 										<Lock className="h-4 w-4 animate-pulse" />
@@ -179,10 +189,11 @@ const LoginPage = () => {
 				<CardFooter className="flex flex-col space-y-2">
 					<div className="text-center text-sm">
 						Don't have an account?{' '}
-						<Link to="/signup" className="text-vsphere-primary hover:underline">
+						<Link to="/signup" className="text-primary hover:underline">
 							Sign up
 						</Link>
 					</div>
+					primary primary
 				</CardFooter>
 			</Card>
 		</div>

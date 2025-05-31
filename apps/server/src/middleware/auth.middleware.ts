@@ -1,11 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 
-export const localAuthMiddleware = passport.authenticate('local', {
+export const localUserAuthMiddleware = passport.authenticate('user-local', {
 	failureRedirect: '/login',
 	failureMessage: true,
 	session: false,
 });
+export const localCustomerAuthMiddleware = passport.authenticate(
+	'customer-local',
+	{
+		failureRedirect: '/login2',
+		failureMessage: true,
+		session: false,
+	}
+);
 export const jwtAuthMiddleware = passport.authenticate('jwt', {
 	session: false,
 });

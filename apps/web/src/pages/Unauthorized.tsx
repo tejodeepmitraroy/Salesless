@@ -2,9 +2,14 @@ import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/users/hooks/useAuth';
 import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
+import { logoutService } from '@/features/users/services';
 
 const Unauthorized = () => {
-	const { user, logout } = useAuth();
+	const { user } = useAuth();
+
+	const handleLogout = () => {
+		logoutService();
+	};
 
 	return (
 		<div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
@@ -37,7 +42,7 @@ const Unauthorized = () => {
 					{user && (
 						<Button
 							variant="ghost"
-							onClick={logout}
+							onClick={() => handleLogout()}
 							className="text-red-500 hover:bg-red-50 hover:text-red-700"
 						>
 							Logout

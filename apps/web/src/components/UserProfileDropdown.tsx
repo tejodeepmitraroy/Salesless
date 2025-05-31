@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -14,16 +13,25 @@ import { Settings, User, LogOut, Bell, Moon, Sun } from 'lucide-react';
 import { useAuth } from '@/features/users/hooks/useAuth';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
+import { logoutService } from '@/features/users/services';
+import { useState } from 'react';
 
 const UserProfileDropdown = () => {
 	// const { toast } = useToast();
-	const { user, logout } = useAuth();
-	const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+	const { user } = useAuth();
+	const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
 	const toggleTheme = () => {
 		setTheme(theme === 'light' ? 'dark' : 'light');
 		toast(`Switched to ${theme === 'light' ? 'dark' : 'light'} mode`, {
 			description: 'Your preference has been saved.',
+		});
+	};
+
+	const handleLogout = () => {
+		logoutService();
+		toast('You have been logged out.', {
+			description: 'Your session has been terminated.',
 		});
 	};
 
@@ -82,7 +90,7 @@ const UserProfileDropdown = () => {
 					)}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem onClick={logout}>
+				<DropdownMenuItem onClick={() => handleLogout()}>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Log out</span>
 				</DropdownMenuItem>

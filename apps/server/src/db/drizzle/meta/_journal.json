@@ -1,41 +1,41 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1745592422869,
-      "tag": "0000_warm_raider",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1745596368891,
-      "tag": "0001_smart_the_santerians",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1745596410359,
-      "tag": "0002_abnormal_ted_forrester",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1745596940281,
-      "tag": "0003_curious_chimera",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1745598752051,
-      "tag": "0004_flowery_molten_man",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1745592422869,
+			"tag": "0000_warm_raider",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1745596368891,
+			"tag": "0001_smart_the_santerians",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1745596410359,
+			"tag": "0002_abnormal_ted_forrester",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1745596940281,
+			"tag": "0003_curious_chimera",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1745598752051,
+			"tag": "0004_flowery_molten_man",
+			"breakpoints": true
+		}
+	]
 }

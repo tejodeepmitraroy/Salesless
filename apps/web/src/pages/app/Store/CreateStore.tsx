@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { Store } from 'lucide-react';
@@ -26,11 +25,13 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { createStoreSchema } from '@/features/Store/schema';
+import { createStoreService } from '@/features/Store/services';
+import { useState } from 'react';
 
 const CreateStore: React.FC = () => {
 	const navigate = useNavigate();
 
-	const [isLoading, setIsLoading] = React.useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const form = useForm({
 		resolver: zodResolver(createStoreSchema),
@@ -46,7 +47,16 @@ const CreateStore: React.FC = () => {
 
 		try {
 			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 1500));
+			// await new Promise((resolve) => setTimeout(resolve, 1500));
+
+			await createStoreService({
+				name: values.storeName,
+				description: values.storeDescription,
+				type: values.storeType,
+				country: 'India',
+				address: '126, subhash nagar byelane',
+				phone: '9674128921',
+			});
 
 			toast('Store created', {
 				description: `${values.storeName} has been created successfully!`,
@@ -64,7 +74,7 @@ const CreateStore: React.FC = () => {
 	};
 
 	const handleCancel = () => {
-		navigate('/store-selection');
+		navigate('/store');
 	};
 
 	return (
@@ -77,7 +87,7 @@ const CreateStore: React.FC = () => {
 			>
 				<div className="mb-6 text-center">
 					<h1 className="mb-2 text-3xl font-bold">
-						<span className="text-vsphere-primary">Vendor</span>
+						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</h1>
 					<p className="text-lg text-gray-600">Create your new store</p>
@@ -86,8 +96,8 @@ const CreateStore: React.FC = () => {
 				<Card>
 					<CardHeader>
 						<div className="mb-3 flex items-center">
-							<div className="bg-vsphere-primary/10 mr-3 flex h-10 w-10 items-center justify-center rounded-full">
-								<Store className="text-vsphere-primary h-5 w-5" />
+							<div className="bg-primary/10 mr-3 flex h-10 w-10 items-center justify-center rounded-full">
+								<Store className="text-primary h-5 w-5" />
 							</div>
 							<div>
 								<CardTitle>Store Details</CardTitle>
@@ -97,8 +107,8 @@ const CreateStore: React.FC = () => {
 					</CardHeader>
 
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							<CardContent>
+						<form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+							<CardContent className="space-y-6">
 								<FormField
 									control={form.control}
 									name="storeName"
@@ -157,7 +167,6 @@ const CreateStore: React.FC = () => {
 									)}
 								/>
 							</CardContent>
-
 							<CardFooter className="flex justify-between">
 								<Button type="button" variant="outline" onClick={handleCancel}>
 									Cancel
@@ -165,7 +174,7 @@ const CreateStore: React.FC = () => {
 								<Button
 									type="submit"
 									disabled={isLoading}
-									className="bg-vsphere-primary hover:bg-vsphere-primary/90"
+									className="bg-primary hover:bg-primary/90"
 								>
 									{isLoading ? 'Creating...' : 'Create Store'}
 								</Button>

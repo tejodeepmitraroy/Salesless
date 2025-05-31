@@ -1,11 +1,7 @@
-
-import React from 'react';
 import SalesOverview from './SalesOverview';
 
 const OverviewTab = () => {
-  return (
-    <SalesOverview />
-  );
+	return <SalesOverview />;
 };
 
 export default OverviewTab;
