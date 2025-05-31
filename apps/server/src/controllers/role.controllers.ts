@@ -1,4 +1,4 @@
-import { generateAccessToken,  } from '../helper/token';
+import { generateAccessToken } from '../helper/token';
 import asyncHandler from '../utils/asyncHandler';
 
 import { Request, Response } from 'express';
@@ -9,25 +9,24 @@ import { role, user } from '../db/schema';
 import { db } from '../db';
 import ApiError from '../utils/ApiError';
 
-
 export const createRole = asyncHandler(
 	async (request: Request, response: Response) => {
-		
-		try{
-			const newRole = await db.insert(role).values({
-				name: request.body.name,	
-			}).returning()
-			console.log(newRole)
+		try {
+			const newRole = await db
+				.insert(role)
+				.values({
+					name: request.body.name,
+				})
+				.returning();
+			console.log(newRole);
 
-			response.status(200).json(new ApiResponse(200, newRole, 'Role created successfully'));
-
-		}catch(error){
-			console.log(error)
 			response
-				.status(400)
-				.json(new ApiError(400, 'Role already exists'));
-		}	
-		
+				.status(200)
+				.json(new ApiResponse(200, newRole, 'Role created successfully'));
+		} catch (error) {
+			console.log(error);
+			response.status(400).json(new ApiError(400, 'Role already exists'));
+		}
 	}
 );
 
@@ -67,7 +66,7 @@ export const loginUser = asyncHandler(
 				)
 			);
 		} else {
-			response.status(500).json(new ApiError(400, 'Error Happens', ));
+			response.status(500).json(new ApiError(400, 'Error Happens'));
 		}
 	}
 );
@@ -83,7 +82,10 @@ export const logoutUser = asyncHandler(
 
 			console.log('Logout, Refresh Token--->', token);
 			try {
-				await db.update(user).set({ refreshToken: null }).where(eq(user.refreshToken, token));
+				await db
+					.update(user)
+					.set({ refreshToken: null })
+					.where(eq(user.refreshToken, token));
 
 				response.clearCookie('access_token', {
 					// httpOnly: true,

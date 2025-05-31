@@ -30,7 +30,6 @@ export const getAllProducts = async ({ storeId }: { storeId: string }) => {
 	return response;
 };
 
-
 export const getProductById = async ({ productId }: { productId: string }) => {
 	const token = getToken();
 

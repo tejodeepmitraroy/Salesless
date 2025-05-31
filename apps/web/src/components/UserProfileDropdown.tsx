@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -15,11 +14,12 @@ import { useAuth } from '@/features/users/hooks/useAuth';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { logoutService } from '@/features/users/services';
+import { useState } from 'react';
 
 const UserProfileDropdown = () => {
 	// const { toast } = useToast();
 	const { user } = useAuth();
-	const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+	const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
 	const toggleTheme = () => {
 		setTheme(theme === 'light' ? 'dark' : 'light');
@@ -29,7 +29,7 @@ const UserProfileDropdown = () => {
 	};
 
 	const handleLogout = () => {
-		logoutService()
+		logoutService();
 		toast('You have been logged out.', {
 			description: 'Your session has been terminated.',
 		});

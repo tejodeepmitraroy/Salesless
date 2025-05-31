@@ -1,4 +1,3 @@
-import React from 'react';
 import { Navigate, useLocation } from 'react-router';
 import { useAuth } from '@/features/users/hooks/useAuth';
 import type { UserRole } from '@/features/users/hooks/useAuth';

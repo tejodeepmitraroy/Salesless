@@ -21,15 +21,13 @@ export const productFormSchema = z.object({
 	storeId: z.number(),
 	title: z.string().min(2).max(50),
 	description: z.string().optional(),
-	price: z.string().transform((value) => Number(value)),
-	comparedAtPrice: z
-		.string()
-		
-		.transform((value) => Number(value)),
+	price: z.string(),
+	comparedAtPrice: z.string(),
+
 	status: z.string(),
 	images: z.array(productImageSchema).optional(),
 	categoryId: z.string(),
-	stockQuantity: z.string().transform((value) => Number(value)),
+	stockQuantity: z.string(),
 	variants: z.array(productVariantSchema).optional(),
 	seoTitle: z.string().optional(),
 	seoDescription: z.string().optional(),

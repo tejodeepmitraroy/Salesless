@@ -15,7 +15,6 @@ const s3Client = new S3Client({
 		accessKeyId: aws_s3_config.access_key,
 		secretAccessKey: aws_s3_config.secret_key,
 	},
-	
 });
 
 export const uploadToS3 = async ({
@@ -33,7 +32,6 @@ export const uploadToS3 = async ({
 		Bucket: aws_s3_config.bucket,
 		Key: `products/${uniqueFileName}`,
 		ContentType: contentType,
-		
 	});
 
 	const uploadUrl = await getSignedUrl(s3Client, command, {

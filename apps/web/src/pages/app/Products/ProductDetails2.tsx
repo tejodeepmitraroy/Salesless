@@ -1,11 +1,11 @@
-// import React from 'react';
-import { useParams, useNavigate } from 'react-router';
+//
+import { useParams } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 // import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, ChevronRight, Package } from 'lucide-react';
-import { useProductStore } from '@/stores/product-store';
+import { ChevronRight } from 'lucide-react';
+
 import { motion } from 'framer-motion';
 import {
 	Form,
@@ -37,11 +37,9 @@ import { useQuery } from '@tanstack/react-query';
 import { getProductById } from '@/features/Products/services';
 
 const ProductDetails2 = () => {
-	const { id, storeId } = useParams<{ id: string; storeId: string }>();
+	const { id } = useParams<{ id: string }>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [product, setProduct] = useState<ProductFormValues | null>(null);
 
-	const navigate = useNavigate();
 	// const product = useProductStore((state) =>
 	// 	state.getProductsById(parseInt(id || '0'))
 	// );
@@ -64,6 +62,7 @@ const ProductDetails2 = () => {
 				...data,
 				images: data.images?.map((image) => image.url),
 			};
+			console.log(modifiedData);
 			// const response = await createProductService(modifiedData);
 			// console.log(response);
 			// Here you would typically make an API call to create the product
@@ -105,18 +104,6 @@ const ProductDetails2 = () => {
 
 	// const featuredImage = getFeaturedImage();
 
-	// const { data: productsData } = useQuery({
-	// 	queryKey: ['products'],
-	// 	queryFn: () => getProductById({ productId: id! }),
-	// });
-
-	// useEffect(() => {
-	// 	if (productsData?.data.data) {
-	// 		console.log(productsData?.data.data);
-	// 		setProduct(productsData?.data.data);
-	// 	}
-	// }, [productsData, setProducts]);
-
 	return isLoading ? (
 		<div>Loading...</div>
 	) : (
@@ -128,7 +115,7 @@ const ProductDetails2 = () => {
 		>
 			<div className="mx-auto max-w-4xl space-y-6">
 				<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-					<h1 className="text-2xl flex gap-2 font-bold">
+					<h1 className="flex gap-2 text-2xl font-bold">
 						{' '}
 						<ChevronRight /> New Product
 					</h1>

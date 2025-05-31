@@ -143,7 +143,10 @@ export const logoutUser = asyncHandler(
 
 			console.log('Logout, Refresh Token--->', token);
 			try {
-				await db.update(user).set({ refreshToken: null }).where(eq(user.refreshToken, token));
+				await db
+					.update(user)
+					.set({ refreshToken: null })
+					.where(eq(user.refreshToken, token));
 
 				response.clearCookie('access_token', {
 					// httpOnly: true,

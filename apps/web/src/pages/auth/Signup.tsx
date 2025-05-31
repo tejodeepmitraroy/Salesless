@@ -10,7 +10,6 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 
-import { useAuth } from '@/features/users/hooks/useAuth';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +25,7 @@ import {
 import { signUpSchema } from '@/features/users/schema';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { signUpService } from '@/features/users/services';
 
 const SignupPage = () => {
 	const form = useForm({
@@ -43,12 +43,11 @@ const SignupPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	// const { toast } = useToast();
 	const navigate = useNavigate();
-	const { register } = useAuth();
 
 	const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
 		setIsLoading(true);
 		try {
-			await register(data.name, data.email, data.password, data.mobile);
+			await signUpService(data);
 			toast('Account created!', {
 				description: 'Your account has been successfully created.',
 			});

@@ -1,7 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { Card, CardContent, } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
 	LayoutDashboard,
 	Package,
@@ -64,12 +63,13 @@ const AppTile: React.FC<AppTileProps> = ({
 			variants={tileVariants}
 			whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
 			whileTap={{ scale: 0.98 }}
-			className={`h-full `}
+			className={`h-full`}
 		>
 			<Link to={to} className="block h-full">
-				<Card className={`${active ? '' : 'opacity-50'} hover:border-primary h-full border-2 transition-all duration-300 hover:shadow-md`}>
-					
-					<CardContent className="flex items-start h-full flex-col p-6">
+				<Card
+					className={`${active ? '' : 'opacity-50'} hover:border-primary h-full border-2 transition-all duration-300 hover:shadow-md`}
+				>
+					<CardContent className="flex h-full flex-col items-start p-6">
 						<motion.div
 							initial={{ scale: 0.8, opacity: 0 }}
 							animate={{ scale: 1, opacity: 1 }}
@@ -79,9 +79,10 @@ const AppTile: React.FC<AppTileProps> = ({
 							{icon}
 						</motion.div>
 						<h3 className="mb-2 text-lg font-medium">{title}</h3>
-						<p className="text-left text-muted-foreground text-sm">{description}</p>
+						<p className="text-muted-foreground text-left text-sm">
+							{description}
+						</p>
 					</CardContent>
-					
 				</Card>
 			</Link>
 		</motion.div>

@@ -205,7 +205,6 @@ export const getStoreCustomers = asyncHandler(
 						customerId: false,
 						storeId: false,
 						registerAt: false,
-						
 					},
 				});
 				if (!customer) {
@@ -230,7 +229,6 @@ export const getStoreCustomers = asyncHandler(
 						customerId: false,
 						storeId: false,
 						registerAt: false,
-					
 					},
 				});
 
@@ -238,12 +236,26 @@ export const getStoreCustomers = asyncHandler(
 					response.status(404).json(new ApiError(404, 'Customers not found'));
 				}
 
+				const customerData = customers.map((customer) => ({
+					id: customer.customer.id,
+					firstName: customer.customer.firstName,
+					lastName: customer.customer.lastName,
+					email: customer.customer.email,
+					phone: customer.customer.phone,
+					avatar: customer.customer.avatar,
+					orderCount: customer.customer.orderCount,
+					totalSpend: customer.customer.totalSpend,
+					taxExempt: customer.customer.taxExempt,
+					createdAt: customer.customer.createdAt,
+					updatedAt: customer.customer.updatedAt,
+				}));
+
 				response
 					.status(200)
 					.json(
 						new ApiResponse(
 							200,
-							customers,
+							customerData,
 							'All Customers fetched successfully'
 						)
 					);
@@ -259,7 +271,7 @@ export const getStoreCustomers = asyncHandler(
 export const getStoreOrders = asyncHandler(
 	async (request: Request, response: Response) => {
 		const storeId = parseInt(request.params.storeId);
-		const orderId = parseInt(request.params.orderId);
+		// const orderId = parseInt(request.params.orderId);
 		try {
 			const storeSettings = await db.query.store.findFirst({
 				where: eq(store.id, storeId),

@@ -29,9 +29,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	maxImages = 10,
 }) => {
 	const [isUploading, setIsUploading] = useState(false);
-	const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
-		{}
-	);
+	const [uploadProgress] = useState<Record<string, number>>({});
 
 	// Initialize S3 client
 	// const s3Client = new S3Client({
@@ -46,7 +44,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	const uploadToS3 = async (file: File): Promise<ProductImage> => {
 		try {
 			// Generate presigned URL
-			const { uploadUrl, fileName, publicS3Url,key } =
+			const { uploadUrl, fileName, publicS3Url, key } =
 				await generatePresignedUrl(file);
 
 			// Upload file directly to S3 using the presigned URL

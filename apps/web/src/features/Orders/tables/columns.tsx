@@ -1,16 +1,13 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Product } from '@/stores/product-store';
 import { ProductImage } from '@/features/Products/schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Package, Trash2 } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Link,  } from 'react-router';
+import { Link } from 'react-router';
 
-
-
-export const orderColumns: ColumnDef<Order>[] = [
+export const orderColumns: ColumnDef<any>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -46,7 +43,7 @@ export const orderColumns: ColumnDef<Order>[] = [
 						<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
 							<AspectRatio ratio={1 / 1}>
 								<img
-									src={images[0]}
+									src={images[0].url}
 									alt={row.original.title}
 									className="h-full w-full object-cover"
 								/>

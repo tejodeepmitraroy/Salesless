@@ -6,8 +6,8 @@ import {
 	updateStore,
 	deleteStore,
 	getStoreSettings,
-    getStoreCustomers,
-    getStoreOrders,
+	getStoreCustomers,
+	getStoreOrders,
 
 	// updateStore,
 	// deleteStore,
@@ -33,9 +33,13 @@ router.route('/:storeId/settings').get(jwtAuthMiddleware, getStoreSettings);
 // .put(jwtAuthMiddleware, updateStoreSettings);
 
 router.route('/:storeId/customers').get(jwtAuthMiddleware, getStoreCustomers);
-router.route('/:storeId/customers/:customerId').get(jwtAuthMiddleware, getStoreCustomers);
+router
+	.route('/:storeId/customers/:customerId')
+	.get(jwtAuthMiddleware, getStoreCustomers);
 router.route('/:storeId/orders').get(jwtAuthMiddleware, getStoreOrders);
-router.route('/:storeId/orders/:orderId').get(jwtAuthMiddleware, getStoreOrders);
+router
+	.route('/:storeId/orders/:orderId')
+	.get(jwtAuthMiddleware, getStoreOrders);
 // .put(jwtAuthMiddleware, updateStoreSettings);
 
 export default router;

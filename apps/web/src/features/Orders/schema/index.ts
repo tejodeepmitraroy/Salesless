@@ -5,7 +5,7 @@ export const productImageSchema = z.object({
 	url: z.string().url(),
 	name: z.string(),
 	isFeatured: z.boolean(),
-	key:z.string()
+	key: z.string(),
 });
 
 export const productVariantSchema = z.object({

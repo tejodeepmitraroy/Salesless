@@ -32,9 +32,7 @@ import { productFormSchema } from '@/features/Products/schema';
 import ImageUpload from '@/features/Products/components/ImageUpload';
 import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
 import { createProductService } from '@/features/Products/services';
-import {  useNavigate, useParams } from 'react-router';
-
-
+import { useNavigate, useParams } from 'react-router';
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 
@@ -49,9 +47,9 @@ const CreateNewProduct = () => {
 			title: '',
 			description: '',
 			categoryId: '',
-			price: 0,
-			comparedAtPrice: 0,
-			stockQuantity: 0,
+			price: '0',
+			comparedAtPrice: '0',
+			stockQuantity: '0',
 			status: 'Active',
 			images: [],
 			variants: [],
@@ -59,7 +57,6 @@ const CreateNewProduct = () => {
 			seoDescription: '',
 			seoKeywords: '',
 			storeId: parseInt(storeId!),
-		
 		},
 	});
 
@@ -67,7 +64,10 @@ const CreateNewProduct = () => {
 		try {
 			console.log(data);
 			setIsSubmitting(true);
-			const modifiedData={...data,images:data.images?.map((image)=>image.url)}
+			const modifiedData = {
+				...data,
+				images: data.images?.map((image) => image.url),
+			};
 			const response = await createProductService(modifiedData);
 			console.log(response);
 			// Here you would typically make an API call to create the product

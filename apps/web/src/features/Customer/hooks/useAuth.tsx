@@ -7,7 +7,7 @@ import React, {
 	useCallback,
 } from 'react';
 import Cookies from 'js-cookie';
-import { getUserData } from '../services';
+import { getUserData } from '@/features/users/services';
 
 // Define user types
 export type UserRole = 'admin' | 'employee' | 'vendor';

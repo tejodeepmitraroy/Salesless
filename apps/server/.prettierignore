@@ -17,11 +17,12 @@ tsconfig.json
 commitlint.config.cjs
 commitlint.config.ts
 .prettierrc
-eslint.config.mjs
+eslint.config.js
 
 # asset
 public
 globals.css
+
 
 
 # next.js
@@ -30,7 +31,7 @@ globals.css
 
 # production
 build
-./dist
+dist
 
 # misc
 .DS_Store

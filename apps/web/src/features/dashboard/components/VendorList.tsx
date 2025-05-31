@@ -1,5 +1,3 @@
-import React from 'react';
-
 // Helper function to get vendor background colors
 const getVendorColor = (index: number): string => {
 	const colors = [

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { Store } from 'lucide-react';
@@ -27,11 +26,12 @@ import {
 } from '@/components/ui/form';
 import { createStoreSchema } from '@/features/Store/schema';
 import { createStoreService } from '@/features/Store/services';
+import { useState } from 'react';
 
 const CreateStore: React.FC = () => {
 	const navigate = useNavigate();
 
-	const [isLoading, setIsLoading] = React.useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const form = useForm({
 		resolver: zodResolver(createStoreSchema),

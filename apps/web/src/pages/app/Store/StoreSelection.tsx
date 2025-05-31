@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
@@ -80,23 +79,31 @@ const StoreSelection: React.FC = () => {
 							</Button>
 						</section>
 						<section className="mt-6 flex flex-col gap-4">
-							{data?.data?.data?.map((store: any) => (
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							{data?.data?.data?.map((store: unknown) => (
 								<div
-									key={store.id}
+									key={(store as { id: string }).id}
 									className={`flex w-full cursor-pointer items-center rounded-2xl p-3 transition-all hover:shadow-md`}
-									onClick={() => handleStoreSelected(store.id)}
+									onClick={() =>
+										handleStoreSelected((store as { id: string }).id)
+									}
 								>
 									<div className="from-primary to-secondary mr-4 flex h-12 w-12 items-center justify-center rounded-md bg-gradient-to-br font-bold text-white">
-										{store.name.substring(0, 2).toUpperCase()}
+										{(store as { name: string }).name
+											.substring(0, 2)
+											.toUpperCase()}
 									</div>
 									<div className="flex-1 justify-items-start">
-										<h3 className="text font-semibold">{store.name}</h3>
+										<h3 className="text font-semibold">
+											{(store as { name: string }).name}
+										</h3>
 										<p className="text-muted-foreground text-sm">
-											id:{store.id}
+											id:{(store as { id: string }).id}
 										</p>
 									</div>
 									<div className="text-muted-foreground text-sm">
-										Last accessed: {store.lastAccessed}
+										Last accessed:{' '}
+										{(store as { lastAccessed: string }).lastAccessed}
 									</div>
 									{/* {selectedStore === store.id && (
 										<div className="ml-4">

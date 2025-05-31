@@ -1,4 +1,4 @@
-// import React from 'react';
+//
 import { useParams, useNavigate } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,11 +20,10 @@ import { useProductStore } from '@/stores/product-store';
 import { motion } from 'framer-motion';
 
 const ProductDetails = () => {
-	const { id,storeId } = useParams<{ id: string,storeId:string }>();
-	
+	const { id, storeId } = useParams<{ id: string; storeId: string }>();
+
 	const navigate = useNavigate();
 	const products = useProductStore((state) => state.products);
-
 
 	const product = products.find((p) => p.id === parseInt(id || '0'));
 
@@ -50,7 +49,6 @@ const ProductDetails = () => {
 
 	const featuredImage = getFeaturedImage();
 
-
 	// const { data: productsData } = useQuery({
 	// 	queryKey: ['products'],
 	// 	queryFn: () => getProductById({ productId: id! }),
@@ -62,7 +60,6 @@ const ProductDetails = () => {
 	// 		setProduct(productsData?.data.data);
 	// 	}
 	// }, [productsData, setProducts]);
-
 
 	return (
 		<motion.div
@@ -134,7 +131,7 @@ const ProductDetails = () => {
 													<div key={image.id} className="space-y-2">
 														<AspectRatio ratio={1}>
 															<img
-																src={image}
+																src={image.url}
 																alt={image.name}
 																className="h-full w-full rounded border object-cover"
 															/>

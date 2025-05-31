@@ -4,8 +4,6 @@ import { Loader } from 'lucide-react';
 import { AuthProvider } from './features/users/hooks/useAuth';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
-// import { ThemeProvider } from './components/ThemeProvider';
-// import { AnimatePresence, motion } from 'motion/react';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
 import AppLauncher from './pages/app/Dashboard/AppLauncher';
@@ -14,6 +12,7 @@ import NotFound from './pages/NotFound';
 import Index from './pages/home/Index';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
 import ProductDetails2 from './pages/app/Products/ProductDetails2';
+import CustomerDetails from './pages/app/Customer/CustomerDetails';
 
 const queryClient = new QueryClient();
 function App() {
@@ -186,6 +185,16 @@ function App() {
 									<ProtectedRoute>
 										<AdminLayout>
 											<CustomerManagement />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/customers/:customerId"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<CustomerDetails />
 										</AdminLayout>
 									</ProtectedRoute>
 								}

@@ -23,21 +23,18 @@ export const registerCustomer = asyncHandler(
 				where: eq(customer.email, email),
 			});
 			if (existedUser) {
-				response
-				.status(200)
-				.json(new ApiError(409, 'User already exists'));
+				response.status(200).json(new ApiError(409, 'User already exists'));
 			} else {
-				
 				const hashedPassword = await passwordHashed(password);
 				const createdCustomer = await db
-				.insert(customer)
-				.values({
-					firstName,
-					lastName,
-					email,
-					password: hashedPassword,
-				})
-				.returning();
+					.insert(customer)
+					.values({
+						firstName,
+						lastName,
+						email,
+						password: hashedPassword,
+					})
+					.returning();
 				console.log('Existed Not User', createdCustomer);
 
 				const registerStore = await db.insert(customerStore).values({

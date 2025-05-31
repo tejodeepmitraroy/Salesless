@@ -91,7 +91,7 @@ export function useInventory() {
 			productId: currentItem.productId,
 			productName: currentItem.productName,
 			date: formattedDate,
-			type: adjustment.type,
+			type: adjustment.type as StockMovement['type'],
 			quantity: adjustment.quantity,
 			reference: adjustment.reference,
 			notes: adjustment.notes,
@@ -171,14 +171,12 @@ export function useInventory() {
 			// Export data as CSV
 			exportToCSV(dataToExport, 'inventory_export');
 
-			toast('Export Complete',{
-				
+			toast('Export Complete', {
 				description: 'Inventory data has been exported successfully.',
 			});
 		} catch (error) {
 			console.error('Export error:', error);
-			toast('Export Failed',{
-				
+			toast('Export Failed', {
 				description: 'There was an error exporting the inventory data.',
 				// variant: 'destructive',
 			});

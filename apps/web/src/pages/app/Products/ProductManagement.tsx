@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -136,7 +135,6 @@ const ProductManagement = () => {
 	}, [productsData, setProducts]);
 
 	return (
-		
 		<div className="space-y-3">
 			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 				<h1 className="text-2xl font-bold">Product Management</h1>

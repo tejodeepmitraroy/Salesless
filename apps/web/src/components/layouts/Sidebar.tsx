@@ -1,9 +1,7 @@
-import React from 'react';
 import { useLocation, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
-	Users,
 	ShoppingCart,
 	Settings,
 	LogOut,
@@ -124,7 +122,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 			animate={sidebarOpen ? 'open' : 'closed'}
 			transition={{ duration: 0.3, ease: 'easeInOut' }}
 			className={cn(
-				'bg-gray-100 border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r md:h-[calc(100vh-4rem)]',
+				'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r bg-gray-100 md:h-[calc(100vh-4rem)]',
 				sidebarOpen ? 'w-64' : 'w-16'
 			)}
 		>

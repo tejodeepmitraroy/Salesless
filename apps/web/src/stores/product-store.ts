@@ -114,8 +114,7 @@ export const useProductStore = create<ProductStore>()(
 			set((state) => ({
 				products: [...state.products, product],
 			})),
-		getProductsById: (productId: number) =>{
-
+		getProductsById: (productId: number) => {
 			const product = get().products.find((p) => p.id === productId);
 			return product;
 		},
@@ -165,16 +164,15 @@ export const useProductStore = create<ProductStore>()(
 				const query = state.searchQuery.toLowerCase();
 				filtered = filtered.filter(
 					(product) =>
-						product.name.toLowerCase().includes(query) ||
-						product.category.toLowerCase().includes(query) ||
-						product.vendor.toLowerCase().includes(query)
+						product.title.toLowerCase().includes(query) ||
+						product.categoryId.toLowerCase().includes(query)
 				);
 			}
 
 			// Apply category filter
 			if (state.filterCategory !== 'all') {
 				filtered = filtered.filter(
-					(product) => product.category === state.filterCategory
+					(product) => product.categoryId === state.filterCategory
 				);
 			}
 

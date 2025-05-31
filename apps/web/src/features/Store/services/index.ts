@@ -12,6 +12,7 @@ export const getAllStoreService = async () => {
 	});
 	return response;
 };
+
 export const createStoreService = async ({
 	name,
 	description,

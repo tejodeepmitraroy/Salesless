@@ -1,21 +1,20 @@
-
 // import { Request } from 'express';
 
 interface AuthenticatedRequest extends Request {
-	user
+	user;
 }
 
 interface PassportUser {
-  id: string;
-  username: string;
-  email: string;
-  role: string;
-  refreshToken: string;
+	id: string;
+	username: string;
+	email: string;
+	role: string;
+	refreshToken: string;
 }
 interface User {
-  id: string;
-  email: string;
-  refreshToken: string;
+	id: string;
+	email: string;
+	refreshToken: string;
 }
 
 // declare global {

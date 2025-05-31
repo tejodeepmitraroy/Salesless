@@ -7,7 +7,7 @@ export const generatePresignedUrl = async (
 	uploadUrl: string;
 	fileName: string;
 	publicS3Url: string;
-	key:string
+	key: string;
 }> => {
 	try {
 		const token = getToken();
@@ -30,7 +30,7 @@ export const generatePresignedUrl = async (
 			throw new Error('Failed to generate upload URL');
 		}
 		const { uploadUrl, fileName, publicS3Url, key } = response.data.data;
-		return { uploadUrl, fileName, publicS3Url,key };
+		return { uploadUrl, fileName, publicS3Url, key };
 	} catch (error) {
 		console.error('Error generating presigned URL:', error);
 

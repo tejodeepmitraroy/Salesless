@@ -6,7 +6,6 @@ import {
 	forgetPassword,
 	registerCustomer,
 	resetLink,
-	
 } from '../controllers/customer.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 

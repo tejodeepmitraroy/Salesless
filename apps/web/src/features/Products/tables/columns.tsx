@@ -6,20 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Edit, Package, Trash2 } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Link, useNavigate } from 'react-router';
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// export type Product = {
-// 	id: string;
-// 	title: string;
-// 	categoryId: string;
-// 	status: 'Active' | 'Low stock' | 'Out of stock';
-// 	price: number;
-// 	stockQuantity: number;
-// 	images: ProductImage[];
-// 	variants: ProductVariant[];
-// };
+import { Link } from 'react-router';
 
 export const productColumns: ColumnDef<Product>[] = [
 	{
@@ -57,7 +44,7 @@ export const productColumns: ColumnDef<Product>[] = [
 						<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
 							<AspectRatio ratio={1 / 1}>
 								<img
-									src={images[0]}
+									src={images[0].url}
 									alt={row.original.title}
 									className="h-full w-full object-cover"
 								/>
