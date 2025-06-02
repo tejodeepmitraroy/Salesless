@@ -6,9 +6,8 @@ import React, {
 	ReactNode,
 	useCallback,
 } from 'react';
+import { getUserData } from '@/features/users/services';
 import Cookies from 'js-cookie';
-import { getUserData } from '../services';
-
 // Define user types
 export type UserRole = 'admin' | 'employee' | 'vendor';
 
@@ -25,6 +24,7 @@ interface AuthContextType {
 	user: User | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
+	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 	storeId: string | null;
 }
 
@@ -37,15 +37,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	const [user, setUser] = useState<User | null>(null);
 	const [storeId, setStoreId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [token, setToken] = useState<string | null>(() => {
-		return Cookies.get('access_token') || null;
-	});
 
 	// Check if user is already logged in (from localStorage)
 	const getUserDetails = useCallback(async () => {
+		setIsLoading(true);
 		try {
 			const response = await getUserData();
-			setUser(response.data);
+			setUser(response.data.data);
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Failed to get user data:', error);
@@ -54,24 +52,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		}
 	}, []);
 
-	useEffect(() => {
-		// Initialize store ID from cookies
-		const storedStoreId = Cookies.get('storeId');
-		if (storedStoreId) {
-			setStoreId(storedStoreId);
-		}
-
-		// Only fetch user data if we have a token
-		if (token) {
-			getUserDetails();
-			setToken(token);
+	const getStoreId = useCallback(() => {
+		const storeId = Cookies.get('storeId');
+		if (!storeId) {
+			setStoreId(null);
 		} else {
-			setIsLoading(false);
+			setStoreId(storeId);
 		}
-	}, [token, getUserDetails]);
+	}, []);
+	console.log('getUserDetails', user);
+
+	useEffect(() => {
+		getStoreId();
+		getUserDetails();
+	}, [getStoreId, getUserDetails]);
 
 	// Update auth state when token changes
-	const isAuthenticated = !!token;
+	const isAuthenticated = !!user;
 
 	return (
 		<AuthContext.Provider
@@ -79,6 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 				user,
 				isAuthenticated,
 				isLoading,
+				setUser,
 				storeId,
 			}}
 		>

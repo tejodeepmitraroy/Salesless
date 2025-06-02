@@ -98,7 +98,7 @@ const SidebarLinks = [
 	{
 		icon: Image,
 		label: 'Media Store',
-		href: '/media',
+		href: '#',
 		active: false,
 		collapsed: false,
 	},
@@ -122,11 +122,11 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 			animate={sidebarOpen ? 'open' : 'closed'}
 			transition={{ duration: 0.3, ease: 'easeInOut' }}
 			className={cn(
-				'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r bg-gray-100 md:h-[calc(100vh-4rem)]',
-				sidebarOpen ? 'w-64' : 'w-16'
+				'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r px-3 py-2 md:h-[calc(100vh-4rem)]',
+				sidebarOpen ? 'w-72' : 'w-16'
 			)}
 		>
-			<div className="hidden p-3 md:block md:p-4">
+			<div className="hidden h-full rounded-lg bg-gray-100 p-3 md:block md:p-4">
 				<motion.nav
 					className="space-y-1"
 					variants={listVariants}
@@ -151,19 +151,19 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 				<SidebarItem
 					icon={Store}
 					label="Website"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<SidebarItem
 					icon={SignpostBig}
 					label="POS"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<SidebarItem
 					icon={Phone}
 					label="WhatsApp"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<Separator className="my-3 md:my-4" />
@@ -185,7 +185,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 				<SidebarItem
 					icon={LogOut}
 					label="Logout"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 			</div>

@@ -63,16 +63,9 @@ const ProductManagement = () => {
 		navigate(`/store/${storeId}/products/create`);
 	};
 
-	// const handleEditProduct = (product: Product) => {
-	// 	setCurrentProduct(product);
-	// 	setIsModalOpen(true);
-	// };
-
 	// const handleDeleteProduct = (productId: number) => {
 	// 	const productToDelete = products.find((p) => p.id === productId);
 	// 	if (!productToDelete) return;
-
-	// 	setProducts(products.filter((p) => p.id !== productId));
 
 	// 	toast('Product Deleted', {
 	// 		description: `${productToDelete.title} has been successfully removed.`,
@@ -105,7 +98,6 @@ const ProductManagement = () => {
 			ID: product.id,
 			Name: product.title,
 			Category: product.categoryId,
-
 			Price: `$${product.price.toFixed(2)}`,
 			Stock: product.stockQuantity,
 			Status: product.status,

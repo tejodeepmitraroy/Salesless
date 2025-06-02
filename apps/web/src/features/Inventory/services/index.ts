@@ -71,20 +71,3 @@ export const forgetPassword = async (email: string) => {
 
 	return response;
 };
-
-export const getUserData = async () => {
-	try {
-		const response = await axios.get(
-			`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/get-user-data`,
-			{
-				withCredentials: true,
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			}
-		);
-		return response;
-	} catch (error) {
-		console.log(error);
-	}
-};

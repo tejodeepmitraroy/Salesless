@@ -1,5 +1,5 @@
 import { getToken } from '@/config/auth';
-import { customAxios } from '@/config/axios-custom';
+import { customAxios } from '@/api/axios-custom';
 import axios from 'axios';
 import { productFormSchema } from '../schema';
 import { z } from 'zod';

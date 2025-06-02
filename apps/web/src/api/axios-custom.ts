@@ -4,6 +4,7 @@ const baseURL = import.meta.env.VITE_API_ENDPOINT_URL;
 
 export const customAxios = axios.create({
 	baseURL: baseURL,
+	withCredentials: true,
 });
 
 customAxios.interceptors.response.use(
@@ -20,6 +21,7 @@ customAxios.interceptors.response.use(
 				await generateRefreshToken();
 				return customAxios(originalRequest);
 			} catch (refreshError) {
+				window.location.href = '/login';
 				console.log('Token refresh failed:', refreshError);
 			}
 		}

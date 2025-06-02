@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { Button } from '@/components/ui/button';
-import { useAuth } from '@/features/users/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { ShieldAlert, Home, ArrowLeft } from 'lucide-react';
 import { logoutService } from '@/features/users/services';
 

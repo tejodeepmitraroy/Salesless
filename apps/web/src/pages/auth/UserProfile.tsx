@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useAuth } from '@/features/users/hooks/useAuth';
 import {
 	Save,
 	User,
@@ -23,6 +22,7 @@ import {
 	Lock,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
 
 const UserProfile = () => {
 	const { user } = useAuth();

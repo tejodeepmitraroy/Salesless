@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import './App.css';
 import { Loader } from 'lucide-react';
-import { AuthProvider } from './features/users/hooks/useAuth';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
@@ -11,12 +10,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotFound from './pages/NotFound';
 import Index from './pages/home/Index';
 import ProtectedRoute from './pages/auth/ProtectedRoute';
-import ProductDetails2 from './pages/app/Products/ProductDetails2';
 import CustomerDetails from './pages/app/Customer/CustomerDetails';
+import LoginPage from './pages/auth/Login';
+import { AuthProvider } from './context/AuthContext';
+import ProductDetails from './pages/app/Products/ProductDetails';
 
 const queryClient = new QueryClient();
 function App() {
-	const Login = React.lazy(() => import('./pages/auth/Login'));
 	const SignUp = React.lazy(() => import('./pages/auth/Signup'));
 	const ForgotPassword = React.lazy(
 		() => import('./pages/auth/ForgotPassword')
@@ -59,13 +59,13 @@ function App() {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
-				<AuthProvider>
+			<AuthProvider>
+				<BrowserRouter>
 					<Toaster />
 					<Suspense fallback={<Loading />}>
 						<Routes>
 							{/* Public routes */}
-							<Route path="/login" element={<Login />} />
+							<Route path="/login" element={<LoginPage />} />
 							<Route path="/signup" element={<SignUp />} />
 							<Route path="/forgot-password" element={<ForgotPassword />} />
 							<Route path="/unauthorized" element={<Unauthorized />} />
@@ -134,7 +134,7 @@ function App() {
 								element={
 									<ProtectedRoute>
 										<AdminLayout>
-											<ProductDetails2 />
+											<ProductDetails />
 										</AdminLayout>
 									</ProtectedRoute>
 								}
@@ -201,8 +201,8 @@ function App() {
 							/>
 						</Routes>
 					</Suspense>
-				</AuthProvider>
-			</BrowserRouter>
+				</BrowserRouter>
+			</AuthProvider>
 		</QueryClientProvider>
 	);
 }

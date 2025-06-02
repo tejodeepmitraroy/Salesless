@@ -1,43 +1,56 @@
-import { getToken } from '@/config/auth';
-import { customAxios } from '@/config/axios-custom';
-import axios from 'axios';
+import { customAxios } from '@/api/axios-custom';
 
 export const createProductService = async (formData: any) => {
-	const token = getToken();
-	const response = await axios.post(
+	const response = await customAxios.post(
 		`${import.meta.env.VITE_API_ENDPOINT_URL}/products`,
-		formData,
-		{
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		}
+		formData
 	);
 
 	return response;
 };
 
 export const getAllProducts = async ({ storeId }: { storeId: string }) => {
-	const token = getToken();
+	// const token = getToken();
 
 	const response = await customAxios.get(`/products/?storeId=${storeId}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
+		// headers: {
+		// 	Authorization: `Bearer ${token}`,
+		// 	'Content-Type': 'application/json',
+		// },
 	});
 	return response;
 };
 
-export const getProductById = async ({ productId }: { productId: string }) => {
-	const token = getToken();
+export const getProductByIdService = async ({
+	productId,
+}: {
+	productId: string;
+}) => {
+	// const token = getToken();
 
 	const response = await customAxios.get(`/products/${productId}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
+		// headers: {
+		// 	Authorization: `Bearer ${token}`,
+		// 	'Content-Type': 'application/json',
+		// },
+	});
+	return response;
+};
+
+export const updateProductService = async ({
+	productId,
+	formData,
+}: {
+	productId: number;
+	formData: any;
+}) => {
+	// const token = getToken();
+
+	const response = await customAxios.put(`/products/${productId}`, formData, {
+		// headers: {
+		// 	Authorization: `Bearer ${token}`,
+		// 	'Content-Type': 'application/json',
+		// },
 	});
 	return response;
 };

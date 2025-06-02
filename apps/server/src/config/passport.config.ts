@@ -8,6 +8,7 @@ import { db } from '../db';
 import { eq } from 'drizzle-orm';
 import { customer, user } from '../db/schema/user';
 import { customerStore } from '../db/schema';
+import { Request } from 'express';
 
 // interface GoogleUserProfile {
 //   id: string;
@@ -22,7 +23,7 @@ import { customerStore } from '../db/schema';
 
 const localStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
-const ExtractJwt = passportJwt.ExtractJwt;
+
 // const OAuth2Strategy = passportOAuth.Strategy;
 
 const accessTokenSecretKey = process.env.ACCESS_TOKEN_SECRET!;
@@ -155,11 +156,19 @@ export const initializePassportStrategies = () => {
 		)
 	);
 
+	const cookieExtractor = (req: Request) => {
+		let token = null;
+		console.log('Cookie Extractor', req.cookies.access_token);
+		if (req && req.cookies) {
+			token = req.cookies.access_token;
+		}
+		return token;
+	};
 	passport.use(
 		new JwtStrategy(
 			{
 				secretOrKey: accessTokenSecretKey,
-				jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+				jwtFromRequest: cookieExtractor,
 			},
 			async function (jwtPayload, done) {
 				//authentication Logic here

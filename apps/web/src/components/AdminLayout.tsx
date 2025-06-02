@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Header from '@/components/layouts/Header';
+
 import Sidebar from '@/components/layouts/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [sidebarOpen] = useState(true);
 
 	const mainVariants = {
 		expanded: {
@@ -50,10 +50,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	};
 	return (
 		<div className="bg-background text-foreground min-h-screen">
-			<Header
+			{/* <Header
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-			/>
+			/> */}
 			<div className="flex">
 				<Sidebar sidebarOpen={sidebarOpen} />
 				<AnimatePresence mode="wait">

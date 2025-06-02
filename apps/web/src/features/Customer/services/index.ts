@@ -1,5 +1,5 @@
 import { getToken } from '@/config/auth';
-import { customAxios } from '@/config/axios-custom';
+import { customAxios } from '@/api/axios-custom';
 // import { getStoreDetails } from '@/features/Store/services';
 
 export const getCustomersService = async ({ storeId }: { storeId: string }) => {
