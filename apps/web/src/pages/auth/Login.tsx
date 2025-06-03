@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { Eye, EyeOff, LogIn, Lock } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -26,29 +26,13 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { loginService } from '@/features/users/services';
-import Cookies from 'js-cookie';
+import { useAuth } from '@/context/AuthContext';
 
 const LoginPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
-
-	const checkAuth = useCallback(() => {
-		const accessToken = Cookies.get('access_token');
-		const storedStoreId = Cookies.get('storeId');
-
-		if (accessToken) {
-			if (storedStoreId) {
-				navigate(`/store/${storedStoreId}`);
-			} else {
-				navigate('/store');
-			}
-		}
-	}, [navigate]);
-	// Check authentication status only once on mount
-	useEffect(() => {
-		checkAuth();
-	}, [checkAuth]);
+	const { setUser, user } = useAuth();
 
 	// 1. Define your form.
 	const form = useForm<z.infer<typeof loginPageSchema>>({
@@ -73,6 +57,8 @@ const LoginPage = () => {
 				password: values.password,
 			});
 
+			setUser(response.data.data.user);
+
 			console.log(response);
 
 			toast('Login successful!', {
@@ -83,7 +69,6 @@ const LoginPage = () => {
 			console.log(error);
 			toast('Login failed', {
 				description: 'Invalid email or password. Please try again.',
-				// variant: 'destructive',
 			});
 		} finally {
 			setIsLoading(false);
@@ -91,6 +76,13 @@ const LoginPage = () => {
 	}
 
 	const toggleShowPassword = () => setShowPassword(!showPassword);
+
+	// Redirect if already logged in
+	useEffect(() => {
+		if (user) {
+			navigate('/store', { replace: true });
+		}
+	}, [user, navigate]);
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
@@ -193,7 +185,6 @@ const LoginPage = () => {
 							Sign up
 						</Link>
 					</div>
-					primary primary
 				</CardFooter>
 			</Card>
 		</div>

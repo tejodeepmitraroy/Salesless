@@ -102,7 +102,7 @@ export const loginUser = asyncHandler(
 		if (request.user) {
 			// Set HTTP-only cookies
 			response.cookie('access_token', accessToken, {
-				// httpOnly: true,
+				httpOnly: true,
 				secure: true,
 				maxAge: 15 * 60 * 1000, // 15 minutes
 				sameSite: 'strict',

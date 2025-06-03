@@ -18,7 +18,7 @@ router
 	.post(jwtAuthMiddleware, createProduct);
 
 router
-	.route('/:id')
+	.route('/:productId')
 	.get(jwtAuthMiddleware, getProductById)
 	.put(jwtAuthMiddleware, updateProduct)
 	.delete(jwtAuthMiddleware, deleteProduct);

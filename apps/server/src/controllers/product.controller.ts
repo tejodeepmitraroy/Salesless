@@ -18,6 +18,10 @@ export const getAllProducts = asyncHandler(
 			const products = await db.query.product.findMany({
 				where: eq(product.storeId, parseInt(storeId)),
 			});
+
+			if (!products) {
+				response.status(404).json(new ApiError(404, 'Products not found'));
+			}
 			response
 				.status(201)
 				.json(new ApiResponse(200, products, 'Products fetched successfully'));
@@ -31,7 +35,7 @@ export const getAllProducts = asyncHandler(
 export const getProductById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const productId = parseInt(request.params.id);
+			const productId = parseInt(request.params.productId);
 			const productDetails = await db.query.product.findFirst({
 				where: eq(product.id, productId),
 				with: {
@@ -119,7 +123,7 @@ export const updateProduct = asyncHandler(
 			seoKeywords,
 		} = request.body;
 		try {
-			const productId = parseInt(request.params.id);
+			const productId = parseInt(request.params.productId);
 			const [result] = await db
 				.update(product)
 				.set({

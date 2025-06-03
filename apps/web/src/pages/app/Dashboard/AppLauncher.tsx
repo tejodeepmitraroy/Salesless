@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -90,12 +90,13 @@ const AppTile: React.FC<AppTileProps> = ({
 };
 
 const AppLauncher: React.FC = () => {
+	const { storeId } = useParams<{ storeId: string }>();
 	const apps = [
 		{
 			icon: <LayoutDashboard className="h-6 w-6 text-white" />,
 			title: 'Dashboard',
 			description: 'Overview of key metrics and performance',
-			to: '',
+			to: `/dashboard`,
 			color: 'bg-blue-500',
 			active: true,
 		},
@@ -223,7 +224,7 @@ const AppLauncher: React.FC = () => {
 						icon={app.icon}
 						title={app.title}
 						description={app.description}
-						to={app.to}
+						to={`/store/${storeId}${app.to}`}
 						color={app.color}
 						index={index}
 						active={app.active}

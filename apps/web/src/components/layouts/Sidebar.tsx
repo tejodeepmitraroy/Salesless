@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router';
+import { Link, useLocation, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
@@ -12,20 +12,17 @@ import {
 	SignpostBig,
 	Phone,
 	Image,
+	PanelsTopLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import SidebarItem from './SidebarItem';
 import { motion } from 'framer-motion';
-
 import { Label } from '../ui/label';
-
-interface SidebarProps {
-	sidebarOpen: boolean;
-}
+import { Button } from '../ui/button';
 
 const sidebarVariants = {
-	open: { width: '16rem', x: 0 },
+	open: { width: '18rem', x: 0 },
 	closed: { width: '4rem', x: 0 },
 };
 
@@ -102,17 +99,12 @@ const SidebarLinks = [
 		active: false,
 		collapsed: false,
 	},
-
-	// {
-	// 	icon: Settings,
-	// 	label: 'Settings',
-	// 	href: '/settings',
-	// 	active: false,
-	// 	collapsed: false,
-	// },
 ];
 
-const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
+const Sidebar: React.FC<{
+	sidebarOpen: boolean;
+	toggleSidebar: () => void;
+}> = ({ sidebarOpen, toggleSidebar }) => {
 	const location = useLocation();
 	const { storeId } = useParams<{ storeId: string }>();
 
@@ -122,11 +114,27 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 			animate={sidebarOpen ? 'open' : 'closed'}
 			transition={{ duration: 0.3, ease: 'easeInOut' }}
 			className={cn(
-				'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r bg-gray-100 md:h-[calc(100vh-4rem)]',
-				sidebarOpen ? 'w-64' : 'w-16'
+				// 'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r px-3 py-2 md:h-[calc(100vh-4rem)]',
+				'fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-3 md:h-[calc(100dvh)]',
+				sidebarOpen ? 'w-[18rem]' : 'w-[4rem] md:w-[4rem]'
 			)}
 		>
-			<div className="hidden p-3 md:block md:p-4">
+			<div className="from-primary/10 hidden h-full w-full rounded-lg bg-gradient-to-r to-gray-100 p-3 md:block md:p-4">
+				<section className="flex w-full items-center justify-between px-2">
+					<Link
+						to={`/store/${storeId}`}
+						className="my-3 flex items-center gap-4"
+					>
+						<img src="/icons/logo.png" alt="" className="h-8 w-8 rounded-lg" />
+						<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
+							Salesless
+						</span>
+					</Link>
+
+					<Button onClick={() => toggleSidebar()} size="icon" variant="ghost">
+						<PanelsTopLeft />
+					</Button>
+				</section>
 				<motion.nav
 					className="space-y-1"
 					variants={listVariants}
@@ -151,19 +159,19 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 				<SidebarItem
 					icon={Store}
 					label="Website"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<SidebarItem
 					icon={SignpostBig}
 					label="POS"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<SidebarItem
 					icon={Phone}
 					label="WhatsApp"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 				<Separator className="my-3 md:my-4" />
@@ -185,7 +193,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 				<SidebarItem
 					icon={LogOut}
 					label="Logout"
-					href="/"
+					href="#"
 					collapsed={!sidebarOpen}
 				/>
 			</div>

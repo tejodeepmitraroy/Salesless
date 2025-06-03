@@ -1,5 +1,5 @@
 import { getToken } from '@/config/auth';
-import { customAxios } from '@/config/axios-custom';
+import { customAxios } from '@/api/axios-custom';
 
 export const getAllStoreService = async () => {
 	const token = getToken();

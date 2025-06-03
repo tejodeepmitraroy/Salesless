@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { getAllStoreService } from '@/features/Store/services';
 import Cookies from 'js-cookie';
-import { useAuth } from '@/features/users/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
+import { useEffect } from 'react';
 
 // const storeVariants = {
 // 	hidden: { opacity: 0, y: 20 },
@@ -31,7 +32,7 @@ import { useAuth } from '@/features/users/hooks/useAuth';
 // };
 
 const StoreSelection: React.FC = () => {
-	const { user } = useAuth();
+	const { user, storeId } = useAuth();
 	const navigate = useNavigate();
 
 	const handleStoreSelected = (storeId: string) => {
@@ -47,6 +48,12 @@ const StoreSelection: React.FC = () => {
 		queryKey: ['storeData'],
 		queryFn: async () => await getAllStoreService(),
 	});
+
+	useEffect(() => {
+		if (user && storeId) {
+			navigate(`/store/${storeId}`, { replace: true });
+		}
+	}, [user, navigate, storeId]);
 
 	return (
 		<section className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
@@ -79,7 +86,6 @@ const StoreSelection: React.FC = () => {
 							</Button>
 						</section>
 						<section className="mt-6 flex flex-col gap-4">
-							// eslint-disable-next-line @typescript-eslint/no-explicit-any
 							{data?.data?.data?.map((store: unknown) => (
 								<div
 									key={(store as { id: string }).id}

@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Settings, User, LogOut, Bell, Moon, Sun } from 'lucide-react';
 
-import { useAuth } from '@/features/users/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 import { logoutService } from '@/features/users/services';

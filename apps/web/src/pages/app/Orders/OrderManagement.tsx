@@ -32,6 +32,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import HeaderSection from '@/components/layouts/HeaderSection';
 // import { Label } from '@/components/ui/label';
 
 type Order = {
@@ -273,17 +274,11 @@ const OrderManagement = () => {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-				<h1 className="text-2xl font-bold">Order Management</h1>
-				<div className="flex items-center gap-2">
-					<Badge
-						variant="outline"
-						className="bg-vsphere-light text-vsphere-dark"
-					>
-						Today: {new Date().toLocaleDateString()}
-					</Badge>
-				</div>
-			</div>
+			<HeaderSection
+				icon={<ShoppingCart />}
+				title="Order Management"
+				description="Manage your orders"
+			/>
 
 			<Tabs defaultValue="all">
 				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -295,16 +290,27 @@ const OrderManagement = () => {
 						<TabsTrigger value="delivered">Delivered</TabsTrigger>
 						<TabsTrigger value="cancelled">Cancelled</TabsTrigger>
 					</TabsList>
-					<div className="relative w-full sm:w-auto">
-						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-						<Input
-							type="text"
-							placeholder="Search orders..."
-							className="w-full rounded-md border py-2 pr-4 pl-10 sm:w-64"
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-						/>
-					</div>
+					<section className="flex w-fit items-center gap-2">
+						<div className="flex items-center gap-2">
+							<Badge
+								variant="outline"
+								className="bg-vsphere-light text-vsphere-dark"
+							>
+								Today: {new Date().toLocaleDateString()}
+							</Badge>
+						</div>
+
+						<div className="relative w-full sm:w-auto">
+							<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+							<Input
+								type="text"
+								placeholder="Search orders..."
+								className="w-full rounded-md border py-2 pr-4 pl-10 sm:w-64"
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+							/>
+						</div>
+					</section>
 				</div>
 
 				<TabsContent value="all" className="mt-0">

@@ -13,21 +13,28 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { useNavigate, useParams } from 'react-router';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	onRowClick?: (row: TData) => void;
 }
 
-export function DataTable<TData, TValue>({
+export function ProductDataTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
+	const navigate = useNavigate();
+	const { storeId } = useParams<{ storeId: string }>();
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
+	const OpenProductDetails = (row: TData) => {
+		navigate(`/store/${storeId}/products/${(row as { id: string }).id}`);
+	};
 
 	return (
 		<div className="rounded-md border">
@@ -55,7 +62,9 @@ export function DataTable<TData, TValue>({
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}
+								onClick={() => OpenProductDetails(row.original)}
 								data-state={row.getIsSelected() && 'selected'}
+								className={'cursor-pointer'}
 							>
 								{row.getVisibleCells().map((cell) => (
 									<TableCell key={cell.id}>
