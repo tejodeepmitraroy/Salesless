@@ -14,6 +14,8 @@ import CustomerDetails from './pages/app/Customer/CustomerDetails';
 import LoginPage from './pages/auth/Login';
 import { AuthProvider } from './context/AuthContext';
 import ProductDetails from './pages/app/Products/ProductDetails';
+import MediaManagement from './pages/app/Media/MediaManagement';
+import MediaDetails from './pages/app/Media/MediaDetails';
 
 const queryClient = new QueryClient();
 function App() {
@@ -81,6 +83,7 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+							<Route path="/store/undefined" element={<NotFound />} />
 							<Route
 								path="/store/create"
 								element={
@@ -155,6 +158,26 @@ function App() {
 									<ProtectedRoute>
 										<AdminLayout>
 											<InventoryManagement />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/media"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<MediaManagement />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/media/:fileId"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<MediaDetails />
 										</AdminLayout>
 									</ProtectedRoute>
 								}

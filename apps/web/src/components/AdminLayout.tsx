@@ -4,11 +4,11 @@ import Sidebar from '@/components/layouts/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [sidebarOpen] = useState(true);
+	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
 	const mainVariants = {
 		expanded: {
-			marginLeft: '16rem',
+			marginLeft: '18rem',
 			transition: {
 				type: 'spring',
 				stiffness: 200,
@@ -49,44 +49,48 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 		duration: 0.3,
 	};
 	return (
-		<div className="bg-background text-foreground min-h-screen">
+		<section className="bg-background text-foreground flex min-h-screen w-full">
 			{/* <Header
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
 			/> */}
-			<div className="flex">
-				<Sidebar sidebarOpen={sidebarOpen} />
-				<AnimatePresence mode="wait">
-					<motion.main
-						key={sidebarOpen ? 'expanded' : 'collapsed'}
-						variants={mainVariants}
-						initial={false}
-						animate={sidebarOpen ? 'expanded' : 'collapsed'}
-						className={`relative h-[calc(100vh-4rem)] w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
+
+			<Sidebar
+				sidebarOpen={sidebarOpen}
+				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+			/>
+
+			<AnimatePresence mode="wait">
+				<motion.main
+					key={sidebarOpen ? 'expanded' : 'collapsed'}
+					variants={mainVariants}
+					initial={false}
+					animate={sidebarOpen ? 'expanded' : 'collapsed'}
+					// className={`relative h-[calc(100vh-4rem)] w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
+					className={`relative min-h-dvh w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
+				>
+					<motion.div
+						initial="initial"
+						animate="animate"
+						exit="exit"
+						variants={contentVariants}
+						className="mx-auto h-full w-full"
 					>
-						<motion.div
-							initial="initial"
-							animate="animate"
-							exit="exit"
-							variants={contentVariants}
-							className="mx-auto h-full w-full"
-						>
-							<AnimatePresence mode="wait">
-								<motion.div
-									initial="initial"
-									animate="animate"
-									exit="exit"
-									variants={pageVariants}
-									transition={pageTransition}
-								>
-									{children}
-								</motion.div>
-							</AnimatePresence>
-						</motion.div>
-					</motion.main>
-				</AnimatePresence>
-			</div>
-		</div>
+						<AnimatePresence mode="wait">
+							<motion.div
+								initial="initial"
+								animate="animate"
+								exit="exit"
+								variants={pageVariants}
+								transition={pageTransition}
+							>
+								{children}
+							</motion.div>
+						</AnimatePresence>
+					</motion.div>
+				</motion.main>
+			</AnimatePresence>
+		</section>
 	);
 };
 

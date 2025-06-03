@@ -1,22 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
-import { Download, Search, User } from 'lucide-react';
+import { Download, Image, Search } from 'lucide-react';
 import { exportToCSV } from '@/utils/exportUtils';
-import { DataTable } from '@/features/Customer/tables/data-table';
-import { customerColumns } from '@/features/Customer/tables/columns';
-import { useQuery } from '@tanstack/react-query';
-import { getCustomersService } from '@/features/Customer/services';
-import { useParams } from 'react-router';
-import { useCustomerStore } from '@/stores/useCustomerStore';
+import { MediaDataTable } from '@/features/Media/tables/MediaDataTable';
+
 import HeaderSection from '@/components/layouts/HeaderSection';
+import { mediaColumns } from '@/features/Media/tables/columns';
 
 interface PurchaseHistory {
 	id: number;
@@ -151,13 +141,33 @@ const USERS_DATA: UserData[] = [
 	},
 ];
 
-const CustomerManagement = () => {
+export interface MediaContent {
+	id: number;
+	fileName: string;
+	altText: string;
+	url: string;
+	createdAt: string;
+	updatedAt: string;
+	size: string;
+	status: string;
+}
+
+export const mediaContent: MediaContent[] = [
+	{
+		id: 1,
+		fileName: 'John Doe',
+		altText: 'john.doe@example.com',
+		url: 'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
+		createdAt: '2023-06-22',
+		updatedAt: '2023-06-22',
+		size: '1 MB',
+		status: 'Active',
+	},
+];
+
+const MediaManagement = () => {
 	const [users, setUsers] = useState<UserData[]>(USERS_DATA);
 	const [searchTerm, setSearchTerm] = useState('');
-	const { storeId } = useParams<{ storeId: string }>();
-
-	const setCustomers = useCustomerStore((state) => state.setCustomers);
-	const customers = useCustomerStore((state) => state.customers);
 
 	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value);
@@ -174,10 +184,6 @@ const CustomerManagement = () => {
 		);
 		setUsers(filtered);
 	};
-
-	// const handleUserSelect = (user: UserData) => {
-	//   setSelectedUser(user);
-	// };
 
 	const exportUsers = () => {
 		const data = users.map((user) => ({
@@ -197,73 +203,36 @@ const CustomerManagement = () => {
 		exportToCSV(data, 'users-data');
 	};
 
-	// const exportUserPurchases = (user: UserData) => {
-	// 	const data = user.purchases.map((purchase) => ({
-	// 		ID: purchase.id,
-	// 		Product: purchase.productName,
-	// 		Date: purchase.date,
-	// 		Amount: purchase.amount.toFixed(2),
-	// 		Status: purchase.status,
-	// 	}));
-
-	// 	exportToCSV(
-	// 		data,
-	// 		`${user.name.replace(/\s+/g, '-').toLowerCase()}-purchases`
-	// 	);
-	// };
-
-	const { data: customersData } = useQuery({
-		queryKey: ['customers'],
-		queryFn: () => getCustomersService({ storeId: storeId! }),
-	});
-
-	useEffect(() => {
-		if (customersData?.data.data) {
-			console.log(customersData?.data.data);
-			setCustomers(customersData?.data.data);
-		}
-	}, [customersData, setCustomers]);
-
 	return (
-		<section className="space-y-6">
+		<section>
 			<HeaderSection
-				icon={<User className="h-7 w-7" />}
-				title="Customer Management"
-				description="Manage your customers"
+				icon={<Image className="h-7 w-7" />}
+				title="Media Store"
+				description="Manage your media"
 			/>
 
-			<section className="flex w-full items-center justify-between">
-				<section className="relative w-full max-w-sm">
-					<Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-					<Input
-						type="search"
-						placeholder="Search users..."
-						className="w-full pl-8"
-						value={searchTerm}
-						onChange={handleSearch}
-					/>
+			<section className="space-y-6">
+				<section className="flex w-full items-center justify-between">
+					<section className="relative w-full max-w-sm">
+						<Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+						<Input
+							type="search"
+							placeholder="Search users..."
+							className="w-full pl-8"
+							value={searchTerm}
+							onChange={handleSearch}
+						/>
+					</section>
+					<Button onClick={exportUsers} className="gap-2">
+						<Download className="h-4 w-4" />
+						Export to CSV
+					</Button>
 				</section>
-				<Button onClick={exportUsers} className="gap-2">
-					<Download className="h-4 w-4" />
-					Export to CSV
-				</Button>
-			</section>
 
-			<Card>
-				<CardHeader className="text-left">
-					<CardTitle className="text-left text-2xl font-bold">
-						Users ({customers.length})
-					</CardTitle>
-					<CardDescription className="text-left">
-						View and manage user accounts
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<DataTable columns={customerColumns} data={customers} />
-				</CardContent>
-			</Card>
+				<MediaDataTable columns={mediaColumns} data={mediaContent} />
+			</section>
 		</section>
 	);
 };
 
-export default CustomerManagement;
+export default MediaManagement;

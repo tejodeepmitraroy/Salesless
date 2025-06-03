@@ -12,10 +12,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { ProductImage } from '@/features/Products/schema';
-import {
-	generatePresignedUrl,
-	deleteObject,
-} from '@/features/Contents/services';
+import { generatePresignedUrl, deleteObject } from '@/features/Media/services';
 
 interface ImageUploadProps {
 	images: ProductImage[];

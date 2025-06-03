@@ -19,6 +19,7 @@ import MovementHistoryTable from '@/features/Inventory/components/MovementHistor
 import AdjustStockDialog from '@/features/Inventory/components/AdjustStockDialog';
 import MovementHistoryDialog from '@/features/Inventory/components/MovementHistoryDialog';
 import LowStockAlert from '@/features/Inventory/components/LowStockAlert';
+import HeaderSection from '@/components/layouts/HeaderSection';
 
 const InventoryManagement: React.FC = () => {
 	const {
@@ -48,46 +49,43 @@ const InventoryManagement: React.FC = () => {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h1 className="text-2xl font-bold tracking-tight">
-						Inventory Management
-					</h1>
-					<p className="text-muted-foreground">
-						Monitor and manage your product inventory
-					</p>
-				</div>
-				<div className="flex items-center gap-2">
-					<Button
-						onClick={handleExportInventory}
-						variant="outline"
-						className="flex items-center gap-2"
-					>
-						<Download className="h-4 w-4" />
-						Export to Excel
-					</Button>
-					<Button
-						onClick={() => setIsLowStockOpen(true)}
-						variant={lowStockItems.length > 0 ? 'destructive' : 'outline'}
-						className="flex items-center gap-2"
-					>
-						<AlertTriangle className="h-4 w-4" />
-						Low Stock Items ({lowStockItems.length})
-					</Button>
-				</div>
-			</div>
+			<HeaderSection
+				icon={<Package />}
+				title="Inventory Management"
+				description="Monitor and manage your product inventory"
+			/>
 
 			<Tabs defaultValue="current">
-				<TabsList>
-					<TabsTrigger value="current" className="flex items-center gap-2">
-						<Package className="h-4 w-4" />
-						Current Inventory
-					</TabsTrigger>
-					<TabsTrigger value="movements" className="flex items-center gap-2">
-						<History className="h-4 w-4" />
-						Stock Movements
-					</TabsTrigger>
-				</TabsList>
+				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+					<TabsList>
+						<TabsTrigger value="current" className="flex items-center gap-2">
+							<Package className="h-4 w-4" />
+							Current Inventory
+						</TabsTrigger>
+						<TabsTrigger value="movements" className="flex items-center gap-2">
+							<History className="h-4 w-4" />
+							Stock Movements
+						</TabsTrigger>
+					</TabsList>
+					<div className="flex items-center gap-2">
+						<Button
+							onClick={handleExportInventory}
+							variant="outline"
+							className="flex items-center gap-2"
+						>
+							<Download className="h-4 w-4" />
+							Export to Excel
+						</Button>
+						<Button
+							onClick={() => setIsLowStockOpen(true)}
+							variant={lowStockItems.length > 0 ? 'destructive' : 'outline'}
+							className="flex items-center gap-2"
+						>
+							<AlertTriangle className="h-4 w-4" />
+							Low Stock Items ({lowStockItems.length})
+						</Button>
+					</div>
+				</div>
 
 				<TabsContent value="current">
 					<Card>

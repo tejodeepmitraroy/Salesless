@@ -2,17 +2,25 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Search, Plus, Filter, ArrowUpDown, Download } from 'lucide-react';
+import {
+	Search,
+	Plus,
+	Filter,
+	ArrowUpDown,
+	Download,
+	ShoppingCart,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Product, useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router';
 import { ProductImage } from '@/features/Products/schema';
-import { DataTable } from '@/features/Products/tables/data-table';
+import { ProductDataTable } from '@/features/Products/tables/ProductDataTable';
 import { productColumns } from '@/features/Products/tables/columns';
 import { useQuery } from '@tanstack/react-query';
 import { getAllProducts } from '@/features/Products/services';
+import HeaderSection from '@/components/layouts/HeaderSection';
 
 export const getFeaturedImage = (product: Product) => {
 	if (!product.images || product.images.length === 0) return undefined;
@@ -127,8 +135,8 @@ const ProductManagement = () => {
 	}, [productsData, setProducts]);
 
 	return (
-		<div className="space-y-3">
-			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+		<section>
+			{/* <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 				<h1 className="text-2xl font-bold">Product Management</h1>
 				<div className="flex flex-wrap gap-2">
 					<Button
@@ -145,7 +153,13 @@ const ProductManagement = () => {
 						<Plus className="mr-2 h-4 w-4" /> Add New Product
 					</Button>
 				</div>
-			</div>
+			</div> */}
+
+			<HeaderSection
+				icon={<ShoppingCart />}
+				title="Product Management"
+				description="Manage your products"
+			/>
 
 			<Tabs defaultValue="all">
 				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -154,7 +168,7 @@ const ProductManagement = () => {
 						<TabsTrigger value="active">Active</TabsTrigger>
 						<TabsTrigger value="draft">Draft</TabsTrigger>
 					</TabsList>
-					<div className="relative w-full sm:w-auto">
+					<div className="relative flex w-fit items-center gap-2">
 						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
 						<Input
 							type="text"
@@ -163,6 +177,19 @@ const ProductManagement = () => {
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
+						<Button
+							variant="outline"
+							className="flex items-center gap-2"
+							onClick={() => handleExportProducts('all')}
+						>
+							<Download className="h-4 w-4" /> Export to CSV
+						</Button>
+						<Button
+							className="bg-primary hover:bg-primary/90 text-white"
+							onClick={() => handleAddProduct()}
+						>
+							<Plus className="mr-2 h-4 w-4" /> Add New Product
+						</Button>
 					</div>
 				</div>
 
@@ -183,7 +210,7 @@ const ProductManagement = () => {
 						</CardHeader>
 						<CardContent>
 							{
-								<DataTable
+								<ProductDataTable
 									columns={productColumns}
 									data={filteredProducts('all')}
 								/>
@@ -216,9 +243,9 @@ const ProductManagement = () => {
 									</Button>
 								</CardTitle>
 							</CardHeader>
-							{/* <CardContent>{renderProductsTable(tab)}</CardContent> */}
+
 							<CardContent>
-								<DataTable
+								<ProductDataTable
 									columns={productColumns}
 									data={filteredProducts(tab)}
 								/>
@@ -236,7 +263,7 @@ const ProductManagement = () => {
 					onSave={handleSaveProduct}
 				/>
 			)} */}
-		</div>
+		</section>
 	);
 };
 

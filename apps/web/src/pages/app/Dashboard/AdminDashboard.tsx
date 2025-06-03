@@ -4,20 +4,22 @@ import DashboardMetrics from '@/features/dashboard/components/DashboardMetrics';
 import OverviewTab from '@/features/dashboard/components/OverviewTab';
 import AnalyticsTab from '@/features/dashboard/components/AnalyticsTab';
 import RecentActivityTab from '@/features/dashboard/components/RecentActivityTab';
+import HeaderSection from '@/components/layouts/HeaderSection';
+import { ChartBar } from 'lucide-react';
 
 const AdminDashboard = () => {
 	return (
 		<div className="space-y-6">
-			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-				<h1 className="text-2xl font-bold">Dashboard</h1>
-				<div className="flex items-center gap-2">
-					<Badge
-						variant="outline"
-						className="bg-vsphere-light text-vsphere-dark"
-					>
-						Last updated: {new Date().toLocaleDateString()}
-					</Badge>
-				</div>
+			<HeaderSection
+				icon={<ChartBar />}
+				title="Dashboard"
+				description="Overview of your store"
+			/>
+
+			<div className="flex w-full items-center justify-end">
+				<Badge variant="outline" className="bg-vsphere-light text-vsphere-dark">
+					Last updated: {new Date().toLocaleDateString()}
+				</Badge>
 			</div>
 
 			{/* Dashboard Metrics */}
