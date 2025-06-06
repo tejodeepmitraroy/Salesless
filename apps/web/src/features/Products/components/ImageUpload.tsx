@@ -18,12 +18,14 @@ interface ImageUploadProps {
 	images: ProductImage[];
 	onChange: (images: ProductImage[]) => void;
 	maxImages?: number;
+	storeId: string;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
 	images = [],
 	onChange,
 	maxImages = 10,
+	storeId,
 }) => {
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadProgress] = useState<Record<string, number>>({});
@@ -42,7 +44,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 		try {
 			// Generate presigned URL
 			const { uploadUrl, fileName, publicS3Url, key } =
-				await generatePresignedUrl(file);
+				await generatePresignedUrl({ file, storeId });
 
 			// Upload file directly to S3 using the presigned URL
 			const response = await fetch(uploadUrl, {

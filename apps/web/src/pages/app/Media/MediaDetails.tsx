@@ -1,44 +1,46 @@
 import { useParams } from 'react-router';
 
-import { mediaContent } from './MediaManagement';
+import { Button } from '@/components/ui/button';
+import { SquareChevronLeft } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { getMediaDetails } from '@/features/Media/services';
 
 const MediaDetails = () => {
-	const { fileId } = useParams<{ fileId: string }>();
+	const navigate = useNavigate();
+	const { fileId, storeId } = useParams<{ fileId: string; storeId: string }>();
 
-	const media = mediaContent.find((media) => media.id === parseInt(fileId!));
+	const { data: mediaContent } = useQuery({
+		queryKey: ['mediaContent', storeId, fileId],
+		queryFn: () => getMediaDetails({ mediaId: fileId!, storeId: storeId! }),
+	});
 
-	// const product = useProductStore((state) =>
-	// 	state.getProductsById(parseInt(id || '0'))
-	// );
-
-	// if (!product) {
-	// 	return (
-	// 		<div className="flex min-h-[400px] flex-col items-center justify-center space-y-4">
-	// 			<Package className="h-16 w-16 text-gray-400" />
-	// 			<h2 className="text-xl font-semibold text-gray-600">
-	// 				Product Not Found
-	// 			</h2>
-	// 			<Button onClick={() => navigate('/products')} variant="outline">
-	// 				<ArrowLeft className="mr-2 h-4 w-4" />
-	// 				Back to Products
-	// 			</Button>
-	// 		</div>
-	// 	);
-	// }
-
-	// const getFeaturedImage = () => {
-	// 	if (!product.images || product.images.length === 0) return null;
-	// 	return product.images.find((img) => img.isFeatured) || product.images[0];
-	// };
-
-	// const featuredImage = getFeaturedImage();
+	const backToMedia = () => {
+		navigate(`/store/${storeId}/media`);
+	};
 
 	return (
-		<section className="w-full">
-			<section className="w-1/2">
-				<img src={media?.url} alt={media?.fileName} />
+		<section className="w-full bg-black">
+			<section className="flex h-[3rem] w-full items-center justify-between bg-gray-800 px-5">
+				<section className="w-fit text-white">
+					<Button onClick={() => backToMedia()} variant="ghost" size={'sm'}>
+						<SquareChevronLeft className="mr-2 h-4 w-4" />
+						Back
+					</Button>
+				</section>
 			</section>
-			<section className="w-1/2"></section>
+			<section className="flex h-[calc(100vh-3rem)] w-full">
+				<section className="flex w-3/4 items-center justify-center border border-white p-6">
+					<img
+						src={mediaContent?.url}
+						alt={mediaContent?.fileName}
+						className="aspect-auto h-full"
+					/>
+				</section>
+				<section className="w-1/4"></section>
+			</section>
+
+			{/* Navbar */}
 		</section>
 	);
 };

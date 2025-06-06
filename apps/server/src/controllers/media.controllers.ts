@@ -1,3 +1,6 @@
+import { eq } from 'drizzle-orm';
+import { db } from '../db';
+import { media } from '../db/schema';
 import {
 	deleteObject,
 	getObjectMetaData,
@@ -14,6 +17,9 @@ import { Request, Response } from 'express';
 export const uploadFileToS3 = asyncHandler(
 	async (request: Request, response: Response): Promise<void> => {
 		const { fileName: uploadFileName, contentType } = request.body;
+		const storeId = Number(request.query.storeId);
+
+		console.log(storeId);
 
 		if (!uploadFileName || !contentType) {
 			response
@@ -28,6 +34,17 @@ export const uploadFileToS3 = asyncHandler(
 				contentType,
 			});
 
+			const storeMedia = await db
+				.insert(media)
+				.values({
+					fileName: uploadFileName,
+					key,
+					storeId,
+					url: publicS3Url,
+				})
+				.returning();
+
+			const storedObject = storeMedia[0];
 			response.status(200).json(
 				new ApiResponse(200, {
 					uploadUrl,
@@ -35,10 +52,39 @@ export const uploadFileToS3 = asyncHandler(
 					contentType,
 					publicS3Url,
 					key,
+					storedObject,
 				})
 			);
 		} catch (error) {
 			console.error('Error generating presigned URL:', error);
+			response
+				.status(500)
+				.json(new ApiError(500, 'Upload Url not generated', error));
+		}
+	}
+);
+
+export const getMediaFiles = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = Number(request.query.storeId);
+		const mediaId = Number(request.params.mediaId);
+		try {
+			if (mediaId) {
+				const mediaFile = await db.query.media.findFirst({
+					where: eq(media.id, mediaId),
+				});
+
+				response.status(200).json(new ApiResponse(200, mediaFile));
+				return;
+			} else {
+				const allMediaFiles = await db.query.media.findMany({
+					where: eq(media.storeId, storeId),
+				});
+
+				response.status(200).json(new ApiResponse(200, allMediaFiles));
+			}
+		} catch (error) {
+			console.log(error);
 			response
 				.status(500)
 				.json(new ApiError(500, 'Upload Url not generated', error));
@@ -93,8 +139,16 @@ export const viewUrl = asyncHandler(
 export const listAllObjects = asyncHandler(
 	async (request: Request, response: Response): Promise<void> => {
 		try {
-			const listAllfiles = await listObjects();
-			response.status(200).json(new ApiResponse(200, { listAllfiles }));
+			const listAllFiles = await listObjects();
+			const mediaFiles = listAllFiles.Contents?.map((file) => ({
+				fileName: file.Key,
+				key: file.Key,
+				size: file.Size,
+				lastModified: file.LastModified,
+				storageClass: file.StorageClass,
+			}));
+
+			response.status(200).json(new ApiResponse(200, mediaFiles));
 		} catch (error) {
 			console.log(error);
 			response

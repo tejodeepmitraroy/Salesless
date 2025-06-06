@@ -3,10 +3,8 @@ import { Product } from '@/stores/product-store';
 import { ProductImage } from '@/features/Products/schema';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Edit, Package, Trash2 } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Link } from 'react-router';
 
 export const productColumns: ColumnDef<Product>[] = [
 	{
@@ -108,33 +106,6 @@ export const productColumns: ColumnDef<Product>[] = [
 		cell: ({ row }) => {
 			const category = row.getValue('category') as string;
 			return <div className="text-center">{category}</div>;
-		},
-	},
-
-	{
-		accessorKey: 'actions',
-		header: () => <div className="text-center">Actions</div>,
-		cell: ({ row }) => {
-			const storeId = row.original.storeId;
-			const id = row.original.id;
-
-			return (
-				<div className="text-center font-medium">
-					<Link to={`/store/${storeId}/products/${id}`}>
-						<Button variant="ghost" size="icon" className="h-8 w-8">
-							<Edit className="h-4 w-4" />
-						</Button>
-					</Link>
-					<Button
-						variant="ghost"
-						size="icon"
-						className="h-8 w-8 text-red-500"
-						// onClick={() => handleDeleteProduct(product.id)}
-					>
-						<Trash2 className="h-4 w-4" />
-					</Button>
-				</div>
-			);
 		},
 	},
 ];

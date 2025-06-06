@@ -176,9 +176,7 @@ function App() {
 								path="/store/:storeId/media/:fileId"
 								element={
 									<ProtectedRoute>
-										<AdminLayout>
-											<MediaDetails />
-										</AdminLayout>
+										<MediaDetails />
 									</ProtectedRoute>
 								}
 							/>

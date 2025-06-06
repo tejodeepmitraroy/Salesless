@@ -32,13 +32,13 @@ export const mediaColumns: ColumnDef<MediaContent>[] = [
 		accessorKey: 'fileName',
 		header: () => <div className="text-left">File Name</div>,
 		cell: ({ row }) => {
-			const image = row.original.url;
+			const imageUrl = row.original.url;
 			return (
 				<div className="flex items-center gap-2 text-left font-medium">
 					<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
 						<AspectRatio ratio={1 / 1}>
 							<img
-								src={image}
+								src={imageUrl!}
 								alt={row.original.fileName}
 								className="h-full w-full object-cover"
 							/>

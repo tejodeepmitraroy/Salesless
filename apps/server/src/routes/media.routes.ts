@@ -2,10 +2,11 @@ import { Router } from 'express';
 import {
 	checkUploadStatus,
 	deleteAObject,
+	getMediaFiles,
 	listAllObjects,
 	uploadFileToS3,
 	viewUrl,
-} from '../controllers/upload.controllers';
+} from '../controllers/media.controllers';
 
 const router = Router();
 
@@ -15,6 +16,9 @@ const router = Router();
 router.route('/upload-url').post(uploadFileToS3);
 
 // Check upload status
+router.route('/files').get(getMediaFiles);
+router.route('/files/:mediaId').get(getMediaFiles);
+// router.route('/files').get(listAllObjects);
 router.get('/upload-status/:fileName', checkUploadStatus);
 
 router.route('/view').get(viewUrl);

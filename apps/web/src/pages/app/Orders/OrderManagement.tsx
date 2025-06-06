@@ -14,7 +14,6 @@ import {
 	Clock,
 	XCircle,
 } from 'lucide-react';
-// import { Separator } from '@/components/ui/separator';
 import {
 	Dialog,
 	DialogContent,
@@ -22,7 +21,6 @@ import {
 	DialogTitle,
 	DialogFooter,
 } from '@/components/ui/dialog';
-// import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import {
 	Select,
@@ -33,7 +31,6 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import HeaderSection from '@/components/layouts/HeaderSection';
-// import { Label } from '@/components/ui/label';
 
 type Order = {
 	id: string;
@@ -50,7 +47,6 @@ type Order = {
 };
 
 const OrderManagement = () => {
-	// const { toast } = useToast();
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 	const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
@@ -282,13 +278,25 @@ const OrderManagement = () => {
 
 			<Tabs defaultValue="all">
 				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-					<TabsList className="grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">
-						<TabsTrigger value="all">All Orders</TabsTrigger>
-						<TabsTrigger value="pending">Pending</TabsTrigger>
-						<TabsTrigger value="processing">Processing</TabsTrigger>
-						<TabsTrigger value="shipped">Shipped</TabsTrigger>
-						<TabsTrigger value="delivered">Delivered</TabsTrigger>
-						<TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+					<TabsList className="bg-background grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">
+						<TabsTrigger className=" " value="all">
+							All Orders
+						</TabsTrigger>
+						<TabsTrigger className="" value="pending">
+							Pending
+						</TabsTrigger>
+						<TabsTrigger className="" value="processing">
+							Processing
+						</TabsTrigger>
+						<TabsTrigger className="" value="shipped">
+							Shipped
+						</TabsTrigger>
+						<TabsTrigger className="" value="delivered">
+							Delivered
+						</TabsTrigger>
+						<TabsTrigger className="" value="cancelled">
+							Cancelled
+						</TabsTrigger>
 					</TabsList>
 					<section className="flex w-fit items-center gap-2">
 						<div className="flex items-center gap-2">

@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import {
-	Search,
-	Plus,
-	Filter,
-	ArrowUpDown,
-	Download,
-	ShoppingCart,
-} from 'lucide-react';
+import { Search, Plus, Download, ShoppingCart } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Product, useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
@@ -21,6 +12,15 @@ import { productColumns } from '@/features/Products/tables/columns';
 import { useQuery } from '@tanstack/react-query';
 import { getAllProducts } from '@/features/Products/services';
 import HeaderSection from '@/components/layouts/HeaderSection';
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 
 export const getFeaturedImage = (product: Product) => {
 	if (!product.images || product.images.length === 0) return undefined;
@@ -35,6 +35,8 @@ const ProductManagement = () => {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();
 	const [searchQuery, setSearchQuery] = useState('');
+	const [filter, setFilter] = useState('all');
+	const [sort, setSort] = useState('');
 
 	const products = useProductStore((state) => state.products);
 	const setProducts = useProductStore((state) => state.setProducts);
@@ -45,10 +47,8 @@ const ProductManagement = () => {
 
 		// Apply search filter
 		if (searchQuery) {
-			filtered = filtered.filter(
-				(product) =>
-					product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					product.categoryId.toLowerCase().includes(searchQuery.toLowerCase())
+			filtered = filtered.filter((product) =>
+				product.title.toLowerCase().includes(searchQuery.toLowerCase())
 			);
 		}
 
@@ -79,16 +79,6 @@ const ProductManagement = () => {
 	// 		description: `${productToDelete.title} has been successfully removed.`,
 	// 		// variant: 'destructive',
 	// 	});
-	// };
-
-	// const handleSaveProduct = (product: Product) => {
-	// 	if (currentProduct) {
-	// 		// Update existing product
-	// 		setProducts(products.map((p) => (p.id === product.id ? product : p)));
-	// 	} else {
-	// 		// Add new product
-	// 		setProducts([...products, product]);
-	// 	}
 	// };
 
 	const handleExportProducts = (tab: string) => {
@@ -135,48 +125,15 @@ const ProductManagement = () => {
 	}, [productsData, setProducts]);
 
 	return (
-		<section>
-			{/* <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-				<h1 className="text-2xl font-bold">Product Management</h1>
-				<div className="flex flex-wrap gap-2">
-					<Button
-						variant="outline"
-						className="flex items-center gap-2"
-						onClick={() => handleExportProducts('all')}
-					>
-						<Download className="h-4 w-4" /> Export to CSV
-					</Button>
-					<Button
-						className="bg-primary hover:bg-primary/90 text-white"
-						onClick={() => handleAddProduct()}
-					>
-						<Plus className="mr-2 h-4 w-4" /> Add New Product
-					</Button>
-				</div>
-			</div> */}
-
+		<section className="mx-auto w-full max-w-7xl">
 			<HeaderSection
 				icon={<ShoppingCart />}
 				title="Product Management"
 				description="Manage your products"
 			/>
-
-			<Tabs defaultValue="all">
-				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-					<TabsList className="grid w-full grid-cols-3 sm:w-auto sm:grid-cols-3">
-						<TabsTrigger value="all">All Products</TabsTrigger>
-						<TabsTrigger value="active">Active</TabsTrigger>
-						<TabsTrigger value="draft">Draft</TabsTrigger>
-					</TabsList>
+			<section className="flex w-full flex-col">
+				<section className="mb-4 flex flex-col items-start justify-end gap-4 sm:flex-row sm:items-center">
 					<div className="relative flex w-fit items-center gap-2">
-						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-						<Input
-							type="text"
-							placeholder="Search products..."
-							className="w-full rounded-md border py-2 pr-4 pl-10 sm:w-64"
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-						/>
 						<Button
 							variant="outline"
 							className="flex items-center gap-2"
@@ -188,81 +145,61 @@ const ProductManagement = () => {
 							className="bg-primary hover:bg-primary/90 text-white"
 							onClick={() => handleAddProduct()}
 						>
-							<Plus className="mr-2 h-4 w-4" /> Add New Product
+							<Plus className="mr-2 h-4 w-4" /> Add Product
 						</Button>
 					</div>
-				</div>
-
-				<TabsContent value="all" className="mt-0">
-					<Card>
-						<CardHeader className="pb-2">
-							<CardTitle className="flex items-center justify-between text-lg">
-								<span>All Products ({products.length})</span>
-								<div className="flex gap-2">
-									<Button variant="outline" size="sm">
-										<Filter className="mr-2 h-3.5 w-3.5" /> Filter
-									</Button>
-									<Button variant="outline" size="sm">
-										<ArrowUpDown className="mr-2 h-3.5 w-3.5" /> Sort
-									</Button>
-								</div>
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							{
-								<ProductDataTable
-									columns={productColumns}
-									data={filteredProducts('all')}
-								/>
-							}
-						</CardContent>
-					</Card>
-				</TabsContent>
-
-				{['active', 'draft'].map((tab) => (
-					<TabsContent key={tab} value={tab}>
-						<Card>
-							<CardHeader className="pb-2">
-								<CardTitle className="flex items-center justify-between text-lg">
-									<span>
-										{tab === 'active'
-											? 'Active'
-											: tab === 'draft'
-												? 'Draft'
-												: 'All Products'}
-										Products ({filteredProducts(tab).length})
-									</span>
-									<Button
-										variant="outline"
-										size="sm"
-										className="flex items-center gap-2"
-										onClick={() => handleExportProducts(tab)}
-									>
-										<Download className="h-3.5 w-3.5" />
-										Export
-									</Button>
-								</CardTitle>
-							</CardHeader>
-
-							<CardContent>
-								<ProductDataTable
-									columns={productColumns}
-									data={filteredProducts(tab)}
-								/>
-							</CardContent>
-						</Card>
-					</TabsContent>
-				))}
-			</Tabs>
-
-			{/* {isModalOpen && (
-				<ProductModal
-					isOpen={isModalOpen}
-					onClose={() => setIsModalOpen(false)}
-					product={currentProduct}
-					onSave={handleSaveProduct}
+				</section>
+				<section className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+					<div className="relative flex w-full items-center gap-2">
+						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+						<Input
+							type="text"
+							placeholder="Search products..."
+							className="w-full rounded-md border py-2 pr-4 pl-10"
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+						/>
+					</div>
+					<Select
+						onValueChange={(filter: string) => setFilter(filter)}
+						defaultValue={filter}
+					>
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Filter" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel>Filter</SelectLabel>
+								<SelectItem value="all">All Products</SelectItem>
+								<SelectItem value="active">Active</SelectItem>
+								<SelectItem value="draft">Draft</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+					<Select
+						onValueChange={(sort: string) => setSort(sort)}
+						defaultValue={sort}
+					>
+						<SelectTrigger className="w-fit">
+							<SelectValue placeholder="Sort" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								<SelectLabel>Sort</SelectLabel>
+								<SelectItem value="apple">Apple</SelectItem>
+								<SelectItem value="banana">Banana</SelectItem>
+								<SelectItem value="blueberry">Blueberry</SelectItem>
+								<SelectItem value="grapes">Grapes</SelectItem>
+								<SelectItem value="pineapple">Pineapple</SelectItem>
+							</SelectGroup>
+						</SelectContent>
+					</Select>
+				</section>
+				<ProductDataTable
+					columns={productColumns}
+					data={filteredProducts(filter)}
 				/>
-			)} */}
+			</section>
 		</section>
 	);
 };

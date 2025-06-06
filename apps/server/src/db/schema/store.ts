@@ -12,6 +12,7 @@ import { role } from './role';
 import { product } from './product';
 import { category } from './category';
 import { cart } from './cart';
+import { media } from './media';
 
 export const store = pgTable('store', {
 	id: serial('id').primaryKey(),
@@ -42,6 +43,9 @@ export const storeRelations = relations(store, ({ many }) => ({
 	}),
 	roles: many(userStore, {
 		relationName: 'storeRoles',
+	}),
+	media: many(media, {
+		relationName: 'storeMedia',
 	}),
 }));
 

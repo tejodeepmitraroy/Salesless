@@ -42,6 +42,7 @@ import {
 const ProductDetails = () => {
 	const { id } = useParams<{ id: string }>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { storeId } = useParams<{ storeId: string }>();
 
 	// const product = useProductStore((state) =>
 	// 	state.getProductsById(parseInt(id || '0'))
@@ -176,6 +177,7 @@ const ProductDetails = () => {
 														images={field.value || []}
 														onChange={(images) => field.onChange(images)}
 														maxImages={8}
+														storeId={storeId!}
 													/>
 												</FormControl>
 												<FormDescription>

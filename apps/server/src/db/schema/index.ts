@@ -24,4 +24,4 @@ export {
 export { cart, cartItems, cartRelations } from './cart';
 export { order, orderItems, orderRelations } from './order';
 export { transaction, transactionRelations } from './transaction';
-export { media } from './media';
+export { media, mediaRelations } from './media';

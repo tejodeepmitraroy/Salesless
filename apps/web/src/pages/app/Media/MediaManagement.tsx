@@ -1,207 +1,98 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Download, Image, Search } from 'lucide-react';
-import { exportToCSV } from '@/utils/exportUtils';
+import { Image, Search, Upload } from 'lucide-react';
 import { MediaDataTable } from '@/features/Media/tables/MediaDataTable';
-
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { mediaColumns } from '@/features/Media/tables/columns';
-
-interface PurchaseHistory {
-	id: number;
-	productName: string;
-	date: string;
-	amount: number;
-	status: 'Completed' | 'Pending' | 'Refunded';
-}
-
-interface UserData {
-	id: number;
-	name: string;
-	email: string;
-	mobile: string;
-	signupDate: string;
-	lastActive: string;
-	status: 'Active' | 'Inactive' | 'Suspended';
-	purchases: PurchaseHistory[];
-}
-
-// Sample data for demonstration
-const USERS_DATA: UserData[] = [
-	{
-		id: 1,
-		name: 'John Doe',
-		email: 'john.doe@example.com',
-		mobile: '+1 (555) 123-4567',
-		signupDate: '2023-01-15',
-		lastActive: '2023-06-22',
-		status: 'Active',
-		purchases: [
-			{
-				id: 101,
-				productName: 'Premium Headphones',
-				date: '2023-02-10',
-				amount: 149.99,
-				status: 'Completed',
-			},
-			{
-				id: 102,
-				productName: 'Wireless Keyboard',
-				date: '2023-04-05',
-				amount: 79.99,
-				status: 'Completed',
-			},
-		],
-	},
-	{
-		id: 2,
-		name: 'Jane Smith',
-		email: 'jane.smith@example.com',
-		mobile: '+1 (555) 987-6543',
-		signupDate: '2023-02-20',
-		lastActive: '2023-06-18',
-		status: 'Active',
-		purchases: [
-			{
-				id: 103,
-				productName: 'Smart Watch',
-				date: '2023-03-15',
-				amount: 199.99,
-				status: 'Completed',
-			},
-		],
-	},
-	{
-		id: 3,
-		name: 'Michael Johnson',
-		email: 'michael.j@example.com',
-		mobile: '+1 (555) 234-5678',
-		signupDate: '2023-03-05',
-		lastActive: '2023-05-30',
-		status: 'Inactive',
-		purchases: [],
-	},
-	{
-		id: 4,
-		name: 'Sarah Williams',
-		email: 'sarah.w@example.com',
-		mobile: '+1 (555) 876-5432',
-		signupDate: '2023-04-12',
-		lastActive: '2023-06-21',
-		status: 'Active',
-		purchases: [
-			{
-				id: 104,
-				productName: 'Bluetooth Speaker',
-				date: '2023-04-20',
-				amount: 89.99,
-				status: 'Completed',
-			},
-			{
-				id: 105,
-				productName: 'Laptop Stand',
-				date: '2023-05-15',
-				amount: 34.99,
-				status: 'Completed',
-			},
-			{
-				id: 106,
-				productName: 'USB-C Hub',
-				date: '2023-06-10',
-				amount: 49.99,
-				status: 'Pending',
-			},
-		],
-	},
-	{
-		id: 5,
-		name: 'Robert Brown',
-		email: 'robert.b@example.com',
-		mobile: '+1 (555) 345-6789',
-		signupDate: '2023-05-08',
-		lastActive: '2023-06-01',
-		status: 'Suspended',
-		purchases: [
-			{
-				id: 107,
-				productName: 'Wireless Mouse',
-				date: '2023-05-10',
-				amount: 29.99,
-				status: 'Completed',
-			},
-			{
-				id: 108,
-				productName: 'Monitor',
-				date: '2023-05-25',
-				amount: 249.99,
-				status: 'Refunded',
-			},
-		],
-	},
-];
+import {
+	generatePresignedUrl,
+	getAllMediaFiles,
+} from '@/features/Media/services';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'react-router';
+import { Input } from '@/components/ui/input';
 
 export interface MediaContent {
 	id: number;
 	fileName: string;
-	altText: string;
-	url: string;
+	url: string | null;
+	key: string;
+	size: number | null;
 	createdAt: string;
-	updatedAt: string;
-	size: string;
-	status: string;
+	lastModified: string;
 }
 
-export const mediaContent: MediaContent[] = [
-	{
-		id: 1,
-		fileName: 'John Doe',
-		altText: 'john.doe@example.com',
-		url: 'https://images.unsplash.com/photo-1511485977113-f34c92461ad9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
-		createdAt: '2023-06-22',
-		updatedAt: '2023-06-22',
-		size: '1 MB',
-		status: 'Active',
-	},
-];
-
 const MediaManagement = () => {
-	const [users, setUsers] = useState<UserData[]>(USERS_DATA);
-	const [searchTerm, setSearchTerm] = useState('');
+	const [mediaObjects, setMediaObjects] = useState<MediaContent[]>([]);
+	const [searchQuery, setSearchQuery] = useState('');
 
-	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(e.target.value);
-		if (!e.target.value.trim()) {
-			setUsers(USERS_DATA);
-			return;
+	const storeId = useParams<{ storeId: string }>().storeId;
+	const uploadToS3 = async (file: File): Promise<{ url: string }> => {
+		try {
+			// Generate presigned URL
+			const { uploadUrl, publicS3Url } = await generatePresignedUrl({
+				file,
+				storeId: storeId!,
+			});
+
+			// Upload file directly to S3 using the presigned URL
+			const response = await fetch(uploadUrl, {
+				method: 'PUT',
+				body: file,
+				headers: {
+					'Content-Type': file.type,
+				},
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to upload file to S3');
+			}
+
+			// return {
+			// 	id: fileName,
+			// 	url: publicS3Url,
+			// 	name: file.name,
+			// 	isFeatured: false,
+			// 	key,
+			// };
+			return { url: publicS3Url };
+		} catch (error) {
+			console.error('S3 Upload Error:', error);
+			throw error;
 		}
-
-		const filtered = USERS_DATA.filter(
-			(user) =>
-				user.name.toLowerCase().includes(e.target.value.toLowerCase()) ||
-				user.email.toLowerCase().includes(e.target.value.toLowerCase()) ||
-				user.mobile.includes(e.target.value)
-		);
-		setUsers(filtered);
 	};
 
-	const exportUsers = () => {
-		const data = users.map((user) => ({
-			ID: user.id,
-			Name: user.name,
-			Email: user.email,
-			Mobile: user.mobile,
-			'Signup Date': user.signupDate,
-			'Last Active': user.lastActive,
-			Status: user.status,
-			'Purchase Count': user.purchases.length,
-			'Total Spent': user.purchases
-				.reduce((sum, purchase) => sum + purchase.amount, 0)
-				.toFixed(2),
-		}));
+	const uploadFile = () => {
+		console.log('Upload file');
+		const fileInput = document.createElement('input');
+		fileInput.type = 'file';
+		fileInput.accept = 'image/*';
+		fileInput.multiple = true;
+		fileInput.onchange = (event) => {
+			const files = (event.target as HTMLInputElement).files;
 
-		exportToCSV(data, 'users-data');
+			if (files) {
+				const fileArray = Array.from(files);
+				console.log(fileArray);
+				for (const file of fileArray) {
+					uploadToS3(file).then((result) => {
+						console.log(result);
+					});
+				}
+			}
+		};
+		fileInput.click();
 	};
+
+	const { data: mediaContents } = useQuery({
+		queryKey: ['mediaContents', storeId],
+		queryFn: () => getAllMediaFiles({ storeId: storeId! }),
+	});
+	useEffect(() => {
+		if (mediaContents) {
+			setMediaObjects(mediaContents);
+		}
+	}, [mediaContents]);
 
 	return (
 		<section>
@@ -212,24 +103,24 @@ const MediaManagement = () => {
 			/>
 
 			<section className="space-y-6">
-				<section className="flex w-full items-center justify-between">
-					<section className="relative w-full max-w-sm">
-						<Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+				<section className="flex w-full items-center justify-end gap-6">
+					<div className="relative flex w-full items-center gap-2">
+						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
 						<Input
-							type="search"
-							placeholder="Search users..."
-							className="w-full pl-8"
-							value={searchTerm}
-							onChange={handleSearch}
+							type="text"
+							placeholder="Search media..."
+							className="w-full rounded-md border py-2 pr-4 pl-10"
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
 						/>
-					</section>
-					<Button onClick={exportUsers} className="gap-2">
-						<Download className="h-4 w-4" />
-						Export to CSV
+					</div>
+					<Button onClick={() => uploadFile()} className="gap-2">
+						<Upload className="h-4 w-4" />
+						Upload File
 					</Button>
 				</section>
 
-				<MediaDataTable columns={mediaColumns} data={mediaContent} />
+				<MediaDataTable columns={mediaColumns} data={mediaObjects} />
 			</section>
 		</section>
 	);

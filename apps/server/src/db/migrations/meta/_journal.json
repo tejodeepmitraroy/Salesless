@@ -15,6 +15,27 @@
 			"when": 1748542847589,
 			"tag": "0001_great_sway",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1749148256493,
+			"tag": "0002_furry_weapon_omega",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1749148321644,
+			"tag": "0003_smart_zodiak",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1749154651365,
+			"tag": "0004_zippy_iron_lad",
+			"breakpoints": true
 		}
 	]
 }
