@@ -5,7 +5,7 @@ import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import storeRouter from './routes/store.routes';
 import productRouter from './routes/product.routes';
-import contentRouter from './routes/content.routes';
+import mediaRouter from './routes/media.routes';
 import orderRouter from './routes/order.routes';
 import customerRouter from './routes/customer.routes';
 import roleRouter from './routes/role.routes';
@@ -55,7 +55,7 @@ app.use('/api/v1/customer', customerRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/orders', orderRouter);
-app.use('/api/v1/contents', contentRouter);
+app.use('/api/v1/media', mediaRouter);
 // app.use("/api/v1/payment", paymentRouter);
 
 // app.use('/api/v1/donation', donationRouter);

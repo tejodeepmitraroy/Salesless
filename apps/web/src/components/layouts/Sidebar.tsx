@@ -26,21 +26,6 @@ const sidebarVariants = {
 	closed: { width: '4rem', x: 0 },
 };
 
-const listVariants = {
-	open: {
-		transition: {
-			staggerChildren: 0.07,
-			delayChildren: 0.2,
-		},
-	},
-	closed: {
-		transition: {
-			staggerChildren: 0.05,
-			staggerDirection: -1,
-		},
-	},
-};
-
 const SidebarLinks = [
 	{
 		icon: LayoutGrid,
@@ -135,12 +120,7 @@ const Sidebar: React.FC<{
 						<PanelsTopLeft />
 					</Button>
 				</section>
-				<motion.nav
-					className="space-y-1"
-					variants={listVariants}
-					initial="closed"
-					animate={sidebarOpen ? 'open' : 'closed'}
-				>
+				<nav className="space-y-1">
 					{SidebarLinks.map((link) => (
 						<SidebarItem
 							key={link.label}
@@ -151,7 +131,7 @@ const Sidebar: React.FC<{
 							collapsed={!sidebarOpen}
 						/>
 					))}
-				</motion.nav>
+				</nav>
 
 				<Separator className="my-3 md:my-4" />
 				<Label className="mx-3 my-2">Sales Channels</Label>

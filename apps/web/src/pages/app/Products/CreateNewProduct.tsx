@@ -23,9 +23,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 
-// import ImageUpload from '@/features/Products/components/ImageUpload';
-// import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
-// import { ProductImage, ProductVariant } from '@/features/Products/schema';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { productFormSchema } from '@/features/Products/schema';
@@ -144,6 +141,7 @@ const CreateNewProduct = () => {
 														images={field.value || []}
 														onChange={(images) => field.onChange(images)}
 														maxImages={8}
+														storeId={storeId!}
 													/>
 												</FormControl>
 												<FormDescription>

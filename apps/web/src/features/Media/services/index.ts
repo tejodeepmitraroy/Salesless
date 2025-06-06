@@ -1,9 +1,13 @@
 import { getToken } from '@/config/auth';
 import { customAxios } from '@/api/axios-custom';
 
-export const generatePresignedUrl = async (
-	file: File
-): Promise<{
+export const generatePresignedUrl = async ({
+	file,
+	storeId,
+}: {
+	file: File;
+	storeId: string;
+}): Promise<{
 	uploadUrl: string;
 	fileName: string;
 	publicS3Url: string;
@@ -13,7 +17,7 @@ export const generatePresignedUrl = async (
 		const token = getToken();
 
 		const response = await customAxios.post(
-			'/contents/upload-url',
+			`/media/upload-url?storeId=${storeId}`,
 			{
 				fileName: file.name,
 				contentType: file.type,
@@ -64,4 +68,48 @@ export const deleteObject = async (
 
 		throw error;
 	}
+};
+
+export const getAllMediaFiles = async ({
+	storeId,
+}: {
+	storeId: string;
+}): Promise<
+	Array<{
+		id: number;
+		fileName: string;
+		url: string | null;
+		key: string;
+		size: number | null;
+		createdAt: string;
+		lastModified: string;
+	}>
+> => {
+	const response = await customAxios.get(`/media/files?storeId=${storeId}`);
+
+	const mediaContents = response.data.data;
+	return mediaContents;
+};
+
+export const getMediaDetails = async ({
+	mediaId,
+	storeId,
+}: {
+	mediaId: string;
+	storeId: string;
+}): Promise<{
+	id: number;
+	fileName: string;
+	url: string;
+	key: string;
+	size: number;
+	createdAt: string;
+	lastModified: string;
+}> => {
+	const response = await customAxios.get(
+		`/media/files/${mediaId}?storeId=${storeId}`
+	);
+
+	const mediaContents = response.data.data;
+	return mediaContents;
 };

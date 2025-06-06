@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, Inter, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -16,14 +16,13 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --radius: 0.625rem;
+  --radius: 0.800rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* --primary: oklch(0.205 0 0); */
   --primary: oklch(0.71 0.1812 22.84);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -61,6 +60,13 @@
   --vsphere-lightpink:oklch(0.9 0.0533 11);
 
 }
+
+@theme{
+  --font-Inter: 'Inter', sans-serif;
+
+}
+
+
 
 
 /* body {
@@ -188,7 +194,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background w-full text-foreground;
+    @apply bg-background w-full font-Inter text-foreground;
   }
 }
 
