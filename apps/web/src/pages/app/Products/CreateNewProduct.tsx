@@ -10,7 +10,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -62,12 +62,22 @@ const CreateNewProduct = () => {
 		},
 	});
 
-	const { watch, setValue } = form;
+	const { watch, setValue, control } = form;
 
 	const price = watch('price');
 	const costPerItem = watch('costPerItem');
 	const isSkuEnabled = watch('isSkuEnabled');
 	const isShippingEnabled = watch('isShippingEnabled');
+
+	const {
+		fields: variantOptions,
+		append: appendVariantOption,
+		remove: removeVariantOption,
+		update: updateVariantOption,
+	} = useFieldArray({
+		control,
+		name: 'variantOptions',
+	});
 
 	const onSubmit = async (data: ProductFormValues) => {
 		try {
@@ -521,14 +531,14 @@ const CreateNewProduct = () => {
 												<FormField
 													control={form.control}
 													name="variantOptions"
-													render={({ field }) => (
+													render={() => (
 														<FormItem className="mx-6">
 															<FormControl className=" ">
 																<ProductVariantOptionManager
-																	options={field.value || []}
-																	onChange={(options) =>
-																		field.onChange(options)
-																	}
+																	variantOptions={variantOptions}
+																	appendVariantOption={appendVariantOption}
+																	removeVariantOption={removeVariantOption}
+																	updateVariantOption={updateVariantOption}
 																/>
 															</FormControl>
 
