@@ -15,14 +15,14 @@ import { ProductImage } from '@/features/Products/schema';
 import { generatePresignedUrl, deleteObject } from '@/features/Media/services';
 
 interface ImageUploadProps {
-	images: ProductImage[];
-	onChange: (images: ProductImage[]) => void;
+	media: ProductImage[];
+	onChange: (media: ProductImage[]) => void;
 	maxImages?: number;
 	storeId: string;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
-	images = [],
+	media = [],
 	onChange,
 	maxImages = 10,
 	storeId,
@@ -30,50 +30,40 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 	const [isUploading, setIsUploading] = useState(false);
 	const [uploadProgress] = useState<Record<string, number>>({});
 
-	// Initialize S3 client
-	// const s3Client = new S3Client({
-	// 	region: process.env.NEXT_PUBLIC_AWS_REGION,
-	// 	credentials: {
-	// 		accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
-	// 		secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
-	// 	},
-	// });
-
 	// Upload to S3
-	const uploadToS3 = async (file: File): Promise<ProductImage> => {
-		try {
-			// Generate presigned URL
-			const { uploadUrl, fileName, publicS3Url, key } =
-				await generatePresignedUrl({ file, storeId });
+	const uploadToS3 = useCallback(
+		async (file: File): Promise<ProductImage> => {
+			try {
+				// Generate presigned URL
+				const { uploadUrl, publicS3Url, key, mediaId } =
+					await generatePresignedUrl({ file, storeId });
 
-			// Upload file directly to S3 using the presigned URL
-			const response = await fetch(uploadUrl, {
-				method: 'PUT',
-				body: file,
-				headers: {
-					'Content-Type': file.type,
-				},
-			});
+				// Upload file directly to S3 using the presigned URL
+				const response = await fetch(uploadUrl, {
+					method: 'PUT',
+					body: file,
+					headers: {
+						'Content-Type': file.type,
+					},
+				});
 
-			if (!response.ok) {
-				throw new Error('Failed to upload file to S3');
+				if (!response.ok) {
+					throw new Error('Failed to upload file to S3');
+				}
+
+				return {
+					mediaId,
+					url: publicS3Url,
+					index: 0,
+					key,
+				};
+			} catch (error) {
+				console.error('S3 Upload Error:', error);
+				throw error;
 			}
-
-			// Get the public URL
-			// const s3Url = `https://${aws_s3_config.bucket}.s3.${aws_s3_config.region}.amazonaws.com/products/${fileName}`;
-
-			return {
-				id: fileName,
-				url: publicS3Url,
-				name: file.name,
-				isFeatured: false,
-				key,
-			};
-		} catch (error) {
-			console.error('S3 Upload Error:', error);
-			throw error;
-		}
-	};
+		},
+		[storeId]
+	);
 
 	const onDrop = useCallback(
 		async (acceptedFiles: File[]) => {
@@ -88,7 +78,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 			}
 
 			// Check if adding these would exceed max images
-			if (images.length + imageFiles.length > maxImages) {
+			if (media.length + imageFiles.length > maxImages) {
 				toast.error(`You can upload a maximum of ${maxImages} images`);
 				return;
 			}
@@ -100,13 +90,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 				const uploadPromises = imageFiles.map((file) => uploadToS3(file));
 				const uploadedImages = await Promise.all(uploadPromises);
 
-				// Set the first image as featured if there are no images yet
-				if (images.length === 0 && uploadedImages.length > 0) {
-					uploadedImages[0].isFeatured = true;
-				}
-
 				// Add new images to the existing array
-				onChange([...images, ...uploadedImages]);
+				onChange([...media, ...uploadedImages]);
 
 				toast.success(
 					`${uploadedImages.length} image${uploadedImages.length > 1 ? 's' : ''} uploaded successfully`
@@ -118,7 +103,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 				setIsUploading(false);
 			}
 		},
-		[images, onChange, maxImages]
+		[maxImages, media, onChange, uploadToS3]
 	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -126,28 +111,28 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 		accept: {
 			'image/*': [],
 		},
-		disabled: isUploading || images.length >= maxImages,
+		disabled: isUploading || media.length >= maxImages,
 	});
 
-	const removeImage = (id: string) => {
-		const Id = images.find((image) => image.id === id)!.key;
+	const removeImage = (id: number) => {
+		const Id = media.find((image) => image.mediaId === id)!.key;
 		deleteObject(Id);
-		onChange(images.filter((image) => image.id !== id));
+		onChange(media.filter((image) => image.mediaId !== id));
 	};
 
-	const setFeaturedImage = (id: string) => {
-		onChange(
-			images.map((image) => ({
-				...image,
-				isFeatured: image.id === id,
-			}))
-		);
-	};
+	// const setFeaturedImage = (id: string) => {
+	// 	onChange(
+	// 		media.map((image) => ({
+	// 			...image,
+	// 			isFeatured: image.mediaId === id,
+	// 		}))
+	// 	);
+	// };
 
 	const moveImage = (from: number, to: number) => {
-		if (to < 0 || to >= images.length) return;
+		if (to < 0 || to >= media.length) return;
 
-		const newImages = [...images];
+		const newImages = [...media];
 		const [movedImage] = newImages.splice(from, 1);
 		newImages.splice(to, 0, movedImage);
 		onChange(newImages);
@@ -162,7 +147,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 					isDragActive
 						? 'border-primary bg-primary/5'
 						: 'hover:border-primary border-gray-300',
-					isUploading || images.length >= maxImages
+					isUploading || media.length >= maxImages
 						? 'cursor-not-allowed opacity-50'
 						: ''
 				)}
@@ -175,7 +160,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 							? 'Drop the files here...'
 							: isUploading
 								? 'Uploading...'
-								: images.length >= maxImages
+								: media.length >= maxImages
 									? `Maximum ${maxImages} images reached`
 									: 'Drag & drop images, or click to select'}
 					</p>
@@ -209,88 +194,87 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 				</div>
 			)}
 
-			{images.length > 0 && (
+			{media.length > 0 && (
 				<div className="space-y-3">
 					<div className="flex items-center justify-between text-sm font-medium">
 						<span>Product Images</span>
 						<span className="text-xs text-gray-500">
-							{images.length} of {maxImages}
+							{media.length} of {maxImages}
 						</span>
 					</div>
 
-					<motion.div
-						className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
-						layout
-					>
+					<motion.section className="w-full" layout>
 						<AnimatePresence>
-							{images.map((image, index) => (
-								<motion.div
-									key={image.id}
-									initial={{ opacity: 0, scale: 0.8 }}
-									animate={{ opacity: 1, scale: 1 }}
-									exit={{ opacity: 0, scale: 0.8 }}
-									layout
-									className="group relative aspect-square overflow-hidden rounded-md border"
-								>
-									<img
-										src={image.url}
-										alt={image.name}
-										className="h-full w-full object-cover"
-									/>
+							<section className="grid grid-cols-2 grid-rows-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+								{media.map((image, index) => (
+									<motion.div
+										key={image.mediaId}
+										initial={{ opacity: 0, scale: 0.8 }}
+										animate={{ opacity: 1, scale: 1 }}
+										exit={{ opacity: 0, scale: 0.8 }}
+										layout
+										className={`${index === 0 ? 'col-span-2 row-span-2' : ''} group relative aspect-square overflow-hidden rounded-md border`}
+									>
+										<img
+											src={image.url}
+											alt={image.key}
+											className="h-full w-full object-cover"
+										/>
 
-									{/* Badge for featured image */}
-									{image.isFeatured && (
+										{/* Badge for featured image */}
+										{/* {image.isFeatured && (
 										<div className="bg-primary absolute top-2 left-2 rounded-full px-2 py-1 text-xs text-white">
-											Featured
+										Featured
 										</div>
-									)}
+									)} */}
 
-									{/* Overlay with controls */}
-									<div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-										<div className="flex space-x-2">
-											{!image.isFeatured && (
+										{/* Overlay with controls */}
+										<div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+											<div className="flex space-x-2">
+												{/* {!image.isFeatured && (
+													<Button
+														size="sm"
+														variant="secondary"
+														onClick={() => setFeaturedImage(image.mediaId)}
+														className="text-xs"
+													>
+														Set as Featured
+													</Button>
+												)} */}
+												<Button
+													size="sm"
+													variant="destructive"
+													onClick={() => removeImage(image.mediaId)}
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</div>
+											<div className="absolute bottom-2 flex w-full justify-between px-2">
 												<Button
 													size="sm"
 													variant="secondary"
-													onClick={() => setFeaturedImage(image.id)}
-													className="text-xs"
+													className="h-8 w-8 p-0"
+													onClick={() => moveImage(index, index - 1)}
+													disabled={index === 0}
 												>
-													Set as Featured
+													<ChevronLeft className="h-4 w-4" />
 												</Button>
-											)}
-											<Button
-												size="sm"
-												variant="destructive"
-												onClick={() => removeImage(image.id)}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
+												<Button
+													size="sm"
+													variant="secondary"
+													className="h-8 w-8 p-0"
+													onClick={() => moveImage(index, index + 1)}
+													disabled={index === media.length - 1}
+												>
+													<ChevronRight className="h-4 w-4" />
+												</Button>
+											</div>
 										</div>
-										<div className="absolute bottom-2 flex w-full justify-between px-2">
-											<Button
-												size="sm"
-												variant="secondary"
-												className="h-8 w-8 p-0"
-												onClick={() => moveImage(index, index - 1)}
-												disabled={index === 0}
-											>
-												<ChevronLeft className="h-4 w-4" />
-											</Button>
-											<Button
-												size="sm"
-												variant="secondary"
-												className="h-8 w-8 p-0"
-												onClick={() => moveImage(index, index + 1)}
-												disabled={index === images.length - 1}
-											>
-												<ChevronRight className="h-4 w-4" />
-											</Button>
-										</div>
-									</div>
-								</motion.div>
-							))}
+									</motion.div>
+								))}
+							</section>
 						</AnimatePresence>
-					</motion.div>
+					</motion.section>
 				</div>
 			)}
 		</div>

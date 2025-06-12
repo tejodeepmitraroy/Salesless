@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
@@ -13,6 +13,8 @@ import {
 	Phone,
 	Image,
 	PanelsTopLeft,
+	Boxes,
+	LibraryBig,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -23,7 +25,7 @@ import { Button } from '../ui/button';
 
 const sidebarVariants = {
 	open: { width: '18rem', x: 0 },
-	closed: { width: '4rem', x: 0 },
+	closed: { width: '6.5rem', x: 0 },
 };
 
 const SidebarLinks = [
@@ -33,6 +35,7 @@ const SidebarLinks = [
 		href: '/',
 		active: false,
 		collapsed: false,
+		subLinks: [],
 	},
 	{
 		icon: LayoutDashboard,
@@ -40,13 +43,7 @@ const SidebarLinks = [
 		href: '/dashboard',
 		active: false,
 		collapsed: false,
-	},
-	{
-		icon: Package,
-		label: 'Products',
-		href: '/products',
-		active: false,
-		collapsed: false,
+		subLinks: [],
 	},
 	{
 		icon: ShoppingCart,
@@ -54,33 +51,113 @@ const SidebarLinks = [
 		href: '/orders',
 		active: false,
 		collapsed: false,
+		subLinks: [],
 	},
 	{
 		icon: Package,
-		label: 'Inventory',
-		href: '/inventory',
+		label: 'Products',
+		href: '/products',
 		active: false,
 		collapsed: false,
+		subLinks: [
+			{
+				icon: LibraryBig,
+				label: 'Collections',
+				href: '/collections',
+				active: false,
+				collapsed: false,
+			},
+			{
+				icon: Boxes,
+				label: 'Inventory',
+				href: '/inventory',
+				active: false,
+				collapsed: false,
+			},
+		],
 	},
-	// {
-	// 	icon: Users,
-	// 	label: 'Vendors',
-	// 	href: '/vendors',
-	// 	active: false,
-	// 	collapsed: false,
-	// },
+
 	{
 		icon: User,
 		label: 'Customers',
 		href: '/customers',
 		active: false,
 		collapsed: false,
+		subLinks: [
+			{
+				icon: User,
+				label: 'Customers',
+				href: '/customers',
+				active: false,
+				collapsed: false,
+			},
+		],
 	},
 
 	{
 		icon: Image,
 		label: 'Media Store',
 		href: '/media',
+		active: false,
+		collapsed: false,
+		subLinks: [
+			{
+				icon: Image,
+				label: 'Media Store',
+				href: '/media',
+				active: false,
+				collapsed: false,
+			},
+		],
+	},
+];
+
+const salesChannels = [
+	{
+		icon: Store,
+		label: 'Website',
+		href: '#',
+		active: false,
+		collapsed: false,
+		subLinks: [],
+	},
+	{
+		icon: SignpostBig,
+		label: 'POS',
+		href: '#',
+		active: false,
+		collapsed: false,
+		subLinks: [],
+	},
+	{
+		icon: Phone,
+		label: 'WhatsApp',
+		href: '#',
+		active: false,
+		collapsed: false,
+		subLinks: [],
+	},
+];
+
+const mainLinks = [
+	{
+		icon: Bell,
+		label: 'Notifications',
+		href: '#',
+		active: false,
+		collapsed: false,
+	},
+	{
+		icon: Settings,
+		label: 'Settings',
+		href: '/settings',
+		active: false,
+		collapsed: false,
+	},
+	{
+		icon: LogOut,
+		label: 'Logout',
+		href: '/logout',
 		active: false,
 		collapsed: false,
 	},
@@ -90,7 +167,6 @@ const Sidebar: React.FC<{
 	sidebarOpen: boolean;
 	toggleSidebar: () => void;
 }> = ({ sidebarOpen, toggleSidebar }) => {
-	const location = useLocation();
 	const { storeId } = useParams<{ storeId: string }>();
 
 	return (
@@ -101,81 +177,66 @@ const Sidebar: React.FC<{
 			className={cn(
 				// 'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r px-3 py-2 md:h-[calc(100vh-4rem)]',
 				'fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-3 md:h-[calc(100dvh)]',
-				sidebarOpen ? 'w-[18rem]' : 'w-[4rem] md:w-[4rem]'
+				sidebarOpen ? 'w-[18rem]' : 'w-[6rem]'
 			)}
 		>
 			<div className="from-primary/10 hidden h-full w-full rounded-lg bg-gradient-to-r to-gray-100 p-3 md:block md:p-4">
-				<section className="flex w-full items-center justify-between px-2">
+				<section
+					className={` ${sidebarOpen ? 'flex-row px-2' : 'flex-col'} flex w-full items-center justify-between`}
+				>
 					<Link
 						to={`/store/${storeId}`}
 						className="my-3 flex items-center gap-4"
 					>
 						<img src="/icons/logo.png" alt="" className="h-8 w-8 rounded-lg" />
-						<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
-							Salesless
-						</span>
+						{sidebarOpen && (
+							<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
+								Salesless
+							</span>
+						)}
 					</Link>
 
 					<Button onClick={() => toggleSidebar()} size="icon" variant="ghost">
 						<PanelsTopLeft />
 					</Button>
 				</section>
-				<nav className="space-y-1">
+				<nav className="mt-3 space-y-1">
 					{SidebarLinks.map((link) => (
 						<SidebarItem
 							key={link.label}
 							icon={link.icon}
 							label={link.label}
-							href={`/store/${storeId}${link.href}`}
-							active={location.pathname === `/store/${storeId}${link.href}`}
+							href={link.href}
+							collapsed={!sidebarOpen}
+							subLinks={link.subLinks}
+						/>
+					))}
+					<Separator className="my-3 md:my-4" />
+					{sidebarOpen && <Label className="mx-3 my-2">Sales Channels</Label>}
+
+					{salesChannels.map((link) => (
+						<SidebarItem
+							key={link.label}
+							icon={link.icon}
+							label={link.label}
+							href={link.href}
+							collapsed={!sidebarOpen}
+							subLinks={link.subLinks}
+						/>
+					))}
+
+					<Separator className="my-3 md:my-4" />
+					{sidebarOpen && <Label className="mx-3 my-2">Main</Label>}
+					{mainLinks.map((link) => (
+						<SidebarItem
+							key={link.label}
+							icon={link.icon}
+							label={link.label}
+							href={link.href}
 							collapsed={!sidebarOpen}
 						/>
 					))}
 				</nav>
-
-				<Separator className="my-3 md:my-4" />
-				<Label className="mx-3 my-2">Sales Channels</Label>
-
-				<SidebarItem
-					icon={Store}
-					label="Website"
-					href="#"
-					collapsed={!sidebarOpen}
-				/>
-				<SidebarItem
-					icon={SignpostBig}
-					label="POS"
-					href="#"
-					collapsed={!sidebarOpen}
-				/>
-				<SidebarItem
-					icon={Phone}
-					label="WhatsApp"
-					href="#"
-					collapsed={!sidebarOpen}
-				/>
-				<Separator className="my-3 md:my-4" />
-				<Label className="mx-3 my-2">Main</Label>
-				<SidebarItem
-					icon={Bell}
-					label="Notifications"
-					href={`/store/${storeId}/notifications`}
-					active={location.pathname === `/store/${storeId}/notifications`}
-					collapsed={!sidebarOpen}
-				/>
-				<SidebarItem
-					icon={Settings}
-					label="Settings"
-					href={`/store/${storeId}/settings`}
-					active={location.pathname === `/store/${storeId}/settings`}
-					collapsed={!sidebarOpen}
-				/>
-				<SidebarItem
-					icon={LogOut}
-					label="Logout"
-					href="#"
-					collapsed={!sidebarOpen}
-				/>
 			</div>
 			{/* <Sheet>
 				<SheetTrigger>Open</SheetTrigger>

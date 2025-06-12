@@ -41,13 +41,16 @@ function App() {
 		() => import('./pages/app/Orders/OrderManagement')
 	);
 	const InventoryManagement = React.lazy(
-		() => import('./pages/app/Inventory/InventoryManagement')
+		() => import('./pages/app/Products/Inventory/InventoryManagement')
 	);
 	const Notifications = React.lazy(
 		() => import('./pages/settings/notifications/Notifications')
 	);
 	const CustomerManagement = React.lazy(
 		() => import('./pages/app/Customer/CustomerManagement')
+	);
+	const CollectionManagement = React.lazy(
+		() => import('./pages/app/Products/Collections/CollectionManagement')
 	);
 
 	const Loading = () => (
@@ -143,21 +146,41 @@ function App() {
 								}
 							/>
 							<Route
-								path="/store/:storeId/orders"
+								path="/store/:storeId/products/collections"
 								element={
 									<ProtectedRoute>
 										<AdminLayout>
-											<OrderManagement />
+											<CollectionManagement />
 										</AdminLayout>
 									</ProtectedRoute>
 								}
 							/>
 							<Route
-								path="/store/:storeId/inventory"
+								path="/store/:storeId/products/inventory"
 								element={
 									<ProtectedRoute>
 										<AdminLayout>
 											<InventoryManagement />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/products/inventory"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<InventoryManagement />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/orders"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<OrderManagement />
 										</AdminLayout>
 									</ProtectedRoute>
 								}

@@ -7,6 +7,7 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { store } from './store';
+import { productMedia } from './product';
 
 export const media = pgTable('media', {
 	id: serial('id').primaryKey(),
@@ -27,5 +28,9 @@ export const mediaRelations = relations(media, ({ one }) => ({
 	store: one(store, {
 		fields: [media.storeId],
 		references: [store.id],
+	}),
+	productMedia: one(productMedia, {
+		fields: [media.id],
+		references: [productMedia.mediaId],
 	}),
 }));

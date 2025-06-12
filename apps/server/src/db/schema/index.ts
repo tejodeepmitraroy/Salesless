@@ -1,5 +1,18 @@
-export { customer, user, customerAddress, customerRelations } from './user';
-export { role, permissions, rolePermissions, roleRelations } from './role';
+export {
+	user,
+	customer,
+	userRelations,
+	customerRelations,
+	customerAddress,
+	customerAddressRelations,
+} from './user';
+export {
+	role,
+	roleRelations,
+	rolePermissionRelations,
+	permissions,
+	rolePermissions,
+} from './role';
 export {
 	store,
 	userStore,
@@ -10,18 +23,32 @@ export {
 } from './store';
 export {
 	product,
+	productOptions,
+	productOptionsValues,
 	productVariant,
 	productMetadata,
 	productRelations,
+	productOptionsRelations,
+	productOptionsValuesRelations,
 	productVariantRelations,
 	productMetadataRelations,
+	productMedia,
+	productMediaRelation,
+	statusEnum,
 } from './product';
+export { category, categoryRelations } from './category';
 export {
-	category,
-	productToCategory,
-	productToCategoryRelations,
-} from './category';
-export { cart, cartItems, cartRelations } from './cart';
-export { order, orderItems, orderRelations } from './order';
+	collection,
+	collectionRelations,
+	productToCollection,
+	productToCollectionRelations,
+} from './collection';
+export { cart, cartItems, cartRelations, cartItemsRelations } from './cart';
+export {
+	order,
+	orderItems,
+	orderRelations,
+	orderItemsRelations,
+} from './order';
 export { transaction, transactionRelations } from './transaction';
 export { media, mediaRelations } from './media';

@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Product } from '@/stores/product-store';
-import { ProductImage } from '@/features/Products/schema';
+import { Product, ProductMedia } from '@/stores/product-store';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Package } from 'lucide-react';
@@ -35,7 +34,7 @@ export const productColumns: ColumnDef<Product>[] = [
 		accessorKey: 'title',
 		header: () => <div className="text-left">Product</div>,
 		cell: ({ row }) => {
-			const images = row.original.images as ProductImage[];
+			const images = row.original.media as ProductMedia[];
 			return (
 				<div className="flex items-center gap-2 text-left font-medium">
 					{images?.length > 0 ? (

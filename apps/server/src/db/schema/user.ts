@@ -63,7 +63,6 @@ export const customerRelations = relations(customer, ({ many }) => ({
 	customerStores: many(customerStore),
 	carts: many(cart),
 }));
-
 export const customerAddress = pgTable('customer_address', {
 	id: serial('id').primaryKey(),
 	customerId: integer('customer_id')

@@ -90,8 +90,8 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 	};
 
 	return (
-		<div className="space-y-4">
-			<div className="flex items-center justify-between">
+		<section className="space-y-4">
+			<section className="flex items-center justify-between">
 				<h3 className="text-sm font-medium">Product Variants</h3>
 				<Button
 					type="button"
@@ -102,7 +102,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 				>
 					<Plus className="h-3 w-3" /> Add Variant
 				</Button>
-			</div>
+			</section>
 
 			{variants.length === 0 ? (
 				<p className="text-muted-foreground text-sm">
@@ -110,9 +110,9 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 					options like sizes or colors.
 				</p>
 			) : (
-				<div className="space-y-6">
+				<section className="space-y-6">
 					{variants.map((variant) => (
-						<div
+						<section
 							key={variant.id}
 							className="relative space-y-4 rounded-md border p-4"
 						>
@@ -126,7 +126,7 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 								<X className="h-4 w-4" />
 							</Button>
 
-							<div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+							<section className="grid grid-cols-1 gap-4 md:grid-cols-3">
 								<div>
 									<label className="mb-1 block text-xs font-medium">
 										Price (Optional)
@@ -176,9 +176,9 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 										}
 									/>
 								</div>
-							</div>
+							</section>
 
-							<div className="space-y-2">
+							<section className="space-y-2">
 								<div className="flex items-center justify-between">
 									<label className="text-xs font-medium">Attributes</label>
 									<Button
@@ -243,12 +243,12 @@ const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
 										))}
 									</div>
 								)}
-							</div>
-						</div>
+							</section>
+						</section>
 					))}
-				</div>
+				</section>
 			)}
-		</div>
+		</section>
 	);
 };
 

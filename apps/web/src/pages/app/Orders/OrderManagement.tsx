@@ -280,22 +280,22 @@ const OrderManagement = () => {
 				<div className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 					<TabsList className="bg-background grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">
 						<TabsTrigger className=" " value="all">
-							All Orders
+							All Orders (32)
 						</TabsTrigger>
 						<TabsTrigger className="" value="pending">
-							Pending
+							Pending (2)
 						</TabsTrigger>
 						<TabsTrigger className="" value="processing">
-							Processing
+							Processing (1)
 						</TabsTrigger>
 						<TabsTrigger className="" value="shipped">
-							Shipped
+							Shipped (1)
 						</TabsTrigger>
 						<TabsTrigger className="" value="delivered">
-							Delivered
+							Delivered (1)
 						</TabsTrigger>
 						<TabsTrigger className="" value="cancelled">
-							Cancelled
+							Cancelled (1)
 						</TabsTrigger>
 					</TabsList>
 					<section className="flex w-fit items-center gap-2">

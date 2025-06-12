@@ -86,17 +86,21 @@ const LoginPage = () => {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-			<Card className="w-full max-w-md">
-				<CardHeader className="space-y-1">
-					<CardTitle className="text-center text-2xl font-bold">
-						<span className="text-primary">Vendor</span>
-						<span className="text-vsphere-dark">Sphere</span>
-					</CardTitle>
-					<CardDescription className="text-center">
+			<Card className="w-full max-w-md py-10">
+				<CardHeader className="px-10">
+					<section className="mb-5 flex items-center gap-2">
+						<img
+							src="/icons/logo.png"
+							alt=""
+							className="border-primary h-10 w-10 rounded-lg border"
+						/>
+					</section>
+					<CardTitle className="text-left text-2xl font-bold">Login</CardTitle>
+					<CardDescription className="text-left">
 						Enter your credentials to access your account
 					</CardDescription>
 				</CardHeader>
-				<CardContent>
+				<CardContent className="px-10">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
 							<FormField
@@ -178,7 +182,7 @@ const LoginPage = () => {
 						</form>
 					</Form>
 				</CardContent>
-				<CardFooter className="flex flex-col space-y-2">
+				<CardFooter className="flex flex-col space-y-2 px-10">
 					<div className="text-center text-sm">
 						Don't have an account?{' '}
 						<Link to="/signup" className="text-primary hover:underline">

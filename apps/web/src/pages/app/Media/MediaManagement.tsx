@@ -48,19 +48,16 @@ const MediaManagement = () => {
 				throw new Error('Failed to upload file to S3');
 			}
 
-			// return {
-			// 	id: fileName,
-			// 	url: publicS3Url,
-			// 	name: file.name,
-			// 	isFeatured: false,
-			// 	key,
-			// };
 			return { url: publicS3Url };
 		} catch (error) {
 			console.error('S3 Upload Error:', error);
 			throw error;
 		}
 	};
+	const { data: mediaContents, refetch } = useQuery({
+		queryKey: ['mediaContents', storeId],
+		queryFn: () => getAllMediaFiles({ storeId: storeId! }),
+	});
 
 	const uploadFile = () => {
 		console.log('Upload file');
@@ -77,6 +74,7 @@ const MediaManagement = () => {
 				for (const file of fileArray) {
 					uploadToS3(file).then((result) => {
 						console.log(result);
+						refetch();
 					});
 				}
 			}
@@ -84,15 +82,11 @@ const MediaManagement = () => {
 		fileInput.click();
 	};
 
-	const { data: mediaContents } = useQuery({
-		queryKey: ['mediaContents', storeId],
-		queryFn: () => getAllMediaFiles({ storeId: storeId! }),
-	});
 	useEffect(() => {
 		if (mediaContents) {
 			setMediaObjects(mediaContents);
 		}
-	}, [mediaContents]);
+	}, [mediaContents, refetch]);
 
 	return (
 		<section>

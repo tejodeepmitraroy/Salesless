@@ -10,15 +10,8 @@ export const createProductService = async (formData: any) => {
 };
 
 export const getAllProducts = async ({ storeId }: { storeId: string }) => {
-	// const token = getToken();
-
-	const response = await customAxios.get(`/products/?storeId=${storeId}`, {
-		// headers: {
-		// 	Authorization: `Bearer ${token}`,
-		// 	'Content-Type': 'application/json',
-		// },
-	});
-	return response;
+	const response = await customAxios.get(`/products/?storeId=${storeId}`);
+	return response.data.data;
 };
 
 export const getProductByIdService = async ({
@@ -26,15 +19,8 @@ export const getProductByIdService = async ({
 }: {
 	productId: string;
 }) => {
-	// const token = getToken();
-
-	const response = await customAxios.get(`/products/${productId}`, {
-		// headers: {
-		// 	Authorization: `Bearer ${token}`,
-		// 	'Content-Type': 'application/json',
-		// },
-	});
-	return response;
+	const response = await customAxios.get(`/products/${productId}`);
+	return response.data.data;
 };
 
 export const updateProductService = async ({
@@ -44,13 +30,39 @@ export const updateProductService = async ({
 	productId: number;
 	formData: any;
 }) => {
-	// const token = getToken();
+	const response = await customAxios.put(`/products/${productId}`, formData);
+	return response.data.data;
+};
 
-	const response = await customAxios.put(`/products/${productId}`, formData, {
-		// headers: {
-		// 	Authorization: `Bearer ${token}`,
-		// 	'Content-Type': 'application/json',
-		// },
-	});
-	return response;
+export const deleteProductService = async ({
+	productId,
+}: {
+	productId: number;
+}) => {
+	const response = await customAxios.delete(`/products/${productId}`);
+	return response.data.data;
+};
+
+///Categories
+export const createCategoryService = async (formData: any) => {
+	const response = await customAxios.post(
+		`${import.meta.env.VITE_API_ENDPOINT_URL}/categories`,
+		formData
+	);
+	return response.data.data;
+};
+
+export const getAllCategoriesService = async (): Promise<
+	{
+		id: number;
+		name: string;
+		slug: string;
+		description: string;
+		parentId: number | null;
+		createdAt: string;
+		updatedAt: string;
+	}[]
+> => {
+	const response = await customAxios.get(`/category`);
+	return response.data.data;
 };

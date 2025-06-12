@@ -206,9 +206,11 @@ const AppLauncher: React.FC = () => {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 			>
-				<h1 className="mb-2 text-3xl font-bold">App Launcher</h1>
+				<h1 className="mb-2 text-3xl font-bold">
+					Welcome back, Tejode Fashion
+				</h1>
 				<p className="text-muted-foreground">
-					Access all VendorSphere admin applications in one place
+					Access all SalesLess applications in one place
 				</p>
 			</motion.div>
 
