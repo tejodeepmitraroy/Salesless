@@ -26,25 +26,26 @@ export const loginService = async ({
 };
 
 export const signUpService = async ({
+	firstName,
+	lastName,
 	email,
 	password,
-	name,
-	mobile,
 	confirmPassword,
 }: {
 	email: string;
 	password: string;
-	name: string;
-	mobile: string;
+	firstName: string;
+	lastName: string;
+
 	confirmPassword: string;
 }) => {
 	const response = await customAxios.post(
-		`/auth/user/register`,
+		`/user/register`,
 		{
 			email,
+			firstName,
+			lastName,
 			password,
-			name,
-			mobile,
 			confirmPassword,
 		},
 		{

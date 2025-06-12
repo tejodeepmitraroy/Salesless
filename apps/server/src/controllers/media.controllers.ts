@@ -29,7 +29,7 @@ export const uploadFileToS3 = asyncHandler(
 
 		console.log(contentType);
 		try {
-			const { uploadUrl, fileName, publicS3Url, key } = await uploadToS3({
+			const { uploadUrl, publicS3Url, key } = await uploadToS3({
 				fileName: uploadFileName,
 				contentType,
 			});
@@ -48,11 +48,10 @@ export const uploadFileToS3 = asyncHandler(
 			response.status(200).json(
 				new ApiResponse(200, {
 					uploadUrl,
-					fileName,
-					contentType,
-					publicS3Url,
-					key,
-					storedObject,
+					fileName: storedObject.fileName,
+					publicS3Url: storedObject.url,
+					key: storedObject.key,
+					mediaId: storedObject.id,
 				})
 			);
 		} catch (error) {

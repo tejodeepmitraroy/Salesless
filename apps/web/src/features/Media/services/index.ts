@@ -12,10 +12,10 @@ export const generatePresignedUrl = async ({
 	fileName: string;
 	publicS3Url: string;
 	key: string;
+	mediaId: number;
 }> => {
 	try {
 		const token = getToken();
-
 		const response = await customAxios.post(
 			`/media/upload-url?storeId=${storeId}`,
 			{
@@ -33,11 +33,11 @@ export const generatePresignedUrl = async ({
 		if (response.status !== 200) {
 			throw new Error('Failed to generate upload URL');
 		}
-		const { uploadUrl, fileName, publicS3Url, key } = response.data.data;
-		return { uploadUrl, fileName, publicS3Url, key };
+		const { uploadUrl, fileName, publicS3Url, key, mediaId } =
+			response.data.data;
+		return { uploadUrl, fileName, publicS3Url, key, mediaId };
 	} catch (error) {
 		console.error('Error generating presigned URL:', error);
-
 		throw error;
 	}
 };

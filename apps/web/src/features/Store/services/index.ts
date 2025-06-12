@@ -27,7 +27,7 @@ export const createStoreService = async ({
 	country: string;
 	address: string;
 	phone: string;
-}) => {
+}): Promise<{ id: string }> => {
 	const token = getToken();
 
 	const response = await customAxios.post(
@@ -47,7 +47,7 @@ export const createStoreService = async ({
 			},
 		}
 	);
-	return response;
+	return response.data.data;
 };
 
 export const getStoreDetails = async ({ storeId }: { storeId: string }) => {

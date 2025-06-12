@@ -5,7 +5,6 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
@@ -49,7 +48,7 @@ const CreateStore: React.FC = () => {
 			// Simulate API call
 			// await new Promise((resolve) => setTimeout(resolve, 1500));
 
-			await createStoreService({
+			const store = await createStoreService({
 				name: values.storeName,
 				description: values.storeDescription,
 				type: values.storeType,
@@ -62,7 +61,7 @@ const CreateStore: React.FC = () => {
 				description: `${values.storeName} has been created successfully!`,
 			});
 
-			navigate('/admin');
+			navigate(`/store/${store.id}`);
 		} catch (error) {
 			console.error('Error creating store:', error);
 			toast('Error creating store', {
@@ -85,30 +84,37 @@ const CreateStore: React.FC = () => {
 				transition={{ duration: 0.5 }}
 				className="w-full max-w-lg"
 			>
-				<div className="mb-6 text-center">
+				{/* <div className="mb-6 text-center">
 					<h1 className="mb-2 text-3xl font-bold">
 						<span className="text-primary">Vendor</span>
 						<span className="text-vsphere-dark">Sphere</span>
 					</h1>
 					<p className="text-lg text-gray-600">Create your new store</p>
-				</div>
+				</div> */}
 
-				<Card>
-					<CardHeader>
-						<div className="mb-3 flex items-center">
-							<div className="bg-primary/10 mr-3 flex h-10 w-10 items-center justify-center rounded-full">
-								<Store className="text-primary h-5 w-5" />
-							</div>
-							<div>
-								<CardTitle>Store Details</CardTitle>
-								<CardDescription>Set up your store information</CardDescription>
-							</div>
-						</div>
+				<Card className="w-full max-w-md py-10">
+					<CardHeader className="px-10">
+						<section className="mb-5 flex items-center gap-2">
+							<img
+								src="/icons/logo.png"
+								alt=""
+								className="border-primary h-10 w-10 rounded-lg border"
+							/>
+						</section>
+						<CardTitle className="flex items-center gap-2 text-left text-2xl font-bold">
+							<Store /> Create Store
+						</CardTitle>
+						<CardDescription className="text-left">
+							Create a new store
+						</CardDescription>
 					</CardHeader>
 
-					<Form {...form}>
-						<form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-							<CardContent className="space-y-6">
+					<CardContent className="px-10">
+						<Form {...form}>
+							<form
+								onSubmit={form.handleSubmit(onSubmit)}
+								className="space-y-6"
+							>
 								<FormField
 									control={form.control}
 									name="storeName"
@@ -166,21 +172,25 @@ const CreateStore: React.FC = () => {
 										</FormItem>
 									)}
 								/>
-							</CardContent>
-							<CardFooter className="flex justify-between">
-								<Button type="button" variant="outline" onClick={handleCancel}>
-									Cancel
-								</Button>
-								<Button
-									type="submit"
-									disabled={isLoading}
-									className="bg-primary hover:bg-primary/90"
-								>
-									{isLoading ? 'Creating...' : 'Create Store'}
-								</Button>
-							</CardFooter>
-						</form>
-					</Form>
+								<section className="flex justify-between">
+									<Button
+										type="button"
+										variant="outline"
+										onClick={handleCancel}
+									>
+										Cancel
+									</Button>
+									<Button
+										type="submit"
+										disabled={isLoading}
+										className="bg-primary hover:bg-primary/90"
+									>
+										{isLoading ? 'Creating...' : 'Create Store'}
+									</Button>
+								</section>
+							</form>
+						</Form>
+					</CardContent>
 				</Card>
 			</motion.div>
 		</div>

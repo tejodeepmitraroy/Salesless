@@ -9,7 +9,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,9 +30,9 @@ const SignupPage = () => {
 	const form = useForm({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {
-			name: '',
+			firstName: '',
+			lastName: '',
 			email: '',
-			mobile: '',
 			password: '',
 			confirmPassword: '',
 		},
@@ -68,44 +67,30 @@ const SignupPage = () => {
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-			<Card className="w-full max-w-md">
-				<CardHeader className="space-y-1">
-					<CardTitle className="text-center text-2xl font-bold">
-						<span className="text-primary">Vendor</span>
-						<span className="text-vsphere-dark">Sphere</span>
+			<Card className="w-full max-w-md py-10">
+				<CardHeader className="px-10">
+					<section className="mb-5 flex items-center gap-2">
+						<img
+							src="/icons/logo.png"
+							alt=""
+							className="border-primary h-10 w-10 rounded-lg border"
+						/>
+					</section>
+					<CardTitle className="text-left text-2xl font-bold">
+						Create a Salesless account
 					</CardTitle>
-					<CardDescription className="text-center">
-						Create a new employee account
+					<CardDescription className="text-left">
+						Create a new Salesless account
 					</CardDescription>
 				</CardHeader>
-				<CardContent>
+				<CardContent className="px-10">
 					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem className="space-y-2">
-										<FormLabel htmlFor="name">Full Name</FormLabel>
-										<FormControl>
-											<Input
-												id="name"
-												type="text"
-												placeholder="John Doe"
-												{...field}
-												required
-											/>
-										</FormControl>
-
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
 							<FormField
 								control={form.control}
 								name="email"
 								render={({ field }) => (
-									<FormItem className="space-y-2">
+									<FormItem className="space-y-1">
 										<FormLabel htmlFor="email">Email</FormLabel>
 										<FormControl>
 											<Input
@@ -120,30 +105,53 @@ const SignupPage = () => {
 									</FormItem>
 								)}
 							/>
-							<FormField
-								control={form.control}
-								name="mobile"
-								render={({ field }) => (
-									<FormItem className="space-y-2">
-										<FormLabel htmlFor="mobile">Mobile Number</FormLabel>
-										<FormControl>
-											<Input
-												id="mobile"
-												type="tel"
-												placeholder="john.doe@example.com"
-												{...field}
-												required
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+							<section className="flex w-full gap-2">
+								<FormField
+									control={form.control}
+									name="firstName"
+									render={({ field }) => (
+										<FormItem className="space-y-1">
+											<FormLabel htmlFor="firstName">First Name</FormLabel>
+											<FormControl>
+												<Input
+													id="name"
+													type="text"
+													placeholder="John Doe"
+													{...field}
+													required
+												/>
+											</FormControl>
+
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="lastName"
+									render={({ field }) => (
+										<FormItem className="space-y-1">
+											<FormLabel htmlFor="lastName">Last Name</FormLabel>
+											<FormControl>
+												<Input
+													id="name"
+													type="text"
+													placeholder="John Doe"
+													{...field}
+													required
+												/>
+											</FormControl>
+
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</section>
 							<FormField
 								control={form.control}
 								name="password"
 								render={({ field }) => (
-									<FormItem className="space-y-2">
+									<FormItem className="space-y-1">
 										<FormLabel htmlFor="password">Password</FormLabel>
 										<div className="relative">
 											<FormControl>
@@ -178,7 +186,7 @@ const SignupPage = () => {
 								control={form.control}
 								name="confirmPassword"
 								render={({ field }) => (
-									<FormItem className="space-y-2">
+									<FormItem className="space-y-1">
 										<FormLabel htmlFor="confirmPassword">
 											Confirm Password
 										</FormLabel>
@@ -227,12 +235,24 @@ const SignupPage = () => {
 						</form>
 					</Form>
 				</CardContent>
-				<CardFooter className="flex flex-col space-y-2">
+				<CardFooter className="flex flex-col space-y-2 px-10">
 					<div className="text-center text-sm">
 						Already have an account?{' '}
 						<Link to="/login" className="text-primary hover:underline">
 							Login
 						</Link>
+					</div>
+					<div className="mt-10">
+						<p className="text-left text-xs text-gray-500">
+							By proceeding, you agree to the{' '}
+							<Link to="/terms" className="text-primary hover:underline">
+								Terms and Conditions
+							</Link>{' '}
+							and{' '}
+							<Link to="/privacy" className="text-primary hover:underline">
+								Privacy Policy
+							</Link>
+						</p>
 					</div>
 				</CardFooter>
 			</Card>

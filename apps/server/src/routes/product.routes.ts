@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 import {
 	createProduct,
@@ -7,15 +6,15 @@ import {
 	getAllProducts,
 	getProductById,
 	updateProduct,
-} from '../controllers/product.controller';
+} from '../controllers/product.controllers';
 
 const router = Router();
 
 // Product routes
 router
 	.route('/')
-	.get(jwtAuthMiddleware, getAllProducts)
-	.post(jwtAuthMiddleware, createProduct);
+	.post(jwtAuthMiddleware, createProduct)
+	.get(jwtAuthMiddleware, getAllProducts);
 
 router
 	.route('/:productId')

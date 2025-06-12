@@ -10,9 +10,9 @@ import { relations } from 'drizzle-orm';
 import { user, customer } from './user';
 import { role } from './role';
 import { product } from './product';
-import { category } from './category';
 import { cart } from './cart';
 import { media } from './media';
+import { collection } from './collection';
 
 export const store = pgTable('store', {
 	id: serial('id').primaryKey(),
@@ -34,7 +34,7 @@ export const store = pgTable('store', {
 
 export const storeRelations = relations(store, ({ many }) => ({
 	products: many(product),
-	categories: many(category),
+	collections: many(collection),
 	carts: many(cart),
 	customerStores: many(customerStore),
 	userStore: many(userStore),

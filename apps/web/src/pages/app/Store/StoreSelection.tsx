@@ -63,28 +63,27 @@ const StoreSelection: React.FC = () => {
 				transition={{ duration: 0.5 }}
 				className="mx-auto w-full max-w-lg"
 			>
-				<Card className="w-full">
-					<CardHeader>
-						<CardTitle>
-							<h1 className="mb-2 text-3xl font-bold">
-								<span className="text-primary">Vendor</span>
-								<span className="text-vsphere-dark">Sphere</span>
-							</h1>
-						</CardTitle>
-						<CardDescription>
-							Welcome back, {user?.name}! Select a store to continue.
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<section className="flex w-full justify-end">
-							<Button
-								onClick={() => handleCreateStore()}
-								className="w-full px-6"
-							>
+				<Card className="h-[calc(100dvh-15rem)] w-full max-w-md py-10">
+					<CardHeader className="px-10">
+						<section className="mb-5 flex items-center gap-2">
+							<img
+								src="/icons/logo.png"
+								alt=""
+								className="border-primary h-10 w-10 rounded-lg border"
+							/>
+						</section>
+						<CardTitle className="flex w-full justify-between text-2xl font-bold">
+							Welcome back
+							<Button onClick={() => handleCreateStore()} className="px-6">
 								<span>Create Store</span>
 								<Plus className="ml-2 h-4 w-4" />
 							</Button>
-						</section>
+						</CardTitle>
+						<CardDescription className="text-left">
+							Select a store to continue.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="px-10">
 						<section className="mt-6 flex flex-col gap-4">
 							{data?.data?.data?.map((store: unknown) => (
 								<div

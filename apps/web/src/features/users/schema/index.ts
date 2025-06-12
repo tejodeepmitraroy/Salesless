@@ -11,18 +11,18 @@ export const forgotPasswordSchema = z.object({
 
 export const signUpSchema = z
 	.object({
-		name: z
+		firstName: z
 			.string()
-			.min(1, 'Name is required')
-			.min(2, 'Name must be at least 2 characters'),
+			.min(1, 'First name is required')
+			.min(2, 'First name must be at least 2 characters'),
+		lastName: z
+			.string()
+			.min(1, 'Last name is required')
+			.min(2, 'Last name must be at least 2 characters'),
 		email: z
 			.string()
 			.min(1, 'Email is required')
 			.email('Invalid email address'),
-		mobile: z
-			.string()
-			.min(1, 'Mobile is required')
-			.email('Invalid mobile address'),
 		password: z
 			.string()
 			.min(1, 'Password is required')

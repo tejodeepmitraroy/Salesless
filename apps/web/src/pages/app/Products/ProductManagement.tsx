@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Search, Plus, Download, ShoppingCart } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Product, useProductStore } from '@/stores/product-store';
+import { useProductStore } from '@/stores/product-store';
 import { exportToCSV } from '@/utils/exportUtils';
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router';
-import { ProductImage } from '@/features/Products/schema';
 import { ProductDataTable } from '@/features/Products/tables/ProductDataTable';
 import { productColumns } from '@/features/Products/tables/columns';
 import { useQuery } from '@tanstack/react-query';
@@ -22,15 +21,16 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 
-export const getFeaturedImage = (product: Product) => {
-	if (!product.images || product.images.length === 0) return undefined;
+// export const getFeaturedImage = (product: Product) => {
+// 	if (!product.images || product.images.length === 0) return undefined;
 
-	// Find featured image or use the first one
-	const featuredImage =
-		product.images.find((img: ProductImage) => img.isFeatured) ||
-		product.images[0];
-	return featuredImage.url;
-};
+// 	// Find featured image or use the first one
+// 	const featuredImage =
+// 		product.images.find((img: ProductImage) => img.isFeatured) ||
+// 		product.images[0];
+// 	return featuredImage.url;
+// };
+
 const ProductManagement = () => {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();
@@ -99,7 +99,7 @@ const ProductManagement = () => {
 			Price: `$${product.price.toFixed(2)}`,
 			Stock: product.stockQuantity,
 			Status: product.status,
-			Images: product.images?.length || 0,
+			Images: product.media?.length || 0,
 		}));
 
 		exportToCSV(
@@ -118,14 +118,14 @@ const ProductManagement = () => {
 	});
 
 	useEffect(() => {
-		if (productsData?.data.data) {
-			console.log(productsData?.data.data);
-			setProducts(productsData?.data.data);
+		if (productsData) {
+			console.log(productsData);
+			setProducts(productsData);
 		}
 	}, [productsData, setProducts]);
 
 	return (
-		<section className="mx-auto w-full max-w-7xl">
+		<section className="mx-auto w-full">
 			<HeaderSection
 				icon={<ShoppingCart />}
 				title="Product Management"

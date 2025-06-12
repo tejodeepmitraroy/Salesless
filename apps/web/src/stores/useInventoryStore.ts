@@ -20,7 +20,6 @@ export type Product = {
 	price: number;
 	comparedAtPrice: number;
 	status: string;
-
 	media: Array<ProductMedia>;
 	categoryId: string;
 	stockQuantity: number;
@@ -31,49 +30,39 @@ export type Product = {
 	seoScore?: number;
 };
 
-interface ProductState {
+interface InventoryState {
 	products: Product[];
-	selectedProduct: Product | null;
 	searchQuery: string;
 	filterCategory: string;
 	filterStatus: string;
 }
 
-interface ProductActions {
+interface InventoryActions {
 	addProduct: (product: Product) => void;
 	setProducts: (products: Product[]) => void;
 	updateProduct: (product: Product) => void;
 	getProductsById: (productId: number) => Product | null;
 	deleteProduct: (productId: number) => void;
-	setSelectedProduct: (product: Product | null) => void;
 	setSearchQuery: (query: string) => void;
 	setFilterCategory: (category: string) => void;
 	setFilterStatus: (status: string) => void;
 	getFilteredProducts: () => Product[];
 }
 
-type ProductStore = ProductState & ProductActions;
+type InventoryStore = InventoryState & InventoryActions;
 
-const initialState: ProductState = {
-	products: [],
-	selectedProduct: null,
-	searchQuery: '',
-	filterCategory: 'all',
-	filterStatus: 'all',
-};
-
-export const useProductStore = create<ProductStore>()(
+export const useInventoryStore = create<InventoryStore>()(
 	devtools((set, get) => ({
-		...initialState,
+		products: [],
+		searchQuery: '',
+		filterCategory: 'all',
+		filterStatus: 'all',
 
 		addProduct: (product: Product) =>
 			set((state) => ({
 				products: [...state.products, product],
 			})),
-		getProductsById: (productId: number) => {
-			const product = get().products.find((p) => p.id === productId);
-			return product;
-		},
+
 		setProducts: (products: Product[]) =>
 			set(() => ({
 				products: products,
@@ -86,14 +75,14 @@ export const useProductStore = create<ProductStore>()(
 				),
 			})),
 
+		getProductsById: (productId: number) => {
+			const product = get().products.find((p) => p.id === productId);
+			return product || null;
+		},
+
 		deleteProduct: (productId: number) =>
 			set((state) => ({
 				products: state.products.filter((p) => p.id !== productId),
-			})),
-
-		setSelectedProduct: (product: Product | null) =>
-			set(() => ({
-				selectedProduct: product,
 			})),
 
 		setSearchQuery: (query: string) =>
@@ -112,34 +101,18 @@ export const useProductStore = create<ProductStore>()(
 			})),
 
 		getFilteredProducts: () => {
-			const state = get();
-			let filtered = state.products;
+			const { products, searchQuery, filterCategory, filterStatus } = get();
+			return products.filter((product) => {
+				const matchesSearch = product.title
+					.toLowerCase()
+					.includes(searchQuery.toLowerCase());
+				const matchesCategory =
+					filterCategory === 'all' || product.categoryId === filterCategory;
+				const matchesStatus =
+					filterStatus === 'all' || product.status === filterStatus;
 
-			// Apply search filter
-			if (state.searchQuery) {
-				const query = state.searchQuery.toLowerCase();
-				filtered = filtered.filter(
-					(product) =>
-						product.title.toLowerCase().includes(query) ||
-						product.categoryId.toLowerCase().includes(query)
-				);
-			}
-
-			// Apply category filter
-			if (state.filterCategory !== 'all') {
-				filtered = filtered.filter(
-					(product) => product.categoryId === state.filterCategory
-				);
-			}
-
-			// Apply status filter
-			if (state.filterStatus !== 'all') {
-				filtered = filtered.filter(
-					(product) => product.status === state.filterStatus
-				);
-			}
-
-			return filtered;
+				return matchesSearch && matchesCategory && matchesStatus;
+			});
 		},
 	}))
 );

@@ -16,7 +16,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 			},
 		},
 		collapsed: {
-			marginLeft: '4rem',
+			marginLeft: '6.5rem',
 			transition: {
 				type: 'spring',
 				stiffness: 200,
@@ -50,11 +50,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 	};
 	return (
 		<section className="bg-background text-foreground flex min-h-screen w-full">
-			{/* <Header
-				sidebarOpen={sidebarOpen}
-				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-			/> */}
-
 			<Sidebar
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}

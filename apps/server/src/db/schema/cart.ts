@@ -7,19 +7,19 @@ import { order } from './order';
 
 export const cart = pgTable('cart', {
 	id: serial('id').primaryKey(),
-	store_id: integer('store_id').references(() => store.id),
-	customer_id: integer('customer_id').references(() => customer.id),
-	created_at: timestamp('created_at'),
-	updated_at: timestamp('updated_at'),
+	storeId: integer('store_id').references(() => store.id),
+	customerId: integer('customer_id').references(() => customer.id),
+	createdAt: timestamp('created_at'),
+	updatedAt: timestamp('updated_at'),
 });
 
 export const cartRelations = relations(cart, ({ one, many }) => ({
 	store: one(store, {
-		fields: [cart.store_id],
+		fields: [cart.storeId],
 		references: [store.id],
 	}),
 	customer: one(customer, {
-		fields: [cart.customer_id],
+		fields: [cart.customerId],
 		references: [customer.id],
 	}),
 	items: many(cartItems),
@@ -28,18 +28,18 @@ export const cartRelations = relations(cart, ({ one, many }) => ({
 
 export const cartItems = pgTable('cart_items', {
 	id: serial('id').primaryKey(),
-	cart_id: integer('cart_id').references(() => cart.id),
+	cartId: integer('cart_id').references(() => cart.id),
 	productVariantId: integer('product_variant_id').references(
 		() => productVariant.id
 	),
 	quantity: integer('quantity'),
-	created_at: timestamp('created_at'),
-	updated_at: timestamp('updated_at'),
+	createdAt: timestamp('created_at'),
+	updatedAt: timestamp('updated_at'),
 });
 
 export const cartItemsRelations = relations(cartItems, ({ one }) => ({
 	cart: one(cart, {
-		fields: [cartItems.cart_id],
+		fields: [cartItems.cartId],
 		references: [cart.id],
 	}),
 	productVariant: one(productVariant, {

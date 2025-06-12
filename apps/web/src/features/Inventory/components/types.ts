@@ -4,6 +4,7 @@ export type InventoryItem = {
 	productId: number;
 	productName: string;
 	sku: string;
+	// media: ProductMedia[];
 	category: string;
 	inStock: number;
 	reorderPoint: number;

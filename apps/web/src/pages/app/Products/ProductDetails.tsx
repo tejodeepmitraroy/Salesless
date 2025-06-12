@@ -1,11 +1,7 @@
-//
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
-// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ChevronRight } from 'lucide-react';
-
+import { Archive, ChevronDown, ChevronRight, Tag, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
 	Form,
@@ -35,98 +31,141 @@ import ImageUpload from '@/features/Products/components/ImageUpload';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import {
+	deleteProductService,
 	getProductByIdService,
 	updateProductService,
 } from '@/features/Products/services';
+import { Badge } from '@/components/ui/badge';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const ProductDetails = () => {
 	const { id } = useParams<{ id: string }>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { storeId } = useParams<{ storeId: string }>();
-
-	// const product = useProductStore((state) =>
-	// 	state.getProductsById(parseInt(id || '0'))
-	// );
+	const navigate = useNavigate();
 
 	const { data: productData, isLoading } = useQuery({
 		queryKey: ['product', id],
 		queryFn: () => getProductByIdService({ productId: id! }),
 	});
-	// setProduct(productData?.data.data);
 
 	const form = useForm<ProductFormValues>({
 		resolver: zodResolver(productFormSchema),
 	});
 
+	const { watch, formState } = form;
+
+	console.log('media', watch('media'), formState.errors);
+
 	const onSubmit = async (data: ProductFormValues) => {
 		try {
-			console.log(data);
+			console.log('data=====>>>', data);
 			setIsSubmitting(true);
-			const modifiedData = {
-				...data,
-				images: data.images?.map((image) => image.url),
-			};
-			console.log(modifiedData);
+
 			const response = await updateProductService({
-				productId: modifiedData.id!,
-				formData: modifiedData,
+				productId: data.id!,
+				formData: data,
 			});
-			console.log(response);
-			// Here you would typically make an API call to create the product
-			// For now, we'll just show a success message
-			toast.success('Product created successfully!');
+
+			console.log('response=====>>>', response);
+
+			toast.success('Product updated successfully!');
 			form.reset();
 		} catch (error) {
-			console.error('Failed to create product:', error);
-			toast.error('Failed to create product');
+			console.error('Failed to update product:', error);
+			toast.error('Failed to update product');
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const handelDeleteProduct = async () => {
+		try {
+			setIsSubmitting(true);
+			await deleteProductService({ productId: Number(id) });
+			toast.success('Product deleted successfully!');
+			navigate(`/store/${storeId}/products`);
+			form.reset();
+		} catch (error) {
+			console.error('Failed to delete product:', error);
+			toast.error('Failed to delete product');
 		} finally {
 			setIsSubmitting(false);
 		}
 	};
 	useEffect(() => {
-		if (productData?.data.data) {
-			form.reset(productData?.data.data);
+		if (productData) {
+			console.log(productData);
+			form.reset(productData);
 		}
 	}, [productData, form]);
-
-	// if (!product) {
-	// 	return (
-	// 		<div className="flex min-h-[400px] flex-col items-center justify-center space-y-4">
-	// 			<Package className="h-16 w-16 text-gray-400" />
-	// 			<h2 className="text-xl font-semibold text-gray-600">
-	// 				Product Not Found
-	// 			</h2>
-	// 			<Button onClick={() => navigate('/products')} variant="outline">
-	// 				<ArrowLeft className="mr-2 h-4 w-4" />
-	// 				Back to Products
-	// 			</Button>
-	// 		</div>
-	// 	);
-	// }
-
-	// const getFeaturedImage = () => {
-	// 	if (!product.images || product.images.length === 0) return null;
-	// 	return product.images.find((img) => img.isFeatured) || product.images[0];
-	// };
-
-	// const featuredImage = getFeaturedImage();
 
 	return isLoading ? (
 		<div>Loading...</div>
 	) : (
-		<motion.div
+		<motion.section
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 			className="mx-auto space-y-6 py-8"
 		>
-			<div className="mx-auto max-w-4xl space-y-6">
-				<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-					<h1 className="flex gap-2 text-2xl font-bold">
-						{' '}
-						<ChevronRight /> New Product
+			<section className="mx-auto max-w-4xl space-y-6">
+				<section className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+					<h1 className="flex items-center gap-2 text-2xl font-bold">
+						<Tag />
+						<ChevronRight /> {productData?.title}{' '}
+						<Badge
+							className={` ${
+								productData?.status === 'Active'
+									? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+									: ''
+							} ${
+								productData?.status === 'Draft'
+									? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+									: ''
+							} ${
+								productData?.status === 'Out of stock'
+									? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+									: ''
+							} `}
+						>
+							{productData?.status}
+						</Badge>
 					</h1>
-				</div>
+
+					<section className="flex items-center gap-2">
+						<DropdownMenu>
+							<DropdownMenuTrigger>
+								<Button className="bg-accent hover:bg-accent/80 flex items-center gap-2 text-black">
+									More Actions
+									<ChevronDown />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								{/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
+								<DropdownMenuSeparator /> */}
+								<DropdownMenuItem>
+									{' '}
+									<Archive />
+									Archive
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => handelDeleteProduct()}
+									className="text-red-500 hover:bg-red-500 hover:text-white"
+								>
+									{' '}
+									<Trash2 className="text-red-500 hover:text-white" />
+									Delete
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</section>
+				</section>
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -168,14 +207,14 @@ const ProductDetails = () => {
 
 									<FormField
 										control={form.control}
-										name="images"
+										name="media"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Media Images</FormLabel>
 												<FormControl>
 													<ImageUpload
-														images={field.value || []}
-														onChange={(images) => field.onChange(images)}
+														media={field.value || []}
+														onChange={(media) => field.onChange(media)}
 														maxImages={8}
 														storeId={storeId!}
 													/>
@@ -282,7 +321,7 @@ const ProductDetails = () => {
 								<CardContent className="grid w-full grid-cols-1 gap-4">
 									<FormField
 										control={form.control}
-										name="stockQuantity"
+										name="inventoryQuantity"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>Stock Quantity</FormLabel>
@@ -345,7 +384,7 @@ const ProductDetails = () => {
 													</FormControl>
 													<SelectContent>
 														<SelectItem value="Active">Active</SelectItem>
-														<SelectItem value="Inactive">Inactive</SelectItem>
+														<SelectItem value="Draft">Draft</SelectItem>
 													</SelectContent>
 												</Select>
 												<FormMessage />
@@ -409,13 +448,13 @@ const ProductDetails = () => {
 						</section>
 						<div className="col-span-2 flex justify-end">
 							<Button type="submit" disabled={isSubmitting}>
-								{isSubmitting ? 'Creating...' : 'Create Product'}
+								{isSubmitting ? 'Updating...' : 'Update Product'}
 							</Button>
 						</div>
 					</form>
 				</Form>
-			</div>
-		</motion.div>
+			</section>
+		</motion.section>
 	);
 };
 
