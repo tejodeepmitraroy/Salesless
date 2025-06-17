@@ -33,6 +33,7 @@ export const getAllProducts = asyncHandler(
 							mediaId: false,
 						},
 					},
+					category: true,
 				},
 			});
 			if (!products) {
@@ -41,6 +42,8 @@ export const getAllProducts = asyncHandler(
 
 			const simplifiedProducts = products.map((product) => ({
 				...product,
+				category: product.category?.name ?? '',
+
 				media: product.media.map((m) => ({
 					index: m.index,
 					mediaId: m.media.id,
@@ -70,50 +73,103 @@ export const getProductById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const productId = parseInt(request.params.productId);
-			const productDetails = await db.query.product.findFirst({
-				where: eq(product.id, productId),
-				with: {
-					media: {
-						with: {
-							media: true,
-						},
-						columns: {
-							productId: false,
-							mediaId: false,
+
+			db.transaction(async (trx) => {
+				const productDetails = await trx.query.product.findFirst({
+					where: eq(product.id, productId),
+					with: {
+						media: {
+							with: {
+								media: true,
+							},
+							columns: {
+								productId: false,
+								mediaId: false,
+							},
 						},
 					},
-				},
+				});
+
+				if (!productDetails) {
+					response.status(404).json(new ApiError(404, 'Product not found'));
+				}
+
+				const media = await trx.query.productMedia.findMany({
+					where: eq(productMedia.productId, productId),
+				});
+
+				console.log(media);
+				if (!productDetails) {
+					response.status(404).json(new ApiError(404, 'Product not found'));
+				}
+				const simplifiedProduct = {
+					...productDetails,
+					description: productDetails?.description ?? '',
+					media: productDetails?.media?.map((m) => ({
+						index: m.index,
+						mediaId: m.media.id,
+						...m.media,
+					})), // Extract only media objects
+				};
+
+				if (productDetails && productDetails.isVariantEnabled) {
+					const options = await trx.query.productOptions.findMany({
+						where: eq(productOptions.productId, productId),
+						with: {
+							values: true,
+						},
+					});
+
+					const variants = await trx
+						.select({
+							variantId: productVariant.id,
+							sku: productVariant.sku,
+							barcode: productVariant.barcode,
+							price: productVariant.price,
+							comparedAtPrice: productVariant.comparedAtPrice,
+							costPerItem: productVariant.costPerItem,
+							manageInventory: productVariant.manageInventory,
+							inventoryQuantity: productVariant.inventoryQuantity,
+							requiresShipping: productVariant.requiresShipping,
+							weight: productVariant.weight,
+							weightUnit: productVariant.weightUnit,
+							option1: productVariant.option1,
+							option2: productVariant.option2,
+							option3: productVariant.option3,
+						})
+						.from(productVariant)
+						.where(eq(productVariant.productId, productId));
+
+					response.status(200).json(
+						new ApiResponse(
+							200,
+							{
+								...simplifiedProduct,
+								variants,
+								options,
+							},
+							'Product fetched successfully'
+						)
+					);
+				} else if (productDetails && !productDetails.isVariantEnabled) {
+					const variant = await trx.query.productVariant.findFirst({
+						where: eq(productVariant.productId, productId),
+					});
+
+					response.status(200).json(
+						new ApiResponse(
+							200,
+							{
+								...simplifiedProduct,
+								variant,
+							},
+							'Product fetched successfully'
+						)
+					);
+				}
 			});
-
-			if (!productDetails) {
-				response.status(404).json(new ApiError(404, 'Product not found'));
-			}
-
-			const media = await db.query.productMedia.findMany({
-				where: eq(productMedia.productId, productId),
-			});
-
-			console.log(media);
-			if (!productDetails) {
-				response.status(404).json(new ApiError(404, 'Product not found'));
-			}
-			const simplifiedProduct = {
-				...productDetails,
-				media: productDetails?.media?.map((m) => ({
-					index: m.index,
-					mediaId: m.media.id,
-					...m.media,
-				})), // Extract only media objects
-			};
-			response.status(200).json(
-				new ApiResponse(
-					200,
-					simplifiedProduct,
-
-					'Product fetched successfully'
-				)
-			);
 		} catch (error) {
+			console.log(error);
 			response
 				.status(500)
 				.json(new ApiError(500, 'Error fetching product', error));
@@ -128,26 +184,37 @@ export const createProduct = asyncHandler(
 			storeId,
 			title,
 			description,
-			status,
-			isVariantEnabled,
 			categoryId,
+			status,
 			media,
-			seoTitle,
-			seoDescription,
-			seoKeywords,
+			isVariantEnabled,
+			variant,
 			options,
 			variants,
+			seo,
 		}: {
 			storeId: number;
 			title: string;
 			description: string;
-			status: string;
 			categoryId: number;
+			status: string;
+			media: { mediaId: number; index: number }[];
 			isVariantEnabled: boolean;
-			media: { mediaId: number }[];
-			seoTitle: string;
-			seoDescription: string;
-			seoKeywords: string;
+			variant: {
+				sku: string;
+				barcode: string;
+				price: number;
+				comparedAtPrice: number;
+				costPerItem: number;
+				manageInventory: boolean;
+				inventoryQuantity: number;
+				requiresShipping: boolean;
+				weight: number;
+				weightUnit: 'kg' | 'g' | 'oz' | 'lb';
+				option1: string | null;
+				option2: string | null;
+				option3: string | null;
+			};
 			options: {
 				name: string;
 				position: number;
@@ -159,32 +226,22 @@ export const createProduct = asyncHandler(
 			variants: {
 				sku: string;
 				barcode: string;
-				price: string;
-				comparedAtPrice: string;
+				price: number;
+				comparedAtPrice: number;
+				costPerItem: number;
 				manageInventory: boolean;
 				inventoryQuantity: number;
+				requiresShipping: boolean;
 				weight: number;
 				weightUnit: 'kg' | 'g' | 'oz' | 'lb';
-				requiredShipping: boolean;
 				option1: string | null;
 				option2: string | null;
 				option3: string | null;
-				costPrice: string;
 			}[];
-			singleVariant: {
-				sku: string;
-				barcode: string;
-				price: string;
-				comparedAtPrice: string;
-				manageInventory: boolean;
-				inventoryQuantity: number;
-				weight: number;
-				weightUnit: 'kg' | 'g' | 'oz' | 'lb';
-				requiredShipping: boolean;
-				option1: string | null;
-				option2: string | null;
-				option3: string | null;
-				costPrice: string;
+			seo: {
+				title: string;
+				description: string;
+				keywords: string;
 			};
 		} = request.body;
 		try {
@@ -198,9 +255,9 @@ export const createProduct = asyncHandler(
 						description,
 						status: status.toLowerCase() === 'active' ? 'active' : 'draft',
 						isVariantEnabled,
-						seoTitle,
-						seoDescription,
-						seoKeywords,
+						seoTitle: seo.title,
+						seoDescription: seo.description,
+						seoKeywords: seo.keywords,
 					})
 					.returning();
 
@@ -244,24 +301,22 @@ export const createProduct = asyncHandler(
 				if (!isVariantEnabled) {
 					const variantResult = await trx
 						.insert(productVariant)
-						.values(
-							variants.map((variant) => {
-								return {
-									productId: productId,
-									sku: variant.sku,
-									barcode: variant.barcode,
-									price: variant.price,
-									comparedAtPrice: variant.comparedAtPrice,
-									costPrice: variant.costPrice,
-									manageInventory: variant.manageInventory,
-									inventoryQuantity: variant.inventoryQuantity,
-									requiredShipping: variant.requiredShipping,
-									option1: null,
-									option2: null,
-									option3: null,
-								};
-							})
-						)
+						.values({
+							productId: Number(productId),
+							sku: variant.sku,
+							barcode: variant.barcode,
+							price: variant.price,
+							comparedAtPrice: variant.comparedAtPrice,
+							costPerItem: variant.costPerItem,
+							manageInventory: variant.manageInventory,
+							inventoryQuantity: variant.inventoryQuantity,
+							requiresShipping: variant.requiresShipping,
+							weight: variant.weight,
+							weightUnit: variant.weightUnit,
+							option1: null,
+							option2: null,
+							option3: null,
+						})
 						.returning();
 
 					response.status(201).json(
@@ -282,7 +337,7 @@ export const createProduct = asyncHandler(
 						.values(
 							options.map((option) => {
 								return {
-									productId: productId,
+									productId: Number(productId),
 									name: option.name,
 									position: option.position,
 								};
@@ -310,21 +365,22 @@ export const createProduct = asyncHandler(
 					const variantResult = await trx
 						.insert(productVariant)
 						.values(
-							variants.map((variant) => {
-								return {
-									productId: productId,
-									sku: variant.sku,
-									barcode: variant.barcode,
-									price: variant.price,
-									comparedAtPrice: variant.comparedAtPrice,
-									manageInventory: variant.manageInventory,
-									inventoryQuantity: variant.inventoryQuantity,
-									requiredShipping: variant.requiredShipping,
-									option1: variant.option1 ?? null,
-									option2: variant.option2 ?? null,
-									option3: variant.option3 ?? null,
-								};
-							})
+							variants.map((variant) => ({
+								productId: Number(productId),
+								sku: variant.sku,
+								barcode: variant.barcode,
+								price: variant.price,
+								costPerItem: variant.costPerItem,
+								comparedAtPrice: variant.comparedAtPrice,
+								manageInventory: variant.manageInventory,
+								inventoryQuantity: variant.inventoryQuantity,
+								requiresShipping: variant.requiresShipping,
+								weight: variant.weight,
+								weightUnit: variant.weightUnit,
+								option1: variant.option1 ? variant.option1 : null,
+								option2: variant.option2 ? variant.option2 : null,
+								option3: variant.option3 ? variant.option3 : null,
+							}))
 						)
 						.returning();
 					response.status(201).json(
@@ -356,120 +412,256 @@ export const updateProduct = asyncHandler(
 			storeId,
 			title,
 			description,
-			category,
-			price,
-			comparedAtPrice,
-			stockQuantity,
+			categoryId,
 			status,
 			media,
-			seoTitle,
-			seoDescription,
-			seoKeywords,
+			isVariantEnabled,
+			variant,
+			options,
+			variants,
+			seo,
+		}: {
+			storeId: number;
+			title: string;
+			description: string;
+			categoryId: number;
+			status: string;
+			media: { mediaId: number; index: number }[];
+			isVariantEnabled: boolean;
+			variant: {
+				variantId: number;
+				sku: string;
+				barcode: string;
+				price: number;
+				comparedAtPrice: number;
+				costPerItem: number;
+				manageInventory: boolean;
+				inventoryQuantity: number;
+				requiresShipping: boolean;
+				weight: number;
+				weightUnit: 'kg' | 'g' | 'oz' | 'lb';
+				option1: string | null;
+				option2: string | null;
+				option3: string | null;
+			};
+			options: {
+				name: string;
+				position: number;
+				values: {
+					value: string;
+					position: number;
+				}[];
+			}[];
+			variants: {
+				variantId: number;
+				sku: string;
+				barcode: string;
+				price: number;
+				comparedAtPrice: number;
+				costPerItem: number;
+				manageInventory: boolean;
+				inventoryQuantity: number;
+				requiresShipping: boolean;
+				weight: number;
+				weightUnit: 'kg' | 'g' | 'oz' | 'lb';
+				option1: string | null;
+				option2: string | null;
+				option3: string | null;
+			}[];
+			seo: {
+				title: string;
+				description: string;
+				keywords: string;
+			};
 		} = request.body;
 		try {
 			const productId = parseInt(request.params.productId);
 			console.log('productId', productId, media);
 
-			const productDetails = await db.query.product.findFirst({
-				where: eq(product.id, productId),
-				with: {
-					media: {
-						with: {
-							media: true,
-						},
-						columns: {
-							productId: false,
-							mediaId: false,
-						},
-					},
-				},
-			});
-			if (!productDetails) {
-				response.status(404).json(new ApiError(404, 'Product not found'));
-			}
-			const simplifiedProduct = {
-				...productDetails,
-				media: productDetails?.media?.map((m) => ({
-					index: m.index,
-					mediaId: m.media.id,
-					...m.media,
-				})), // Extract only media objects
-			};
+			console.log('Body---->', request.body);
 
-			const updateProductData = {
-				storeId,
-				title,
-				description,
-				category,
-				price,
-				comparedAtPrice,
-				stockQuantity,
-				status,
-				seoTitle,
-				seoDescription,
-				seoKeywords,
-				media,
-			};
-
-			if (!simplifiedProduct) {
-				response.status(404).json(new ApiError(404, 'Product not found'));
+			// Validate required fields
+			if (!title) {
+				response.status(400).json({ message: 'Title is required' });
 			}
 
-			if (
-				JSON.stringify(simplifiedProduct) === JSON.stringify(updateProductData)
-			) {
-				response
-					.status(404)
-					.json(new ApiError(404, 'Product no need to update'));
-			} else {
-				await db.transaction(async (trx) => {
-					const [result] = await trx
-						.update(product)
-						.set({
-							storeId,
-							title,
-							description,
-							status,
-							seoTitle,
-							seoDescription,
-							seoKeywords,
-						})
-						.where(eq(product.id, productId))
-						.returning();
+			await db.transaction(async (trx) => {
+				const [productResult] = await trx
+					.update(product)
+					.set({
+						storeId,
+						categoryId,
+						title: title.trim(), // Trim whitespace from title
+						description,
+						status: status?.toLowerCase() === 'active' ? 'active' : 'draft',
+						isVariantEnabled,
+						seoTitle: seo?.title,
+						seoDescription: seo?.description,
+						seoKeywords: seo?.keywords,
+					})
+					.where(eq(product.id, productId))
+					.returning();
 
-					if (!result) {
-						response.status(404).json({ message: 'Product not found' });
-					}
+				if (!productResult) {
+					response.status(404).json({ message: 'Product not found' });
+				}
 
-					// const mediaData = [];
+				///Update the media
+				await trx
+					.delete(productMedia)
+					.where(eq(productMedia.productId, productId));
 
+				for (const { index, mediaId } of media) {
 					await trx
-						.delete(productMedia)
-						.where(eq(productMedia.productId, productId));
+						.insert(productMedia)
+						.values({ index, mediaId, productId })
+						.returning()
+						.then((result) => {
+							console.log('mediaId===>', result);
+							// mediaData.push(...result);
+						});
+				}
 
-					for (const { index, mediaId } of media) {
-						await trx
-							.insert(productMedia)
-							.values({ index, mediaId, productId })
-							.returning()
-							.then((result) => {
-								console.log('mediaId===>', result);
-								// mediaData.push(...result);
-							});
-					}
+				if (!isVariantEnabled && !options.length && !variants.length) {
+					await trx
+						.delete(productVariant)
+						.where(eq(productVariant.productId, productId));
 
-					// console.log('mediaData===>', mediaData);
+					const options = await trx.query.productOptions.findMany({
+						where: eq(productOptions.productId, productId),
+					});
 
-					response.json(
-						new ApiResponse(
-							200,
-
-							{ ...result },
-							'Product updated successfully'
+					await Promise.all(
+						options.map((option) =>
+							trx
+								.delete(productOptionsValues)
+								.where(eq(productOptionsValues.optionId, option.id))
 						)
 					);
-				});
-			}
+					await trx
+						.delete(productOptions)
+						.where(eq(productOptions.productId, productId));
+
+					const variantResult = await trx
+						.insert(productVariant)
+						.values({
+							productId: Number(productId),
+							sku: variant.sku,
+							barcode: variant.barcode,
+							price: variant.price,
+							comparedAtPrice: variant.comparedAtPrice,
+							costPerItem: variant.costPerItem,
+							manageInventory: variant.manageInventory,
+							inventoryQuantity: variant.inventoryQuantity,
+							requiresShipping: variant.requiresShipping,
+							weight: variant.weight,
+							weightUnit: variant.weightUnit,
+							option1: null,
+							option2: null,
+							option3: null,
+						})
+						.returning();
+
+					response.status(201).json(
+						new ApiResponse(
+							200,
+							{
+								...productResult,
+
+								variant: variantResult,
+							},
+							'Product created successfully'
+						)
+					);
+				}
+
+				if (isVariantEnabled && options.length && variants.length) {
+					await trx
+						.delete(productVariant)
+						.where(eq(productVariant.productId, productId));
+
+					const deleteOptions = await trx.query.productOptions.findMany({
+						where: eq(productOptions.productId, productId),
+					});
+
+					await Promise.all(
+						deleteOptions.map((option) =>
+							trx
+								.delete(productOptionsValues)
+								.where(eq(productOptionsValues.optionId, option.id))
+						)
+					);
+					await trx
+						.delete(productOptions)
+						.where(eq(productOptions.productId, productId));
+					// 🔴 Update multi Variant
+					const optionsResult = await trx
+						.insert(productOptions)
+						.values(
+							options.map((option) => {
+								return {
+									productId: Number(productId),
+									name: option.name,
+									position: option.position,
+								};
+							})
+						)
+						.returning();
+
+					console.log('Options Result--->', optionsResult);
+					const flatOptions = optionsResult.flat();
+
+					// 🔴 Insert option values
+					await Promise.all(
+						options.flatMap((option, i) => {
+							const optionId = flatOptions[i].id;
+							return option.values.map((value) =>
+								trx.insert(productOptionsValues).values({
+									optionId,
+									value: value.value,
+									position: value.position,
+								})
+							);
+						})
+					);
+
+					const variantResult = await trx
+						.insert(productVariant)
+						.values(
+							variants.map((variant) => ({
+								productId: Number(productId),
+								sku: variant.sku,
+								barcode: variant.barcode,
+								price: variant.price,
+								costPerItem: variant.costPerItem,
+								comparedAtPrice: variant.comparedAtPrice,
+								manageInventory: variant.manageInventory,
+								inventoryQuantity: variant.inventoryQuantity,
+								requiresShipping: variant.requiresShipping,
+								weight: variant.weight,
+								weightUnit: variant.weightUnit,
+								option1: variant.option1 ? variant.option1 : null,
+								option2: variant.option2 ? variant.option2 : null,
+								option3: variant.option3 ? variant.option3 : null,
+							}))
+						)
+						.returning();
+					response.status(201).json(
+						new ApiResponse(
+							200,
+							{
+								...productResult,
+
+								variant: variantResult,
+								options: optionsResult,
+							},
+							'Product created successfully'
+						)
+					);
+				}
+
+				// console.log('mediaData===>', mediaData);
+			});
 		} catch (error) {
 			console.log(error);
 			response.status(400).json({ message: 'Error updating product', error });
@@ -488,6 +680,25 @@ export const deleteProduct = asyncHandler(
 					.delete(productMedia)
 					.where(eq(productMedia.productId, productId));
 
+				const options = await trx.query.productOptions.findMany({
+					where: eq(productOptions.productId, productId),
+				});
+
+				await Promise.all(
+					options.map((option) =>
+						trx
+							.delete(productOptionsValues)
+							.where(eq(productOptionsValues.optionId, option.id))
+					)
+				);
+				await trx
+					.delete(productOptions)
+					.where(eq(productOptions.productId, productId));
+
+				await trx
+					.delete(productVariant)
+					.where(eq(productVariant.productId, productId));
+
 				const [result] = await trx
 					.delete(product)
 					.where(eq(product.id, productId))
@@ -498,9 +709,12 @@ export const deleteProduct = asyncHandler(
 				}
 				res
 					.status(200)
-					.json(new ApiResponse(200, result, 'Product deleted successfully'));
+					.json(
+						new ApiResponse(200, { result }, 'Product deleted successfully')
+					);
 			});
 		} catch (error) {
+			console.log(error);
 			res.status(500).json(new ApiError(500, 'Error deleting product', error));
 		}
 	}

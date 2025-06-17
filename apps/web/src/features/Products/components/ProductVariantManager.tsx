@@ -1,255 +1,283 @@
+import { ProductVariantColumns } from '../tables/ProductVariantColumn';
+import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import { ProductFormValues } from '@/pages/app/Products/CreateNewProduct';
+import { ProductVariantDataTable } from '../tables/ProductVariantDataTable';
+import { generateVariantsFromOptions } from '../hooks/generateVariantsFromOptions';
+import { useEffect, useState } from 'react';
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { DollarSign } from 'lucide-react';
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { X, Plus } from 'lucide-react';
-
-import { nanoid } from 'nanoid';
+import { Separator } from '@/components/ui/separator';
 import { ProductVariant } from '../schema';
 
-interface ProductVariantManagerProps {
-	variants: ProductVariant[];
-	onChange: (variants: ProductVariant[]) => void;
-}
+const ProductVariantManager = () => {
+	const { control } = useFormContext<ProductFormValues>();
 
-const ProductVariantManager: React.FC<ProductVariantManagerProps> = ({
-	variants = [],
-	onChange,
-}) => {
-	const addVariant = () => {
-		const newVariant: ProductVariant = {
-			id: nanoid(),
-			attributes: {},
-			price: undefined,
-			stock: undefined,
-			sku: undefined,
-		};
+	const options = control._getWatch('options');
 
-		onChange([...variants, newVariant]);
-	};
+	const { fields, replace, update } = useFieldArray({
+		control,
+		name: 'variants',
+	});
 
-	const removeVariant = (id: string) => {
-		onChange(variants.filter((variant) => variant.id !== id));
-	};
+	const columns = ProductVariantColumns(control);
+	useEffect(() => {
+		if (fields.length === 0) {
+			const variantsGenerated = generateVariantsFromOptions(options);
 
-	const updateVariant = (
-		id: string,
-		field: keyof ProductVariant,
-		value: any
-	) => {
-		onChange(
-			variants.map((variant) =>
-				variant.id === id ? { ...variant, [field]: value } : variant
-			)
-		);
-	};
-
-	const updateAttribute = (variantId: string, key: string, value: string) => {
-		onChange(
-			variants.map((variant) =>
-				variant.id === variantId
-					? {
-							...variant,
-							attributes: {
-								...variant.attributes,
-								[key]: value,
-							},
-						}
-					: variant
-			)
-		);
-	};
-
-	const addAttribute = (variantId: string) => {
-		// Find variant
-		const variant = variants.find((v) => v.id === variantId);
-		if (!variant) return;
-
-		// Create a unique key name
-		const newKey = 'attribute';
-		let counter = 1;
-		while (variant.attributes[newKey + counter]) {
-			counter++;
+			console.log('variantsGenerated', variantsGenerated.variants);
+			replace(variantsGenerated.variants); // inject into RHF `variants` field
 		}
-
-		updateAttribute(variantId, newKey + counter, '');
-	};
-
-	const removeAttribute = (variantId: string, key: string) => {
-		onChange(
-			variants.map((variant) => {
-				if (variant.id === variantId) {
-					// eslint-disable-next-line @typescript-eslint/no-unused-vars
-					const { [key]: removed, ...remainingAttributes } = variant.attributes;
-					return {
-						...variant,
-						attributes: remainingAttributes,
-					};
-				}
-				return variant;
-			})
-		);
-	};
+	}, [replace, options, fields.length]);
 
 	return (
-		<section className="space-y-4">
-			<section className="flex items-center justify-between">
-				<h3 className="text-sm font-medium">Product Variants</h3>
-				<Button
-					type="button"
-					variant="outline"
-					size="sm"
-					onClick={addVariant}
-					className="flex items-center gap-1"
-				>
-					<Plus className="h-3 w-3" /> Add Variant
-				</Button>
-			</section>
-
-			{variants.length === 0 ? (
-				<p className="text-muted-foreground text-sm">
-					No variants added. Add variants if this product comes in different
-					options like sizes or colors.
-				</p>
-			) : (
-				<section className="space-y-6">
-					{variants.map((variant) => (
-						<section
-							key={variant.id}
-							className="relative space-y-4 rounded-md border p-4"
-						>
-							<Button
-								type="button"
-								variant="ghost"
-								size="sm"
-								onClick={() => removeVariant(variant.id)}
-								className="absolute top-2 right-2 h-8 w-8 p-0"
-							>
-								<X className="h-4 w-4" />
-							</Button>
-
-							<section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-								<div>
-									<label className="mb-1 block text-xs font-medium">
-										Price (Optional)
-									</label>
-									<Input
-										type="number"
-										min="0"
-										step="0.01"
-										placeholder="Variant price"
-										value={variant.price || ''}
-										onChange={(e) =>
-											updateVariant(
-												variant.id,
-												'price',
-												parseFloat(e.target.value) || undefined
-											)
-										}
-									/>
-								</div>
-								<div>
-									<label className="mb-1 block text-xs font-medium">
-										Stock (Optional)
-									</label>
-									<Input
-										type="number"
-										min="0"
-										placeholder="Variant stock"
-										value={variant.stock || ''}
-										onChange={(e) =>
-											updateVariant(
-												variant.id,
-												'stock',
-												parseInt(e.target.value, 10) || undefined
-											)
-										}
-									/>
-								</div>
-								<div>
-									<label className="mb-1 block text-xs font-medium">
-										SKU (Optional)
-									</label>
-									<Input
-										placeholder="SKU-123"
-										value={variant.sku || ''}
-										onChange={(e) =>
-											updateVariant(variant.id, 'sku', e.target.value)
-										}
-									/>
-								</div>
-							</section>
-
-							<section className="space-y-2">
-								<div className="flex items-center justify-between">
-									<label className="text-xs font-medium">Attributes</label>
-									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										onClick={() => addAttribute(variant.id)}
-										className="h-6 text-xs"
-									>
-										<Plus className="mr-1 h-3 w-3" /> Add
-									</Button>
-								</div>
-
-								{Object.keys(variant.attributes).length === 0 ? (
-									<p className="text-muted-foreground text-xs">
-										No attributes added. Examples: Color, Size, Material.
-									</p>
-								) : (
-									<div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-										{Object.entries(variant.attributes).map(([key, value]) => (
-											<div key={key} className="flex items-center gap-2">
-												<Input
-													placeholder="Name"
-													className="h-8 flex-1 text-xs"
-													value={key}
-													onChange={(e) => {
-														const newKey = e.target.value;
-														if (newKey && newKey !== key) {
-															// Create new attribute with new key
-															const newVariant = { ...variant };
-															const attrValue = newVariant.attributes[key];
-															delete newVariant.attributes[key];
-															newVariant.attributes[newKey] = attrValue;
-
-															// Update variants with this modified variant
-															onChange(
-																variants.map((v) =>
-																	v.id === variant.id ? newVariant : v
-																)
-															);
-														}
-													}}
-												/>
-												<Input
-													placeholder="Value"
-													className="h-8 flex-1 text-xs"
-													value={value}
-													onChange={(e) =>
-														updateAttribute(variant.id, key, e.target.value)
-													}
-												/>
-												<Button
-													type="button"
-													variant="ghost"
-													size="sm"
-													onClick={() => removeAttribute(variant.id, key)}
-													className="h-8 w-8 p-0"
-												>
-													<X className="h-3 w-3" />
-												</Button>
-											</div>
-										))}
-									</div>
-								)}
-							</section>
-						</section>
-					))}
-				</section>
-			)}
-		</section>
+		<ProductVariantDataTable columns={columns} data={fields} update={update} />
 	);
 };
 
 export default ProductVariantManager;
+
+interface ProductVariantModalProps {
+	children: React.ReactNode;
+	variant: ProductVariant;
+	index: number;
+	update: (index: number, data: ProductVariant) => void;
+}
+
+export const ProductVariantModal = ({
+	children,
+	variant,
+	index,
+	update,
+}: ProductVariantModalProps) => {
+	const form = useForm<ProductVariant>({
+		defaultValues: variant,
+	});
+
+	const [isOpen, setIsOpen] = useState(false);
+	const { watch, setValue } = form;
+	const price = watch('price');
+	const costPerItem = watch('costPerItem');
+
+	useEffect(() => {
+		if (price !== undefined && costPerItem !== undefined) {
+			const profit = Number(price) - Number(costPerItem);
+			setValue('profit', profit.toString());
+
+			const margin =
+				costPerItem === 0
+					? '0'
+					: ((profit / Number(price)) * 100).toFixed(2) + '%';
+			setValue('margin', margin);
+		}
+	}, [price, costPerItem, setValue]);
+
+	useEffect(() => {
+		form.reset(variant);
+	}, [variant, form]);
+
+	return (
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogTrigger asChild onClick={() => setIsOpen(true)}>
+				{children}
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[625px]">
+				<DialogHeader>
+					<DialogTitle>
+						Edit Variant {`${variant?.option1}+${variant?.option2}`}
+					</DialogTitle>
+					<DialogDescription>
+						Edit variant here. Click save when you&apos;re done.
+					</DialogDescription>
+				</DialogHeader>
+
+				<Form {...form}>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							form.handleSubmit((data) => {
+								update(index, data);
+							})(e);
+						}}
+						className="space-y-6"
+					>
+						<section className="grid w-full grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name={'price'}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Price</FormLabel>
+										<FormControl>
+											<div className="relative flex w-full items-center gap-2">
+												<DollarSign className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+
+												<Input
+													type="number"
+													placeholder="0.00"
+													className="w-full pl-8"
+													value={field.value}
+													onChange={(e) => field.onChange(e.target.value)}
+												/>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name={'comparedAtPrice'}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Compared At Price</FormLabel>
+										<FormControl>
+											<div className="relative flex w-full items-center gap-2">
+												<DollarSign className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+
+												<Input
+													type="number"
+													placeholder="0.00"
+													className="w-full pl-8"
+													{...field}
+												/>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</section>
+
+						<section className="mt-4 grid w-full grid-cols-3 gap-4">
+							<FormField
+								control={form.control}
+								name="costPerItem"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Cost Price</FormLabel>
+										<FormControl>
+											<div className="relative flex w-full items-center gap-2">
+												<DollarSign className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+												<Input
+													type="number"
+													placeholder="0.00"
+													className="w-full pl-8"
+													{...field}
+												/>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="profit"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Profit</FormLabel>
+										<FormControl>
+											<div className="relative flex w-full items-center gap-2">
+												<DollarSign className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+												<Input
+													placeholder="--"
+													className="w-full pl-8"
+													{...field}
+													readOnly
+												/>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="margin"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Margin</FormLabel>
+										<FormControl>
+											<Input placeholder="--" {...field} readOnly />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</section>
+						<Separator />
+						<section className="flex w-full flex-col gap-5">
+							<section className="w-full text-left text-lg">Inventory</section>
+							<section className="grid w-full grid-cols-2 gap-4">
+								<FormField
+									control={form.control}
+									name="sku"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>SKU (Stock Keeping Unit)</FormLabel>
+											<FormControl>
+												<Input placeholder="Enter SKU" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="barcode"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Barcode</FormLabel>
+											<FormControl>
+												<Input placeholder="Enter Barcode" {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</section>
+						</section>
+						<Separator />
+						<section className="p-1 text-left">
+							Save the product to edit more variant details.
+						</section>
+						<Separator />
+						<DialogFooter
+							className={`mt-5 flex w-full flex-col items-center sm:justify-between`}
+						>
+							<DialogClose asChild>
+								<Button variant="outline">Cancel</Button>
+							</DialogClose>
+
+							{/* <DialogClose asChild> */}
+							<Button type="submit" onClick={() => setIsOpen(false)}>
+								Done
+							</Button>
+							{/* </DialogClose> */}
+						</DialogFooter>
+					</form>
+				</Form>
+			</DialogContent>
+		</Dialog>
+	);
+};

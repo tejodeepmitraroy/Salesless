@@ -1,20 +1,33 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Clock, Mail, User, Building } from 'lucide-react';
+import {
+	ArrowRight,
+	CheckCircle,
+	Mail,
+	User,
+	Building,
+	Play,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import HeroImage from '@/components/landing/HeroImage';
-import CountdownTimer from '@/components/landing/CountdownTimer';
+
 import TestimonialCard from '@/components/landing/TestimonialCard';
 import FeatureCard from '@/components/landing/FeatureCard';
 import Navbar from '@/components/navigation/Navbar';
 import BenefitsSection from '@/components/landing/BenefitsSection';
+import MarqueeSection from '@/components/landing/MarqueeSection';
+import ProductOverview from '@/components/landing/ProductOverview';
+import PricingSection from '@/components/landing/PricingSection';
+import CompanyLogos from '@/components/landing/CompanyLogos';
 
 // Animation variants for staggered animations
 const containerVariants = {
-	hidden: { opacity: 0 },
+	hidden: {
+		opacity: 0,
+	},
 	visible: {
 		opacity: 1,
 		transition: {
@@ -23,145 +36,214 @@ const containerVariants = {
 		},
 	},
 };
-
 const itemVariants = {
-	hidden: { y: 20, opacity: 0 },
+	hidden: {
+		y: 20,
+		opacity: 0,
+	},
 	visible: {
 		y: 0,
 		opacity: 1,
-		transition: { duration: 0.5, ease: 'easeOut' },
+		transition: {
+			duration: 0.5,
+			ease: 'easeOut',
+		},
 	},
 };
-
 const Index = () => {
 	const [email, setEmail] = useState('');
 	const [name, setName] = useState('');
 	const [company, setCompany] = useState('');
 	const [framework, setFramework] = useState('');
-
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// Here you would integrate with HubSpot or your preferred CRM
-		console.log({ email, name, company, framework });
+		console.log({
+			email,
+			name,
+			company,
+			framework,
+		});
 		alert("Thanks for signing up! We'll be in touch soon.");
 	};
-
 	return (
 		<div className="flex min-h-screen flex-col">
 			{/* Navbar */}
 			<Navbar />
 
 			{/* Hero Section - Updated to match the reference image */}
-			<section className="relative overflow-hidden bg-blue-600 px-4 py-20">
-				<div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-500 to-blue-700"></div>
-				<div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-yellow-300 opacity-10"></div>
-				<div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-blue-400 opacity-20"></div>
+			<section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 pt-32 pb-20">
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+				<div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.1),transparent_50%)]"></div>
 
-				<div className="relative z-10 container mx-auto max-w-6xl">
-					<div className="rounded-xl bg-white p-8 shadow-xl md:p-12">
-						<div className="mb-8 text-center md:text-left">
-							<motion.p
-								initial={{ opacity: 0, y: -10 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.4 }}
-								className="mb-2 text-sm text-gray-600"
-							>
-								All your sales data - from all departments - in one place.
-							</motion.p>
-						</div>
+				<div className="relative z-10 container mx-auto max-w-7xl">
+					<div className="mb-16 text-center">
+						<motion.div
+							initial={{
+								opacity: 0,
+								y: 20,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							transition={{
+								duration: 0.6,
+							}}
+							className="mb-6"
+						>
+							<span className="inline-flex items-center rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700">
+								🚀 New: AI-Powered Customer Journey Mapping
+							</span>
+						</motion.div>
 
-						<div className="flex flex-col items-center gap-8 md:flex-row">
-							<motion.div
-								className="flex-1 space-y-6"
-								initial={{ opacity: 0, x: -30 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ duration: 0.6, delay: 0.2 }}
+						<motion.h1
+							initial={{
+								opacity: 0,
+								y: 30,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							transition={{
+								duration: 0.8,
+								delay: 0.2,
+							}}
+							className="mb-6 text-5xl leading-tight font-bold text-gray-900 md:text-6xl lg:text-6xl"
+						>
+							Surface hidden customer pains,
+							<br />
+							<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+								effortlessly
+							</span>
+						</motion.h1>
+
+						<motion.p
+							className="mx-auto mb-10 max-w-4xl text-xl leading-relaxed text-gray-600 md:text-2xl"
+							initial={{
+								opacity: 0,
+								y: 20,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							transition={{
+								duration: 0.8,
+								delay: 0.4,
+							}}
+						>
+							Centralize all customer feedback, and instantly categorize and
+							reveal the underlying drivers of negative customer experience
+							across user journey to minimize churn.
+						</motion.p>
+
+						<motion.div
+							className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row"
+							initial={{
+								opacity: 0,
+								y: 20,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							transition={{
+								duration: 0.8,
+								delay: 0.6,
+							}}
+						>
+							<Button
+								size="lg"
+								className="rounded-full bg-blue-600 px-8 py-4 text-lg text-white hover:bg-blue-700"
 							>
-								<h1 className="text-4xl leading-tight font-bold text-gray-900 md:text-5xl lg:text-6xl">
-									Control your sales
-									<br />
-									with confidence & ease
-								</h1>
-								<p className="text-xl text-gray-700 md:text-2xl">
-									Everything you need to manage, track, and finalize sales — all
-									in one clear, actionable space.
-								</p>
-								<div className="flex flex-col gap-4 pt-4 sm:flex-row">
-									<Button
-										size="lg"
-										className="bg-[#FF6600] px-8 text-white hover:bg-orange-700"
-									>
-										Sign up for free
-									</Button>
-									<Button
-										size="lg"
-										variant="outline"
-										className="border-gray-300 text-gray-700 hover:bg-gray-50"
-									>
-										Request a demo
-									</Button>
-								</div>
-								<div className="flex items-center gap-4">
-									<div className="flex items-center">
-										<div className="flex">
-											{[1, 2, 3, 4, 5].map((star) => (
-												<svg
-													key={star}
-													className="h-4 w-4 text-yellow-400"
-													fill="currentColor"
-													viewBox="0 0 20 20"
-												>
-													<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-												</svg>
-											))}
-										</div>
-										<span className="ml-2 text-sm font-medium">4.7 rating</span>
-									</div>
-									<div className="h-6 border-l border-gray-300"></div>
-									<div className="rounded-md bg-gray-100 px-3 py-1">
-										<span className="text-sm font-medium">Capterra 4.7</span>
-									</div>
-								</div>
-							</motion.div>
-							<motion.div
-								className="flex-1"
-								initial={{ opacity: 0, x: 30 }}
-								animate={{ opacity: 1, x: 0 }}
-								transition={{ duration: 0.6, delay: 0.4 }}
+								Book a Demo
+								<ArrowRight className="ml-2 h-5 w-5" />
+							</Button>
+							<Button
+								size="lg"
+								variant="outline"
+								className="rounded-full border-gray-300 px-8 py-4 text-lg text-gray-700 hover:bg-gray-50"
 							>
-								<HeroImage />
-							</motion.div>
-						</div>
+								<Play className="mr-2 h-5 w-5" />
+								Watch Video
+							</Button>
+						</motion.div>
+
+						<motion.div
+							className="flex items-center justify-center gap-6 text-sm text-gray-500"
+							initial={{
+								opacity: 0,
+							}}
+							animate={{
+								opacity: 1,
+							}}
+							transition={{
+								delay: 0.8,
+								duration: 0.5,
+							}}
+						>
+							<div className="flex items-center">
+								<CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+								No credit card required
+							</div>
+							<div className="flex items-center">
+								<CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+								14-day free trial
+							</div>
+							<div className="flex items-center">
+								<CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+								Cancel anytime
+							</div>
+						</motion.div>
 					</div>
+
+					<motion.div
+						className="mx-auto max-w-5xl"
+						initial={{
+							opacity: 0,
+							y: 40,
+						}}
+						animate={{
+							opacity: 1,
+							y: 0,
+						}}
+						transition={{
+							duration: 1,
+							delay: 0.8,
+						}}
+					>
+						<HeroImage />
+					</motion.div>
 				</div>
 			</section>
 
-			{/* Offer Countdown Section - Added animation */}
-			<motion.section
-				className="bg-[#FF6600] py-4 text-white"
-				initial={{ opacity: 0, y: -10 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.6, duration: 0.5 }}
+			{/* Company Logos Section */}
+			<CompanyLogos />
+
+			{/* Marquee Section */}
+			<motion.div
+				initial="hidden"
+				whileInView="visible"
+				variants={containerVariants}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
 			>
-				<div className="container mx-auto text-center">
-					<div className="flex flex-col items-center justify-center gap-4 md:flex-row">
-						<div className="flex items-center">
-							<Clock className="mr-2 h-5 w-5" />
-							<span className="font-bold">
-								🚀 30-Day Money-Back Guarantee – Offer Ends in:
-							</span>
-						</div>
-						<CountdownTimer hours={24} />
-					</div>
-				</div>
-			</motion.section>
+				<MarqueeSection />
+			</motion.div>
 
 			{/* Benefits Section - Added animation */}
 			<motion.div
 				initial="hidden"
 				whileInView="visible"
 				variants={containerVariants}
-				viewport={{ once: true, margin: '-100px' }}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
 			>
 				<BenefitsSection />
 			</motion.div>
@@ -171,7 +253,10 @@ const Index = () => {
 				initial="hidden"
 				whileInView="visible"
 				variants={containerVariants}
-				viewport={{ once: true, margin: '-100px' }}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
 			>
 				<BenefitsSection reversed={true} />
 			</motion.div>
@@ -182,7 +267,10 @@ const Index = () => {
 				initial="hidden"
 				whileInView="visible"
 				variants={containerVariants}
-				viewport={{ once: true, margin: '-100px' }}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
 			>
 				<div className="container mx-auto max-w-6xl">
 					<motion.h2
@@ -216,20 +304,45 @@ const Index = () => {
 				</div>
 			</motion.section>
 
+			{/* Product Overview Section */}
+			<motion.div
+				initial="hidden"
+				whileInView="visible"
+				variants={containerVariants}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
+			>
+				<ProductOverview />
+			</motion.div>
+
 			{/* Features Section - Updated to match the image */}
 			<motion.section
 				className="bg-white px-4 py-20"
 				initial="hidden"
 				whileInView="visible"
 				variants={containerVariants}
-				viewport={{ once: true, margin: '-100px' }}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
 			>
 				<div className="container mx-auto max-w-6xl">
 					<motion.div className="mb-12 text-center" variants={itemVariants}>
 						<motion.div
-							initial={{ opacity: 0, y: -10 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.2, duration: 0.5 }}
+							initial={{
+								opacity: 0,
+								y: -10,
+							}}
+							animate={{
+								opacity: 1,
+								y: 0,
+							}}
+							transition={{
+								delay: 0.2,
+								duration: 0.5,
+							}}
 							className="mx-auto mb-4"
 						>
 							<img
@@ -291,7 +404,7 @@ const Index = () => {
 					<div className="mt-12 text-center">
 						<Button
 							size="lg"
-							className="bg-[#00B86B] px-8 text-white hover:bg-green-700"
+							className="bg-blue-600 px-8 text-white hover:bg-blue-700"
 						>
 							Start your free trial today
 						</Button>
@@ -299,20 +412,44 @@ const Index = () => {
 				</div>
 			</motion.section>
 
+			{/* Pricing Section */}
+			<motion.div
+				initial="hidden"
+				whileInView="visible"
+				variants={containerVariants}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
+			>
+				<PricingSection />
+			</motion.div>
+
 			{/* Social Proof Section - Added animation */}
 			<motion.section
 				className="bg-gray-50 px-4 py-20"
-				initial={{ opacity: 0 }}
-				whileInView={{ opacity: 1 }}
-				viewport={{ once: true, margin: '-100px' }}
-				transition={{ duration: 0.6 }}
+				initial={{
+					opacity: 0,
+				}}
+				whileInView={{
+					opacity: 1,
+				}}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
+				transition={{
+					duration: 0.6,
+				}}
 			>
 				<div className="container mx-auto max-w-6xl">
 					<motion.div
 						initial="hidden"
 						whileInView="visible"
 						variants={containerVariants}
-						viewport={{ once: true }}
+						viewport={{
+							once: true,
+						}}
 					>
 						<motion.h2
 							className="mb-3 text-center text-3xl font-bold md:text-4xl"
@@ -350,10 +487,21 @@ const Index = () => {
 			{/* Lead Capture Section - Added animation */}
 			<motion.section
 				className="bg-white px-4 py-20"
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true, margin: '-100px' }}
-				transition={{ duration: 0.7 }}
+				initial={{
+					opacity: 0,
+					y: 20,
+				}}
+				whileInView={{
+					opacity: 1,
+					y: 0,
+				}}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
+				transition={{
+					duration: 0.7,
+				}}
 			>
 				<div className="container mx-auto max-w-2xl">
 					<Card className="border border-gray-200 shadow-lg">
@@ -425,7 +573,7 @@ const Index = () => {
 								<div className="pt-4">
 									<Button
 										type="submit"
-										className="w-full bg-[#00B86B] text-white hover:bg-green-700"
+										className="w-full bg-blue-600 text-white hover:bg-blue-700"
 										size="lg"
 									>
 										Claim Your CRM Now
@@ -444,37 +592,61 @@ const Index = () => {
 			{/* Trust Indicators - Added animation */}
 			<motion.section
 				className="bg-gray-50 px-4 py-12"
-				initial={{ opacity: 0 }}
-				whileInView={{ opacity: 1 }}
-				viewport={{ once: true, margin: '-100px' }}
-				transition={{ duration: 0.5 }}
+				initial={{
+					opacity: 0,
+				}}
+				whileInView={{
+					opacity: 1,
+				}}
+				viewport={{
+					once: true,
+					margin: '-100px',
+				}}
+				transition={{
+					duration: 0.5,
+				}}
 			>
 				<div className="container mx-auto max-w-4xl">
 					<div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3">
 						<motion.div
 							className="flex flex-col items-center"
-							whileHover={{ y: -5, transition: { duration: 0.2 } }}
+							whileHover={{
+								y: -5,
+								transition: {
+									duration: 0.2,
+								},
+							}}
 						>
-							<div className="mb-4 rounded-full bg-orange-100 p-3">
-								<CheckCircle className="h-6 w-6 text-[#FF6600]" />
+							<div className="mb-4 rounded-full bg-blue-100 p-3">
+								<CheckCircle className="h-6 w-6 text-blue-600" />
 							</div>
 							<p className="font-medium">Trusted by 10,000+ businesses</p>
 						</motion.div>
 						<motion.div
 							className="flex flex-col items-center"
-							whileHover={{ y: -5, transition: { duration: 0.2 } }}
+							whileHover={{
+								y: -5,
+								transition: {
+									duration: 0.2,
+								},
+							}}
 						>
-							<div className="mb-4 rounded-full bg-orange-100 p-3">
-								<CheckCircle className="h-6 w-6 text-[#FF6600]" />
+							<div className="mb-4 rounded-full bg-blue-100 p-3">
+								<CheckCircle className="h-6 w-6 text-blue-600" />
 							</div>
 							<p className="font-medium">Modern security best practices</p>
 						</motion.div>
 						<motion.div
 							className="flex flex-col items-center"
-							whileHover={{ y: -5, transition: { duration: 0.2 } }}
+							whileHover={{
+								y: -5,
+								transition: {
+									duration: 0.2,
+								},
+							}}
 						>
-							<div className="mb-4 rounded-full bg-orange-100 p-3">
-								<CheckCircle className="h-6 w-6 text-[#FF6600]" />
+							<div className="mb-4 rounded-full bg-blue-100 p-3">
+								<CheckCircle className="h-6 w-6 text-blue-600" />
 							</div>
 							<p className="font-medium">HubSpot lead tracking</p>
 						</motion.div>
@@ -485,10 +657,18 @@ const Index = () => {
 			{/* Footer - Added subtle animation */}
 			<motion.footer
 				className="mt-auto bg-gray-900 px-4 py-12 text-white"
-				initial={{ opacity: 0 }}
-				whileInView={{ opacity: 1 }}
-				viewport={{ once: true }}
-				transition={{ duration: 0.8 }}
+				initial={{
+					opacity: 0,
+				}}
+				whileInView={{
+					opacity: 1,
+				}}
+				viewport={{
+					once: true,
+				}}
+				transition={{
+					duration: 0.8,
+				}}
 			>
 				<div className="container mx-auto max-w-6xl">
 					<div className="grid grid-cols-1 gap-8 md:grid-cols-4">
@@ -609,5 +789,4 @@ const Index = () => {
 		</div>
 	);
 };
-
 export default Index;

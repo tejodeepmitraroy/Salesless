@@ -1,126 +1,151 @@
 import { motion } from 'framer-motion';
-import { Card, CardContent } from '@/components/ui/card';
-import { Clock, ExternalLink, Building, User, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+// import { Clock, ExternalLink, Building, User } from "lucide-react";
 
-type FeatureCardProps = {
+interface FeatureCardProps {
 	title: string;
 	description: string;
-	icon: string;
-	ctaText?: string;
-	bulletPoints?: string[];
+	icon?: string;
 	tagText?: string;
 	imageUrl?: string;
-};
+	bulletPoints?: string[];
+	ctaText?: string;
+}
 
 const FeatureCard = ({
 	title,
 	description,
-	icon,
-	ctaText = 'Learn more',
-	bulletPoints = [],
+	// icon,
 	tagText,
 	imageUrl,
+	bulletPoints = [],
+	ctaText = 'Learn more',
 }: FeatureCardProps) => {
-	const renderIcon = () => {
-		switch (icon) {
-			case 'Clock':
-				return <Clock className="h-6 w-6 text-[#00B86B]" />;
-			case 'ExternalLink':
-				return <ExternalLink className="h-6 w-6 text-[#00B86B]" />;
-			case 'Building':
-				return <Building className="h-6 w-6 text-[#00B86B]" />;
-			case 'User':
-				return <User className="h-6 w-6 text-[#00B86B]" />;
-			default:
-				return <Clock className="h-6 w-6 text-[#00B86B]" />;
-		}
-	};
+	// const iconMap = {
+	//   Clock,
+	//   ExternalLink,
+	//   Building,
+	//   User
+	// };
+
+	// const IconComponent = iconMap[icon as keyof typeof iconMap] || Clock;
 
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			whileInView={{ opacity: 1, y: 0 }}
-			exit={{
-				opacity: 0,
-				y: -20,
-				transition: { duration: 0.3, ease: 'easeIn' },
-			}}
-			transition={{ duration: 0.5, ease: 'easeOut' }}
-			viewport={{ once: true, margin: '-50px' }}
-			whileHover={{
-				scale: 1.03,
-				boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
-				transition: { duration: 0.2 },
-			}}
-			className="h-full"
+			viewport={{ once: true }}
+			transition={{ duration: 0.6 }}
+			whileHover={{ y: -5 }}
+			className="mb-12"
 		>
-			<Card
-				className={`border ${imageUrl ? 'border-0' : 'border-gray-100'} h-full overflow-hidden shadow-sm transition-shadow ${imageUrl ? 'bg-blue-50' : 'bg-white'}`}
-			>
-				<CardContent
-					className={`p-6 ${imageUrl ? 'flex flex-col p-0 md:flex-row' : ''}`}
-				>
-					{imageUrl ? (
-						<>
-							<div className="flex-1 p-6">
-								{tagText && (
-									<span className="mb-4 inline-block rounded-full bg-white px-3 py-1 text-sm font-medium">
+			<Card className="border border-gray-200 shadow-lg transition-all duration-300 hover:shadow-xl">
+				<CardContent className="p-8">
+					<div className="flex flex-col items-center gap-8 lg:flex-row">
+						<div className="flex-1 space-y-6">
+							{tagText && (
+								<motion.div
+									initial={{ opacity: 0, x: -20 }}
+									whileInView={{ opacity: 1, x: 0 }}
+									viewport={{ once: true }}
+									transition={{ delay: 0.2, duration: 0.5 }}
+									className="inline-block"
+								>
+									<span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
 										{tagText}
 									</span>
-								)}
-								<h3 className="mb-4 text-2xl font-bold text-gray-800">
-									{title}
-								</h3>
-								<p className="mb-4 text-gray-600">{description}</p>
-								<div className="mb-6 space-y-3">
+								</motion.div>
+							)}
+
+							<motion.h3
+								initial={{ opacity: 0, x: -20 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: 0.3, duration: 0.5 }}
+								className="text-2xl font-bold text-gray-900 lg:text-3xl"
+							>
+								{title}
+							</motion.h3>
+
+							<motion.p
+								initial={{ opacity: 0, x: -20 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: 0.4, duration: 0.5 }}
+								className="text-lg text-gray-600"
+							>
+								{description}
+							</motion.p>
+
+							{bulletPoints.length > 0 && (
+								<motion.ul
+									initial={{ opacity: 0, x: -20 }}
+									whileInView={{ opacity: 1, x: 0 }}
+									viewport={{ once: true }}
+									transition={{ delay: 0.5, duration: 0.5 }}
+									className="space-y-3"
+								>
 									{bulletPoints.map((point, index) => (
-										<div key={index} className="flex items-start">
-											<svg
-												className="mt-1 mr-2 h-5 w-5 text-[#00B86B]"
-												fill="none"
-												stroke="currentColor"
-												viewBox="0 0 24 24"
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													strokeWidth="2"
-													d="M5 13l4 4L19 7"
-												></path>
-											</svg>
-											<p className="text-gray-600">{point}</p>
-										</div>
+										<motion.li
+											key={index}
+											initial={{ opacity: 0, x: -10 }}
+											whileInView={{ opacity: 1, x: 0 }}
+											viewport={{ once: true }}
+											transition={{ delay: 0.6 + index * 0.1, duration: 0.4 }}
+											className="flex items-start"
+										>
+											<div className="mt-1 mr-3 flex-shrink-0 rounded-full bg-green-100 p-1">
+												<div className="h-2 w-2 rounded-full bg-green-500"></div>
+											</div>
+											<span className="text-gray-700">{point}</span>
+										</motion.li>
 									))}
-								</div>
-								<Button className="bg-[#00B86B] text-white hover:bg-green-700">
-									{ctaText} <ArrowRight className="ml-2 h-4 w-4" />
+								</motion.ul>
+							)}
+
+							<motion.div
+								initial={{ opacity: 0, x: -20 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: 0.7, duration: 0.5 }}
+							>
+								<Button
+									variant="outline"
+									className="border-blue-500 text-blue-600 transition-colors hover:bg-blue-50"
+								>
+									{ctaText}
 								</Button>
-							</div>
-							<div className="flex-1">
-								<img
+							</motion.div>
+						</div>
+
+						{imageUrl && (
+							<motion.div
+								initial={{ opacity: 0, x: 50 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true }}
+								transition={{ delay: 0.4, duration: 0.8 }}
+								className="relative flex-1 overflow-hidden rounded-lg"
+							>
+								<motion.img
 									src={imageUrl}
 									alt={title}
-									className="h-full w-full object-cover"
+									className="h-64 w-full rounded-lg object-cover lg:h-80"
+									whileHover={{ scale: 1.05, rotate: 2 }}
+									animate={{
+										x: [0, -10, 0],
+										rotate: [-1, 1, -1],
+									}}
+									transition={{
+										duration: 4,
+										ease: 'easeInOut',
+										repeat: Infinity,
+										repeatType: 'reverse',
+									}}
 								/>
-							</div>
-						</>
-					) : (
-						<>
-							<div className="mb-4 inline-block rounded-lg bg-green-50 p-3">
-								{renderIcon()}
-							</div>
-							<h3 className="mb-2 text-xl font-bold">{title}</h3>
-							<p className="mb-4 text-gray-600">{description}</p>
-							<Button
-								variant="link"
-								className="h-auto p-0 font-medium text-[#00B86B] hover:text-green-700"
-							>
-								{ctaText} <ArrowRight className="ml-1 h-4 w-4" />
-							</Button>
-						</>
-					)}
+							</motion.div>
+						)}
+					</div>
 				</CardContent>
 			</Card>
 		</motion.div>

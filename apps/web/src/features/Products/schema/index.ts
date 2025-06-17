@@ -8,11 +8,21 @@ export const productMediaSchema = z.object({
 });
 
 export const productVariantSchema = z.object({
-	id: z.string(),
-	attributes: z.record(z.string()),
-	price: z.number().optional(),
-	stock: z.number().optional(),
+	variantId: z.number(),
 	sku: z.string().optional(),
+	barcode: z.string().optional(),
+	price: z.coerce.number().optional(),
+	comparedAtPrice: z.coerce.number().optional(),
+	costPerItem: z.coerce.number().optional(),
+	profit: z.string().optional(),
+	margin: z.string().optional(),
+	inventoryQuantity: z.coerce.number().optional(),
+	weight: z.coerce.number().optional(),
+	weightUnit: z.enum(['kg', 'g', 'oz', 'lb']).optional(),
+	requiredShipping: z.boolean().optional(),
+	option1: z.string().optional().or(z.null()),
+	option2: z.string().optional().or(z.null()),
+	option3: z.string().optional().or(z.null()),
 });
 
 export const productVariantOptionSchema = z.object({
@@ -49,16 +59,16 @@ export const productFormSchema = z.object({
 	inventoryQuantity: z.coerce.number().optional(),
 
 	//Shipping
-	isShippingEnabled: z.boolean().optional(),
+	requiredShipping: z.boolean().optional(),
 	weight: z.coerce.number().optional(),
 	weightUnit: z.enum(['kg', 'g', 'oz', 'lb']).optional(),
-
 	status: z.string(),
 
 	//Multi Variants
-	variantOptions: z.array(productVariantOptionSchema).optional(),
-
+	options: z.array(productVariantOptionSchema).optional(),
 	variants: z.array(productVariantSchema).optional(),
+
+	//SEO
 	seoTitle: z.string().optional(),
 	seoDescription: z.string().optional(),
 	seoKeywords: z.string().optional(),

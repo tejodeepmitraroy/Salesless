@@ -1,10 +1,7 @@
 import { customAxios } from '@/api/axios-custom';
 
 export const createProductService = async (formData: any) => {
-	const response = await customAxios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/products`,
-		formData
-	);
+	const response = await customAxios.post(`/products`, formData);
 
 	return response;
 };
