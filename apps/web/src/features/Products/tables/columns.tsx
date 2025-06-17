@@ -9,7 +9,7 @@ export const productColumns: ColumnDef<Product>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
-			<div className="text-center">
+			<div className="z-10 text-center">
 				<Checkbox
 					checked={
 						table.getIsAllPageRowsSelected() ||
@@ -83,22 +83,22 @@ export const productColumns: ColumnDef<Product>[] = [
 			);
 		},
 	},
-	{
-		accessorKey: 'price',
-		header: () => <div className="text-center">Price</div>,
-		cell: ({ row }) => {
-			const price = row.getValue('price') as number;
-			return <div className="text-center">${price}</div>;
-		},
-	},
-	{
-		accessorKey: 'stockQuantity',
-		header: () => <div className="text-center">Stock</div>,
-		cell: ({ row }) => {
-			const stockQuantity = row.getValue('stockQuantity') as number;
-			return <div className="text-center">{stockQuantity}</div>;
-		},
-	},
+	// {
+	// 	accessorKey: 'inventory',
+	// 	header: () => <div className="text-center">Inventory</div>,
+	// 	cell: ({ row }) => {
+	// 		const inventory = row.getValue('inventory') as number;
+	// 		return <div className="text-center">${inventory}</div>;
+	// 	},
+	// },
+	// {
+	// 	accessorKey: 'stockQuantity',
+	// 	header: () => <div className="text-center">Stock</div>,
+	// 	cell: ({ row }) => {
+	// 		const stockQuantity = row.getValue('stockQuantity') as number;
+	// 		return <div className="text-center">{stockQuantity}</div>;
+	// 	},
+	// },
 	{
 		accessorKey: 'category',
 		header: () => <div className="text-center">Category</div>,

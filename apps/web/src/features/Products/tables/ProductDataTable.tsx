@@ -14,6 +14,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { useNavigate, useParams } from 'react-router';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -27,10 +28,15 @@ export function ProductDataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();
+	const [rowSelection, setRowSelection] = useState({});
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		onRowSelectionChange: setRowSelection,
+		state: {
+			rowSelection,
+		},
 	});
 	const OpenProductDetails = (row: TData) => {
 		navigate(`/store/${storeId}/products/${(row as { id: string }).id}`);
@@ -62,15 +68,29 @@ export function ProductDataTable<TData, TValue>({
 						table.getRowModel().rows.map((row) => (
 							<TableRow
 								key={row.id}
-								onClick={() => OpenProductDetails(row.original)}
 								data-state={row.getIsSelected() && 'selected'}
 								className={'cursor-pointer'}
 							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</TableCell>
-								))}
+								{row.getVisibleCells().map((cell) =>
+									cell.column.id === 'select' ? (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									) : (
+										<TableCell
+											onClick={() => OpenProductDetails(row.original)}
+											key={cell.id}
+										>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									)
+								)}
 							</TableRow>
 						))
 					) : (
@@ -82,6 +102,11 @@ export function ProductDataTable<TData, TValue>({
 					)}
 				</TableBody>
 			</Table>
+
+			<div className="text-muted-foreground mt-10 flex-1 text-sm">
+				{table.getFilteredSelectedRowModel().rows.length} of{' '}
+				{table.getFilteredRowModel().rows.length} row(s) selected.
+			</div>
 		</div>
 	);
 }

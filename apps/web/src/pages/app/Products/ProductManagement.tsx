@@ -21,16 +21,6 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 
-// export const getFeaturedImage = (product: Product) => {
-// 	if (!product.images || product.images.length === 0) return undefined;
-
-// 	// Find featured image or use the first one
-// 	const featuredImage =
-// 		product.images.find((img: ProductImage) => img.isFeatured) ||
-// 		product.images[0];
-// 	return featuredImage.url;
-// };
-
 const ProductManagement = () => {
 	const navigate = useNavigate();
 	const { storeId } = useParams<{ storeId: string }>();

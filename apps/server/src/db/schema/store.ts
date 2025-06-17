@@ -38,9 +38,7 @@ export const storeRelations = relations(store, ({ many }) => ({
 	carts: many(cart),
 	customerStores: many(customerStore),
 	userStore: many(userStore),
-	users: many(userStore, {
-		relationName: 'storeUsers',
-	}),
+
 	roles: many(userStore, {
 		relationName: 'storeRoles',
 	}),

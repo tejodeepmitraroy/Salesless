@@ -21,30 +21,28 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Label } from '@/components/ui/label';
-interface ProductVariantOptionManagerProps {
-	variantOptions: ProductVariantOption[];
-	appendVariantOption: (option: ProductVariantOption) => void;
-	removeVariantOption: (optionIndex: number) => void;
-	updateVariantOption: (
-		optionIndex: number,
-		option: ProductVariantOption
-	) => void;
-}
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { ProductFormValues } from '@/pages/app/Products/CreateNewProduct';
+import { useState } from 'react';
 
-const ProductVariantOptionManager: React.FC<
-	ProductVariantOptionManagerProps
-> = ({
-	variantOptions,
-	appendVariantOption,
-	removeVariantOption,
-	updateVariantOption,
-}) => {
+const ProductVariantOptionManager = () => {
+	const { control } = useFormContext<ProductFormValues>();
+
+	const {
+		fields: options,
+		append: appendVariantOption,
+		remove: removeVariantOption,
+		update: updateVariantOption,
+	} = useFieldArray({
+		control,
+		name: 'options',
+	});
+
 	return (
-		<section>
-			{variantOptions.length === 0 ? (
+		<section className="mx-6">
+			{options.length === 0 ? (
 				<VariantOptionDialog
 					onAppend={(variant) => appendVariantOption(variant)}
 				>
@@ -58,40 +56,38 @@ const ProductVariantOptionManager: React.FC<
 				</VariantOptionDialog>
 			) : (
 				<Card className="pb-0">
-					<CardHeader className="flex items-center justify-between">
+					{/* <CardHeader className="flex items-center justify-between">
 						<CardTitle className="text-sm font-medium">
 							Variants Options
 						</CardTitle>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						<div className="flex w-full flex-col items-start gap-1">
-							{variantOptions.map((option, optionIndex) => (
-								<VariantOptionDialog
-									key={option.name}
-									variant={option}
-									onUpdate={(variant) =>
-										updateVariantOption(optionIndex, variant)
-									}
-									onRemove={() => removeVariantOption(optionIndex)}
-								>
-									<Card className="relative w-full gap-2 rounded-md border-0 px-0 py-3 shadow-none">
-										<CardHeader className="flex items-center justify-between">
-											<CardTitle className="text-sm font-medium">
-												{option.name}
-											</CardTitle>
-										</CardHeader>
-										<CardContent className="flex w-full flex-wrap items-center justify-start gap-3">
-											{option.values.map((value) => (
-												<Badge className="rounded-md text-sm" key={value.value}>
-													{value.value}
-												</Badge>
-											))}
-										</CardContent>
-										<Separator />
-									</Card>
-								</VariantOptionDialog>
-							))}
-						</div>
+					</CardHeader> */}
+					<CardContent className="flex w-full flex-col items-start gap-1">
+						{options.map((option, optionIndex) => (
+							<VariantOptionDialog
+								key={option.name}
+								variant={option}
+								onUpdate={(variant) =>
+									updateVariantOption(optionIndex, variant)
+								}
+								onRemove={() => removeVariantOption(optionIndex)}
+							>
+								<Card className="relative flex w-full gap-3 rounded-md border-0 px-0 py-3 shadow-none">
+									<CardHeader className="flex items-center justify-between">
+										<CardTitle className="text-sm leading-3 font-medium">
+											{option.name}
+										</CardTitle>
+									</CardHeader>
+									<CardContent className="flex w-full flex-wrap items-center justify-start gap-2">
+										{option.values.map((value) => (
+											<Badge className="rounded text-sm" key={value.value}>
+												{value.value}
+											</Badge>
+										))}
+									</CardContent>
+									<Separator />
+								</Card>
+							</VariantOptionDialog>
+						))}
 					</CardContent>
 					<CardFooter className="flex flex-col items-center justify-start p-0">
 						<Separator />
