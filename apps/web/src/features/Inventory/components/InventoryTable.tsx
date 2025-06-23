@@ -67,13 +67,13 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
 						<TableHead>Location</TableHead>
 						<TableHead
 							className="cursor-pointer text-right"
-							onClick={() => handleSort('retailPrice')}
+							// onClick={() => handleSort('retailPrice')}
 						>
 							<div className="flex items-center justify-end gap-1">
 								Price
-								{sortField === 'retailPrice' && (
+								{/* {sortField === 'retailPrice' && (
 									<ArrowUpDown className="h-3 w-3" />
-								)}
+								)} */}
 							</div>
 						</TableHead>
 						<TableHead className="text-right">Actions</TableHead>
@@ -120,14 +120,14 @@ const InventoryTable: React.FC<InventoryTableProps> = ({
 										{item.status}
 									</Badge>
 								</TableCell>
-								<TableCell>{item.vendorName}</TableCell>
+								{/* <TableCell>{item.vendorName}</TableCell>
 								<TableCell>{item.location}</TableCell>
 								<TableCell className="text-right">
 									${item.retailPrice.toFixed(2)}
 									<div className="text-muted-foreground text-xs">
 										Cost: ${item.costPrice.toFixed(2)}
 									</div>
-								</TableCell>
+								</TableCell> */}
 								<TableCell className="text-right">
 									<div className="flex justify-end gap-2">
 										<Button

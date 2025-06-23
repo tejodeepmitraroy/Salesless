@@ -26,9 +26,10 @@ export function useInventory() {
 		return inventory
 			.filter(
 				(item) =>
-					item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					item.vendorName.toLowerCase().includes(searchTerm.toLowerCase())
+					item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+				// ||
+				// item.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				// item.vendorName.toLowerCase().includes(searchTerm.toLowerCase())
 			)
 			.filter(
 				(item) => categoryFilter === 'all' || item.category === categoryFilter
@@ -164,7 +165,7 @@ export function useInventory() {
 				'In Stock': item.inStock,
 				'Reorder Point': item.reorderPoint,
 				Status: item.status,
-				'Vendor Name': item.vendorName,
+				// 'Vendor Name': item.vendorName,
 				'Last Updated': item.lastUpdated,
 			}));
 

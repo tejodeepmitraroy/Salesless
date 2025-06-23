@@ -8,12 +8,12 @@ import {
 	Download,
 	AlertTriangle,
 	History,
+	Loader,
 } from 'lucide-react';
 // Import refactored components
 import { useInventory } from '@/features/Inventory/components/useInventory';
 import { InventoryItem } from '@/features/Inventory/components/types';
 import InventoryFilters from '@/features/Inventory/components/InventoryFilters';
-import InventoryTable from '@/features/Inventory/components/InventoryTable';
 import MovementHistoryTable from '@/features/Inventory/components/MovementHistoryTable';
 import AdjustStockDialog from '@/features/Inventory/components/AdjustStockDialog';
 import MovementHistoryDialog from '@/features/Inventory/components/MovementHistoryDialog';
@@ -21,8 +21,12 @@ import LowStockAlert from '@/features/Inventory/components/LowStockAlert';
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { InventoryDataTable } from '@/features/Inventory/tables/InventoryDataTable';
 import { inventoryColumns } from '@/features/Inventory/tables/columns';
+import { useQuery } from '@tanstack/react-query';
+import { getAllInventory } from '@/features/Inventory/services';
+import { useParams } from 'react-router';
 
 const InventoryManagement: React.FC = () => {
+	const { storeId } = useParams<{ storeId: string }>();
 	const {
 		searchTerm,
 		setSearchTerm,
@@ -30,14 +34,14 @@ const InventoryManagement: React.FC = () => {
 		setCategoryFilter,
 		statusFilter,
 		setStatusFilter,
-		sortField,
-		sortDirection,
-		handleSort,
+		// sortField,
+		// sortDirection,
+		// handleSort,
 		handleAdjustStock,
 		handleExportInventory,
 		getProductMovements,
 		uniqueCategories,
-		filteredInventory,
+		// filteredInventory,
 		lowStockItems,
 		stockMovements,
 	} = useInventory();
@@ -48,7 +52,16 @@ const InventoryManagement: React.FC = () => {
 	const [isLowStockOpen, setIsLowStockOpen] = useState(false);
 	const [currentItem, setCurrentItem] = useState<InventoryItem | null>(null);
 
-	return (
+	const { data: inventoryData, isLoading } = useQuery({
+		queryKey: ['inventory'],
+		queryFn: () => getAllInventory({ storeId: storeId! }),
+	});
+
+	console.log('inventoryData', inventoryData);
+
+	return isLoading ? (
+		<Loader className="h-5 w-5 animate-spin" />
+	) : (
 		<div className="space-y-6">
 			<HeaderSection
 				icon={<Package />}
@@ -102,7 +115,7 @@ const InventoryManagement: React.FC = () => {
 							setCategoryFilter={setCategoryFilter}
 							setStatusFilter={setStatusFilter}
 						/>
-						<InventoryTable
+						{/* <InventoryTable
 							filteredInventory={filteredInventory}
 							sortField={sortField}
 							sortDirection={sortDirection}
@@ -115,10 +128,10 @@ const InventoryManagement: React.FC = () => {
 								setCurrentItem(item);
 								setIsMovementHistoryOpen(true);
 							}}
-						/>
+						/> */}
 						<InventoryDataTable
 							columns={inventoryColumns}
-							data={filteredInventory}
+							data={inventoryData}
 						/>
 					</TabsContent>
 

@@ -16,6 +16,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -27,8 +28,8 @@ export function InventoryDataTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
-	// const navigate = useNavigate();
-	// const { storeId } = useParams<{ storeId: string }>();
+	const navigate = useNavigate();
+	const { storeId } = useParams<{ storeId: string }>();
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const table = useReactTable({
 		data,
@@ -40,6 +41,12 @@ export function InventoryDataTable<TData, TValue>({
 			sorting,
 		},
 	});
+
+	const OpenProductDetails = (row: TData) => {
+		navigate(
+			`/store/${storeId}/products/${(row as { productId: string }).productId}`
+		);
+	};
 
 	return (
 		<div className="rounded-md border">
@@ -70,11 +77,26 @@ export function InventoryDataTable<TData, TValue>({
 								data-state={row.getIsSelected() && 'selected'}
 								className={'cursor-pointer'}
 							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</TableCell>
-								))}
+								{row.getVisibleCells().map((cell) =>
+									cell.column.id === 'select' ? (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									) : (
+										<TableCell
+											onClick={() => OpenProductDetails(row.original)}
+											key={cell.id}
+										>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									)
+								)}
 							</TableRow>
 						))
 					) : (

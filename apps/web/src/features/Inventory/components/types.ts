@@ -3,7 +3,7 @@ export type InventoryItem = {
 	id: number;
 	productId: number;
 	productName: string;
-	sku: string;
+	sku: string | null;
 	// media: ProductMedia[];
 	category: string;
 	inStock: number;
@@ -11,10 +11,10 @@ export type InventoryItem = {
 	onOrder: number;
 	lastUpdated: string;
 	status: 'In Stock' | 'Low Stock' | 'Out of Stock' | 'Overstocked';
-	vendorName: string;
-	location: string;
-	costPrice: number;
-	retailPrice: number;
+	// vendorName: string;
+	// location: string;
+	price: number;
+	comparedAtPrice: number;
 };
 
 export type StockMovement = {
@@ -42,10 +42,10 @@ export const initialInventory: InventoryItem[] = [
 		onOrder: 0,
 		lastUpdated: '2024-06-08',
 		status: 'In Stock',
-		vendorName: 'TechGadgets Inc.',
-		location: 'Warehouse A',
-		costPrice: 28.5,
-		retailPrice: 59.99,
+		// vendorName: 'TechGadgets Inc.',
+		// location: 'Warehouse A',
+		price: 28.5,
+		comparedAtPrice: 59.99,
 	},
 	{
 		id: 2,
@@ -58,10 +58,10 @@ export const initialInventory: InventoryItem[] = [
 		onOrder: 25,
 		lastUpdated: '2024-06-09',
 		status: 'Low Stock',
-		vendorName: 'TechGadgets Inc.',
-		location: 'Warehouse A',
-		costPrice: 35.75,
-		retailPrice: 79.99,
+		// vendorName: 'TechGadgets Inc.',
+		// location: 'Warehouse A',
+		price: 35.75,
+		comparedAtPrice: 79.99,
 	},
 	{
 		id: 3,
@@ -74,10 +74,10 @@ export const initialInventory: InventoryItem[] = [
 		onOrder: 20,
 		lastUpdated: '2024-06-07',
 		status: 'Out of Stock',
-		vendorName: 'AudioTech Solutions',
-		location: 'Warehouse B',
-		costPrice: 18.25,
-		retailPrice: 39.99,
+		// vendorName: 'AudioTech Solutions',
+		// location: 'Warehouse B',
+		price: 18.25,
+		comparedAtPrice: 39.99,
 	},
 	{
 		id: 4,
@@ -90,10 +90,10 @@ export const initialInventory: InventoryItem[] = [
 		onOrder: 0,
 		lastUpdated: '2024-06-10',
 		status: 'Overstocked',
-		vendorName: 'EcoFashion Co.',
-		location: 'Warehouse C',
-		costPrice: 12.5,
-		retailPrice: 24.99,
+		// vendorName: 'EcoFashion Co.',
+		// location: 'Warehouse C',
+		price: 12.5,
+		comparedAtPrice: 24.99,
 	},
 	{
 		id: 5,
@@ -106,10 +106,10 @@ export const initialInventory: InventoryItem[] = [
 		onOrder: 0,
 		lastUpdated: '2024-06-09',
 		status: 'In Stock',
-		vendorName: 'Global Coffee Imports',
-		location: 'Warehouse D',
-		costPrice: 8.75,
-		retailPrice: 16.99,
+		// vendorName: 'Global Coffee Imports',
+		// location: 'Warehouse D',
+		price: 8.75,
+		comparedAtPrice: 16.99,
 	},
 ];
 

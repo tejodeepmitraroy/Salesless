@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
 import { Download, Search, User } from 'lucide-react';
 import { exportToCSV } from '@/utils/exportUtils';
-import { DataTable } from '@/features/Customer/tables/data-table';
+import { CustomerDataTable } from '@/features/Customer/tables/CustomerDataTable';
 import { customerColumns } from '@/features/Customer/tables/columns';
 import { useQuery } from '@tanstack/react-query';
 import { getCustomersService } from '@/features/Customer/services';
@@ -249,19 +242,7 @@ const CustomerManagement = () => {
 				</Button>
 			</section>
 
-			<Card>
-				<CardHeader className="text-left">
-					<CardTitle className="text-left text-2xl font-bold">
-						Users ({customers.length})
-					</CardTitle>
-					<CardDescription className="text-left">
-						View and manage user accounts
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<DataTable columns={customerColumns} data={customers} />
-				</CardContent>
-			</Card>
+			<CustomerDataTable columns={customerColumns} data={customers} />
 		</section>
 	);
 };

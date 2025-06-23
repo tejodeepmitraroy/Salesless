@@ -13,21 +13,28 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { useNavigate, useParams } from 'react-router';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function CustomerDataTable<TData, TValue>({
 	columns,
 	data,
 }: DataTableProps<TData, TValue>) {
+	const navigate = useNavigate();
+	const { storeId } = useParams<{ storeId: string }>();
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 	});
+
+	const OpenCustomerDetails = (row: TData) => {
+		navigate(`/store/${storeId}/customers/${(row as { id: string }).id}`);
+	};
 
 	return (
 		<div className="rounded-md border">
@@ -56,12 +63,28 @@ export function DataTable<TData, TValue>({
 							<TableRow
 								key={row.id}
 								data-state={row.getIsSelected() && 'selected'}
+								className={'cursor-pointer'}
 							>
-								{row.getVisibleCells().map((cell) => (
-									<TableCell key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</TableCell>
-								))}
+								{row.getVisibleCells().map((cell) =>
+									cell.column.id === 'select' ? (
+										<TableCell key={cell.id}>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									) : (
+										<TableCell
+											onClick={() => OpenCustomerDetails(row.original)}
+											key={cell.id}
+										>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext()
+											)}
+										</TableCell>
+									)
+								)}
 							</TableRow>
 						))
 					) : (

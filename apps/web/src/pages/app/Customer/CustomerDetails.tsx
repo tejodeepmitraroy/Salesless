@@ -1,14 +1,12 @@
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-} from '@/components/ui/card';
+import HeaderSection from '@/components/layouts/HeaderSection';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCustomerByIdService } from '@/features/Customer/services';
 import { Customer, useCustomerStore } from '@/stores/useCustomerStore';
 import { useQuery } from '@tanstack/react-query';
+import { User } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -40,73 +38,62 @@ const CustomerDetails = () => {
 	}, [customerData?.data.data, customerId, getCustomerById]);
 
 	return (
-		<section>
-			<Card>
-				<CardHeader>
-					{/* <div className="flex items-center justify-between">
-						<CardTitle>User Profile: {customer?.firstName}</CardTitle>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => exportUserPurchases(customer)}
-							className="gap-2"
-						>
-							<Download className="h-4 w-4" />
-							Export Purchases
-						</Button>
-					</div> */}
-					<CardDescription>
-						Last active: {customer?.lastActive} | Status: {customer?.status}
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<Tabs defaultValue="details">
-						<TabsList>
-							<TabsTrigger value="details">User Details</TabsTrigger>
-							<TabsTrigger value="purchases">Purchase History</TabsTrigger>
-						</TabsList>
-						<TabsContent value="details" className="space-y-4 pt-4">
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+		<section className="space-y-6">
+			<HeaderSection
+				icon={<User className="h-7 w-7" />}
+				title={`User Profile: ${customer?.firstName} ${customer?.lastName}`}
+				description={`Last active: ${customer?.lastActive} | Status: ${customer?.status}`}
+			/>
+
+			<Tabs defaultValue="details">
+				<TabsList>
+					<TabsTrigger value="details">User Details</TabsTrigger>
+					<TabsTrigger value="purchases">Purchase History</TabsTrigger>
+				</TabsList>
+				<TabsContent value="details" className="space-y-4 pt-4">
+					<Card>
+						<CardContent className="grid grid-cols-2 gap-4 space-y-4">
+							<section className="flex flex-col gap-2">
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Name
+									</Label>
+									<p className="text-base font-semibold">
+										{customer?.firstName}
 									</p>
-									<p>{customer?.firstName}</p>
 								</div>
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Email
-									</p>
-									<p>{customer?.email}</p>
+									</Label>
+									<p className="text-base font-semibold">{customer?.email}</p>
 								</div>
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Mobile
-									</p>
-									<p>{customer?.phone}</p>
+									</Label>
+									<p className="text-base font-semibold">{customer?.phone}</p>
 								</div>
-								{/* <div>
-									<p className="text-muted-foreground text-sm font-medium">
-										Signup Date
-									</p>
-									<p>{customer?.createdAt}</p>
-								</div> */}
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Last Active
+									</Label>
+									<p className="text-base font-semibold">
+										{customer?.lastActive}
 									</p>
-									<p>{customer?.lastActive}</p>
 								</div>
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Status
-									</p>
-									<p>{customer?.status}</p>
+									</Label>
+									<p className="text-base font-semibold">{customer?.status}</p>
 								</div>
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
+							</section>
+							<section>
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
 										Total Spent
-									</p>
+									</Label>
 									{/* <p>
 										$
 										{customer?.purchases
@@ -114,16 +101,37 @@ const CustomerDetails = () => {
 											.toFixed(2)}
 									</p> */}
 								</div>
-								<div>
-									<p className="text-muted-foreground text-sm font-medium">
-										Total Purchases
-									</p>
-									{/* <p>{customer?.purchases.length}</p> */}
-									<p>{customer?.orderCount}</p>
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
+										Status
+									</Label>
+									<p className="text-base font-semibold">{customer?.status}</p>
 								</div>
-							</div>
-						</TabsContent>
-						{/* <TabsContent value="purchases" className="pt-4">
+								<div className="flex flex-col items-start gap-2">
+									<Label className="text-muted-foreground text-sm font-medium">
+										Total Spent
+									</Label>
+									{/* <p>
+										$
+										{customer?.purchases
+											.reduce((sum, purchase) => sum + purchase.amount, 0)
+											.toFixed(2)}
+									</p> */}
+								</div>
+								<div className="flex flex-col items-start gap-1">
+									<Label className="text-muted-foreground text-base font-semibold">
+										Total Purchases
+									</Label>
+									{/* <p>{customer?.purchases.length}</p> */}
+									<p className="text-base font-semibold">
+										{customer?.orderCount}
+									</p>
+								</div>
+							</section>
+						</CardContent>
+					</Card>
+				</TabsContent>
+				{/* <TabsContent value="purchases" className="pt-4">
 							{customer?.purchases.length > 0 ? (
 								<Table>
 									<TableHeader>
@@ -165,9 +173,7 @@ const CustomerDetails = () => {
 								</p>
 							)}
 						</TabsContent> */}
-					</Tabs>
-				</CardContent>
-			</Card>
+			</Tabs>
 		</section>
 	);
 };

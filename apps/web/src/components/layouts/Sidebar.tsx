@@ -14,7 +14,6 @@ import {
 	Image,
 	PanelsTopLeft,
 	Boxes,
-	LibraryBig,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -60,13 +59,13 @@ const SidebarLinks = [
 		active: false,
 		collapsed: false,
 		subLinks: [
-			{
-				icon: LibraryBig,
-				label: 'Collections',
-				href: '/collections',
-				active: false,
-				collapsed: false,
-			},
+			// {
+			// 	icon: LibraryBig,
+			// 	label: 'Collections',
+			// 	href: '/collections',
+			// 	active: false,
+			// 	collapsed: false,
+			// },
 			{
 				icon: Boxes,
 				label: 'Inventory',
@@ -83,15 +82,7 @@ const SidebarLinks = [
 		href: '/customers',
 		active: false,
 		collapsed: false,
-		subLinks: [
-			{
-				icon: User,
-				label: 'Customers',
-				href: '/customers',
-				active: false,
-				collapsed: false,
-			},
-		],
+		subLinks: [],
 	},
 
 	{
@@ -100,15 +91,7 @@ const SidebarLinks = [
 		href: '/media',
 		active: false,
 		collapsed: false,
-		subLinks: [
-			{
-				icon: Image,
-				label: 'Media Store',
-				href: '/media',
-				active: false,
-				collapsed: false,
-			},
-		],
+		subLinks: [],
 	},
 ];
 
