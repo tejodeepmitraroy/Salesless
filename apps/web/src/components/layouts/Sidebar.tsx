@@ -7,13 +7,14 @@ import {
 	LogOut,
 	User,
 	Bell,
-	LayoutGrid,
 	Store,
 	SignpostBig,
 	Phone,
 	Image,
 	PanelsTopLeft,
 	Boxes,
+	ChevronsUpDown,
+	Home,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -21,6 +22,14 @@ import SidebarItem from './SidebarItem';
 import { motion } from 'framer-motion';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '../ui/dialog';
 
 const sidebarVariants = {
 	open: { width: '18rem', x: 0 },
@@ -29,8 +38,8 @@ const sidebarVariants = {
 
 const SidebarLinks = [
 	{
-		icon: LayoutGrid,
-		label: 'App Launcher',
+		icon: Home,
+		label: 'Home',
 		href: '/',
 		active: false,
 		collapsed: false,
@@ -40,14 +49,6 @@ const SidebarLinks = [
 		icon: LayoutDashboard,
 		label: 'Dashboard',
 		href: '/dashboard',
-		active: false,
-		collapsed: false,
-		subLinks: [],
-	},
-	{
-		icon: ShoppingCart,
-		label: 'Orders',
-		href: '/orders',
 		active: false,
 		collapsed: false,
 		subLinks: [],
@@ -74,6 +75,14 @@ const SidebarLinks = [
 				collapsed: false,
 			},
 		],
+	},
+	{
+		icon: ShoppingCart,
+		label: 'Orders',
+		href: '/orders',
+		active: false,
+		collapsed: false,
+		subLinks: [],
 	},
 
 	{
@@ -159,11 +168,12 @@ const Sidebar: React.FC<{
 			transition={{ duration: 0.3, ease: 'easeInOut' }}
 			className={cn(
 				// 'border-border scrollbar-thin fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r px-3 py-2 md:h-[calc(100vh-4rem)]',
-				'fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-3 md:h-[calc(100dvh)]',
+				// 'fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto px-3 py-3 md:h-[calc(100dvh)]',
+				'fixed z-10 h-[calc(100vh-3.5rem)] overflow-y-auto border-r md:h-[calc(100dvh)]',
 				sidebarOpen ? 'w-[18rem]' : 'w-[6rem]'
 			)}
 		>
-			<div className="from-primary/10 hidden h-full w-full rounded-lg bg-gradient-to-r to-gray-100 p-3 md:block md:p-4">
+			<div className="from-primary/10 bg-background hidden h-full w-full rounded-lg p-3 md:block md:p-4">
 				<section
 					className={` ${sidebarOpen ? 'flex-row px-2' : 'flex-col'} flex w-full items-center justify-between`}
 				>
@@ -171,7 +181,7 @@ const Sidebar: React.FC<{
 						to={`/store/${storeId}`}
 						className="my-3 flex items-center gap-4"
 					>
-						<img src="/icons/logo.png" alt="" className="h-8 w-8 rounded-lg" />
+						<img src="/logo.png" alt="" className="h-8 w-8 rounded-lg" />
 						{sidebarOpen && (
 							<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
 								Salesless
@@ -183,7 +193,31 @@ const Sidebar: React.FC<{
 						<PanelsTopLeft />
 					</Button>
 				</section>
-				<nav className="mt-3 space-y-1">
+
+				<Dialog>
+					<DialogTrigger className="mt-6 w-full">
+						<section className="flex w-full items-center justify-between border py-1 pl-4">
+							<div className="g flex items-center">
+								<Store />
+								<Label className="mx-2 my-2">Stores</Label>
+							</div>
+							<div className="mx-3 my-2">
+								<ChevronsUpDown />
+							</div>
+						</section>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>Are you absolutely sure?</DialogTitle>
+							<DialogDescription>
+								This action cannot be undone. This will permanently delete your
+								account and remove your data from our servers.
+							</DialogDescription>
+						</DialogHeader>
+					</DialogContent>
+				</Dialog>
+
+				<nav className="mt-4 space-y-1">
 					{SidebarLinks.map((link) => (
 						<SidebarItem
 							key={link.label}

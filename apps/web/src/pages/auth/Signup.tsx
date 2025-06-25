@@ -9,7 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, Mail, UserPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,6 +26,8 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { signUpService } from '@/features/users/services';
 import { Label } from '@/components/ui/label';
+import { googleLoginService } from '@/features/Auth/services';
+import ChatButton from '@/components/ChatButton';
 
 const SignupPage = () => {
 	const form = useForm({
@@ -68,6 +70,7 @@ const SignupPage = () => {
 
 	return (
 		<>
+			<ChatButton />
 			<section className="fixed top-0 z-50 flex w-full items-center">
 				<div className="mx-auto flex w-full max-w-4xl items-center px-3">
 					<div className="my-6 flex items-center gap-2">
@@ -83,21 +86,40 @@ const SignupPage = () => {
 			<div className="flex min-h-screen items-center justify-center p-4">
 				<Card className="w-full max-w-lg py-10">
 					<CardHeader className="px-10">
-						<section className="mb-5 flex items-center gap-2">
+						{/* <section className="mb-5 flex items-center gap-2">
 							<img
 								src="/logo.png"
 								alt=""
 								className="border-primary h-10 w-10 rounded-lg border"
 							/>
-						</section>
+						</section> */}
 						<CardTitle className="text-left text-2xl font-bold">
 							Create a Salesless account
 						</CardTitle>
 						<CardDescription className="text-left">
-							Create a new Salesless account
+							Just a few steps to your store
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="px-10">
+					<CardContent className="flex flex-col gap-5 px-10">
+						<Link to={googleLoginService()} className="w-full">
+							<Button
+								variant="outline"
+								className="hover:bg-primary/85 flex h-12 w-full items-center justify-center gap-3 text-black hover:text-white"
+							>
+								<img
+									src={'/icons/google.png'}
+									width={20}
+									height={20}
+									alt="google"
+								/>
+								<span>Sign up with Google</span>
+							</Button>
+						</Link>
+						<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+							<span className="bg-card text-muted-foreground relative z-10 px-2">
+								Or continue with
+							</span>
+						</div>
 						<Form {...form}>
 							<form
 								onSubmit={form.handleSubmit(onSubmit)}
@@ -110,13 +132,23 @@ const SignupPage = () => {
 										<FormItem className="space-y-1">
 											<FormLabel htmlFor="email">Email</FormLabel>
 											<FormControl>
-												<Input
+												<div className="relative flex w-full items-center gap-2">
+													<Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+													<Input
+														type="text"
+														placeholder="Search products..."
+														className="w-full rounded-md border py-2 pr-4 pl-10"
+														{...field}
+														required
+													/>
+												</div>
+												{/* <Input
 													id="email"
 													type="email"
 													placeholder="john.doe@example.com"
 													{...field}
 													required
-												/>
+												/> */}
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -252,25 +284,23 @@ const SignupPage = () => {
 							</form>
 						</Form>
 					</CardContent>
-					<CardFooter className="flex flex-col space-y-2 px-10">
-						<div className="text-center text-sm">
+					<CardFooter className="mt-2 flex flex-col items-start gap-2 space-y-2 px-10">
+						<div className="text-muted-foreground text-left text-sm">
 							Already have an account?{' '}
 							<Link to="/login" className="text-primary hover:underline">
 								Login
 							</Link>
 						</div>
-						<div className="mt-10">
-							<p className="text-left text-xs text-gray-500">
-								By proceeding, you agree to the{' '}
-								<Link to="/terms" className="text-primary hover:underline">
-									Terms and Conditions
-								</Link>{' '}
-								and{' '}
-								<Link to="/privacy" className="text-primary hover:underline">
-									Privacy Policy
-								</Link>
-							</p>
-						</div>
+						<p className="text-muted-foreground text-left text-sm">
+							By providing your email, you agree to our{' '}
+							<Link to="/terms" className="text-primary hover:underline">
+								Terms and Service
+							</Link>{' '}
+							and{' '}
+							<Link to="/privacy" className="text-primary hover:underline">
+								Privacy Policy
+							</Link>
+						</p>
 					</CardFooter>
 				</Card>
 			</div>

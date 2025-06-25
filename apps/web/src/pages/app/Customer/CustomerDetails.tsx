@@ -38,7 +38,7 @@ const CustomerDetails = () => {
 	}, [customerData?.data.data, customerId, getCustomerById]);
 
 	return (
-		<section className="space-y-6">
+		<section className="mx-auto max-w-7xl space-y-6">
 			<HeaderSection
 				icon={<User className="h-7 w-7" />}
 				title={`User Profile: ${customer?.firstName} ${customer?.lastName}`}

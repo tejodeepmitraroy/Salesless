@@ -32,13 +32,14 @@ import {
 } from '@/features/Products/services';
 import { useNavigate, useParams } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { DollarSign, Loader } from 'lucide-react';
+import { DollarSign, Loader, Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import ProductVariantOptionManager from '@/features/Products/components/ProductVariantOptionsManager';
 import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
+import HeaderSection from '@/components/layouts/HeaderSection';
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
 
@@ -167,24 +168,35 @@ const CreateNewProduct = () => {
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
-			className="mx-auto py-8"
+			className="mx-auto"
 		>
-			<div className="mx-auto max-w-6xl space-y-6">
+			<div className="mx-auto max-w-7xl space-y-6">
 				<FormProvider {...form}>
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-								<h1 className="text-3xl font-bold">Create New Product</h1>
-								<div className="col-span-2 flex justify-end">
+							<HeaderSection
+								icon={<Plus />}
+								title="Create New Product"
+								description="Create a new product"
+							>
+								<div className="flex justify-end gap-5">
+									<Button
+										type="submit"
+										disabled={isSubmitting}
+										className="cursor-pointer"
+										variant="outline"
+									>
+										Back
+									</Button>
 									<Button
 										type="submit"
 										disabled={isSubmitting}
 										className="cursor-pointer"
 									>
-										{isSubmitting ? 'Creating...' : 'Create Product'}
+										{isSubmitting ? 'Adding...' : 'Add'}
 									</Button>
 								</div>
-							</div>
+							</HeaderSection>
 							<Separator />
 							<section className="grid grid-cols-3 gap-6">
 								<section className="col-span-2 space-y-4">

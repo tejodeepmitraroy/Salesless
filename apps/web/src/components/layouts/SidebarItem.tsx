@@ -69,15 +69,14 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 					className={cn(
 						'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
 						isActive
-							? 'bg-primary/10 text-primary'
+							? 'bg-primary text-background'
 							: 'hover:text-primary text-gray-700 hover:bg-gray-100'
 					)}
 				>
-					<motion.div
-					// variants={iconVariants}
-					// animate={collapsed ? 'closed' : 'open'}
-					>
-						<Icon className="h-5 w-5 flex-shrink-0" />
+					<motion.div>
+						<Icon
+							className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-background' : 'text-[#888888]'}`}
+						/>
 					</motion.div>
 
 					{!collapsed && (
@@ -118,7 +117,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 							className={cn(
 								'my-2 ml-5 flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors',
 								`/store/${storeId}${href}${subLink.href}` === location.pathname
-									? 'bg-primary/10 text-primary'
+									? 'bg-primary text-background'
 									: 'hover:text-primary text-gray-700 hover:bg-gray-100'
 							)}
 						>
@@ -126,7 +125,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 							// variants={iconVariants}
 							// animate={collapsed ? 'closed' : 'open'}
 							>
-								{<subLink.icon className="h-5 w-5 flex-shrink-0" />}
+								{
+									<subLink.icon
+										className={`h-5 w-5 flex-shrink-0 ${`/store/${storeId}${href}${subLink.href}` === location.pathname ? 'text-background' : 'text-[#888888]'}`}
+									/>
+								}
 								{/* <Icon className="h-5 w-5 flex-shrink-0" /> */}
 							</motion.div>
 

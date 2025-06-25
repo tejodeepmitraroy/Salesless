@@ -26,6 +26,8 @@ import {
 import { createStoreSchema } from '@/features/Store/schema';
 import { createStoreService } from '@/features/Store/services';
 import { useState } from 'react';
+import ChatButton from '@/components/ChatButton';
+import { Label } from '@/components/ui/label';
 
 const CreateStore: React.FC = () => {
 	const navigate = useNavigate();
@@ -77,7 +79,20 @@ const CreateStore: React.FC = () => {
 	};
 
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+		<div className="bg-background flex min-h-screen items-center justify-center p-4">
+			<ChatButton />
+			<section className="fixed top-0 z-50 flex w-full items-center">
+				<div className="mx-auto flex w-full max-w-4xl items-center px-3">
+					<div className="my-6 flex items-center gap-2">
+						<img
+							src="/logo.png"
+							alt=""
+							className="h-10 w-10 rounded-lg border"
+						/>
+						<Label className="text-xl font-bold">SalesLess</Label>
+					</div>
+				</div>
+			</section>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -92,15 +107,15 @@ const CreateStore: React.FC = () => {
 					<p className="text-lg text-gray-600">Create your new store</p>
 				</div> */}
 
-				<Card className="w-full max-w-md py-10">
+				<Card className="w-full max-w-lg py-10">
 					<CardHeader className="px-10">
-						<section className="mb-5 flex items-center gap-2">
+						{/* <section className="mb-5 flex items-center gap-2">
 							<img
 								src="/icons/logo.png"
 								alt=""
 								className="border-primary h-10 w-10 rounded-lg border"
 							/>
-						</section>
+						</section> */}
 						<CardTitle className="flex items-center gap-2 text-left text-2xl font-bold">
 							<Store /> Create Store
 						</CardTitle>

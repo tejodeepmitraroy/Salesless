@@ -27,6 +27,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { loginService } from '@/features/users/services';
 import { useAuth } from '@/context/AuthContext';
+import { googleLoginService } from '@/features/Auth/services';
+import ChatButton from '@/components/ChatButton';
 
 const LoginPage = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -86,11 +88,12 @@ const LoginPage = () => {
 
 	return (
 		<>
+			<ChatButton />
 			<section className="fixed top-0 z-50 flex w-full items-center">
 				<div className="mx-auto flex w-full max-w-4xl items-center px-3">
 					<div className="my-6 flex items-center gap-2">
 						<img
-							src="/icons/logo.png"
+							src="/logo.png"
 							alt=""
 							className="h-10 w-10 rounded-lg border"
 						/>
@@ -115,7 +118,7 @@ const LoginPage = () => {
 							Enter your credentials to access your account
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="px-10">
+					<CardContent className="flex flex-col gap-5 px-10">
 						<Form {...form}>
 							<form
 								onSubmit={form.handleSubmit(onSubmit)}
@@ -202,6 +205,25 @@ const LoginPage = () => {
 								</Button>
 							</form>
 						</Form>
+						<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+							<span className="bg-card text-muted-foreground relative z-10 px-2">
+								Or continue with
+							</span>
+						</div>
+						<Link to={googleLoginService()} className="w-full">
+							<Button
+								variant="outline"
+								className="hover:bg-primary/85 flex h-12 w-full items-center justify-center gap-3 text-black hover:text-white"
+							>
+								<img
+									src={'/icons/google.png'}
+									width={20}
+									height={20}
+									alt="google"
+								/>
+								<span>Sign up with Google</span>
+							</Button>
+						</Link>
 					</CardContent>
 					<CardFooter className="flex flex-col space-y-2 px-10">
 						<div className="text-center text-sm">

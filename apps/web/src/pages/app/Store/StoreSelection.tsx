@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
+
 import { Plus } from 'lucide-react';
 
 import {
@@ -16,6 +16,8 @@ import { getAllStoreService } from '@/features/Store/services';
 import Cookies from 'js-cookie';
 import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
+import { Label } from '@radix-ui/react-dropdown-menu';
+import ChatButton from '@/components/ChatButton';
 
 // const storeVariants = {
 // 	hidden: { opacity: 0, y: 20 },
@@ -56,61 +58,74 @@ const StoreSelection: React.FC = () => {
 	}, [user, navigate, storeId]);
 
 	return (
-		<section className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
-			<motion.div
+		<section className="bg-background flex h-screen w-full items-center justify-center p-4">
+			<ChatButton />
+			<section className="fixed top-0 z-50 flex w-full items-center">
+				<div className="mx-auto flex w-full max-w-4xl items-center px-3">
+					<div className="my-6 flex items-center gap-2">
+						<img
+							src="/logo.png"
+							alt=""
+							className="h-10 w-10 rounded-lg border"
+						/>
+						<Label className="text-xl font-bold">SalesLess</Label>
+					</div>
+				</div>
+			</section>
+			{/* <motion.div
 				initial={{ opacity: 0, y: -20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.5 }}
 				className="mx-auto w-full max-w-lg"
-			>
-				<Card className="h-[calc(100dvh-15rem)] w-full max-w-md py-10">
-					<CardHeader className="px-10">
-						<section className="mb-5 flex items-center gap-2">
+			> */}
+			<Card className="h-[calc(100dvh-15rem)] w-full max-w-lg py-10">
+				<CardHeader className="px-10">
+					{/* <section className="mb-5 flex items-center gap-2">
 							<img
 								src="/icons/logo.png"
 								alt=""
 								className="border-primary h-10 w-10 rounded-lg border"
 							/>
-						</section>
-						<CardTitle className="flex w-full justify-between text-2xl font-bold">
-							Welcome back
-							<Button onClick={() => handleCreateStore()} className="px-6">
-								<span>Create Store</span>
-								<Plus className="ml-2 h-4 w-4" />
-							</Button>
-						</CardTitle>
-						<CardDescription className="text-left">
-							Select a store to continue.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="px-10">
-						<section className="mt-6 flex flex-col gap-4">
-							{data?.data?.data?.map((store: unknown) => (
-								<div
-									key={(store as { id: string }).id}
-									className={`flex w-full cursor-pointer items-center rounded-2xl p-3 transition-all hover:shadow-md`}
-									onClick={() =>
-										handleStoreSelected((store as { id: string }).id)
-									}
-								>
-									<div className="from-primary to-secondary mr-4 flex h-12 w-12 items-center justify-center rounded-md bg-gradient-to-br font-bold text-white">
-										{(store as { name: string }).name
-											.substring(0, 2)
-											.toUpperCase()}
-									</div>
-									<div className="flex-1 justify-items-start">
-										<h3 className="text font-semibold">
-											{(store as { name: string }).name}
-										</h3>
-										<p className="text-muted-foreground text-sm">
-											id:{(store as { id: string }).id}
-										</p>
-									</div>
-									<div className="text-muted-foreground text-sm">
+						</section> */}
+					<CardTitle className="flex w-full justify-between text-2xl font-bold">
+						Welcome back
+						<Button onClick={() => handleCreateStore()} className="px-6">
+							<span>Create Store</span>
+							<Plus className="ml-2 h-4 w-4" />
+						</Button>
+					</CardTitle>
+					<CardDescription className="text-left">
+						Select a store to continue.
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="px-10">
+					<section className="mt-6 flex flex-col gap-4">
+						{data?.data?.data?.map((store: unknown) => (
+							<div
+								key={(store as { id: string }).id}
+								className={`flex w-full cursor-pointer items-center rounded p-3 transition-all hover:shadow-md`}
+								onClick={() =>
+									handleStoreSelected((store as { id: string }).id)
+								}
+							>
+								<div className="bg-primary mr-4 flex h-12 w-12 items-center justify-center rounded-md font-bold text-white">
+									{(store as { name: string }).name
+										.substring(0, 2)
+										.toUpperCase()}
+								</div>
+								<div className="flex-1 justify-items-start">
+									<h3 className="text font-semibold">
+										{(store as { name: string }).name}
+									</h3>
+									<p className="text-muted-foreground text-sm">
+										id:{(store as { id: string }).id}
+									</p>
+								</div>
+								{/* <div className="text-muted-foreground text-sm">
 										Last accessed:{' '}
 										{(store as { lastAccessed: string }).lastAccessed}
-									</div>
-									{/* {selectedStore === store.id && (
+									</div> */}
+								{/* {selectedStore === store.id && (
 										<div className="ml-4">
 											<div className="bg-primary flex h-6 w-6 items-center justify-center rounded-full">
 												<svg
@@ -130,12 +145,12 @@ const StoreSelection: React.FC = () => {
 											</div>
 										</div>
 									)} */}
-								</div>
-							))}
-						</section>
-					</CardContent>
-				</Card>
-			</motion.div>
+							</div>
+						))}
+					</section>
+				</CardContent>
+			</Card>
+			{/* </motion.div> */}
 		</section>
 	);
 };

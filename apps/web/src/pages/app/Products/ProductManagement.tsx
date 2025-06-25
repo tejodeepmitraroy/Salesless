@@ -115,30 +115,29 @@ const ProductManagement = () => {
 	}, [productsData, setProducts]);
 
 	return (
-		<section className="mx-auto w-full">
+		<section className="mx-auto w-full max-w-7xl">
 			<HeaderSection
 				icon={<ShoppingCart />}
-				title="Product Management"
+				title="Products"
 				description="Manage your products"
-			/>
-			<section className="flex w-full flex-col">
-				<section className="mb-4 flex flex-col items-start justify-end gap-4 sm:flex-row sm:items-center">
-					<div className="relative flex w-fit items-center gap-2">
-						<Button
-							variant="outline"
-							className="flex items-center gap-2"
-							onClick={() => handleExportProducts('all')}
-						>
-							<Download className="h-4 w-4" /> Export to CSV
-						</Button>
-						<Button
-							className="bg-primary hover:bg-primary/90 text-white"
-							onClick={() => handleAddProduct()}
-						>
-							<Plus className="mr-2 h-4 w-4" /> Add Product
-						</Button>
-					</div>
-				</section>
+			>
+				<div className="relative flex w-fit items-center gap-2">
+					<Button
+						variant="outline"
+						className="flex items-center gap-2"
+						onClick={() => handleExportProducts('all')}
+					>
+						<Download className="h-4 w-4" /> Export to CSV
+					</Button>
+					<Button
+						className="bg-primary hover:bg-primary/90 text-white"
+						onClick={() => handleAddProduct()}
+					>
+						<Plus className="mr-2 h-4 w-4" /> Add Product
+					</Button>
+				</div>
+			</HeaderSection>
+			<section className="flex w-full flex-col gap-6">
 				<section className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 					<div className="relative flex w-full items-center gap-2">
 						<Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />

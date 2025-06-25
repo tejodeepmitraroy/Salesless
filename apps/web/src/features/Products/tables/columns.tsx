@@ -35,10 +35,11 @@ export const productColumns: ColumnDef<Product>[] = [
 		header: () => <div className="text-left">Product</div>,
 		cell: ({ row }) => {
 			const images = row.original.media as ProductMedia[];
+			const status = row.original.status as string;
 			return (
-				<div className="flex items-center gap-2 text-left font-medium">
+				<div className="flex items-center gap-2 py-2 text-left font-medium">
 					{images?.length > 0 ? (
-						<div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded border">
+						<div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded border">
 							<AspectRatio ratio={1 / 1}>
 								<img
 									src={images[0].url}
@@ -48,11 +49,28 @@ export const productColumns: ColumnDef<Product>[] = [
 							</AspectRatio>
 						</div>
 					) : (
-						<div className="bg-vsphere-light/50 dark:bg-vsphere-dark/20 flex h-10 w-10 items-center justify-center rounded p-1.5">
-							<Package className="text-primary h-4 w-4" />
+						<div className="bg-vsphere-light/50 dark:bg-vsphere-dark/20 flex h-12 w-12 items-center justify-center rounded border p-1.5">
+							<Package className="text-primary h-6 w-6" />
 						</div>
 					)}
-					{row.getValue('title')}
+					{row.getValue('title')}{' '}
+					<Badge
+						className={` ${
+							status === 'Active'
+								? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+								: ''
+						} ${
+							status === 'Draft'
+								? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+								: ''
+						} ${
+							status === 'Out of stock'
+								? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+								: ''
+						} `}
+					>
+						{status}
+					</Badge>
 				</div>
 			);
 		},

@@ -16,6 +16,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProductDetails from './pages/app/Products/ProductDetails';
 import MediaManagement from './pages/app/Media/MediaManagement';
 import MediaDetails from './pages/app/Media/MediaDetails';
+import GeneralSettings from './pages/app/Settings/GeneralSettings';
 
 const queryClient = new QueryClient();
 function App() {
@@ -85,7 +86,7 @@ function App() {
 										<StoreSelection />
 									</ProtectedRoute>
 								}
-							/>
+							></Route>
 							<Route path="/store/undefined" element={<NotFound />} />
 							<Route
 								path="/store/create"
@@ -104,7 +105,7 @@ function App() {
 										</AdminLayout>
 									</ProtectedRoute>
 								}
-							/>
+							></Route>
 							<Route
 								path="/store/:storeId/dashboard"
 								element={
@@ -165,16 +166,7 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
-							<Route
-								path="/store/:storeId/products/inventory"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<InventoryManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
+
 							<Route
 								path="/store/:storeId/orders"
 								element={
@@ -203,8 +195,10 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+
+							{/* Settings */}
 							<Route
-								path="/store/:id/settings"
+								path="/store/:storeId/settings"
 								element={
 									<ProtectedRoute>
 										<AdminLayout>
@@ -213,6 +207,38 @@ function App() {
 									</ProtectedRoute>
 								}
 							/>
+							<Route
+								path="/store/:storeId/settings/general"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<GeneralSettings />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							<Route
+								path="/store/:storeId/settings/apikeys"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<Settings />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/>
+							{/* <Route
+								path="/store/:storeId/settings/general"
+								element={
+									<ProtectedRoute>
+										<AdminLayout>
+											<Settings />
+										</AdminLayout>
+									</ProtectedRoute>
+								}
+							/> */}
+
+							{/* Notification */}
 							<Route
 								path="/store/:storeId/notifications"
 								element={
