@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Image, Search, Upload } from 'lucide-react';
+import { Image, Loader, Search, Upload } from 'lucide-react';
 import { MediaDataTable } from '@/features/Media/tables/MediaDataTable';
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { mediaColumns } from '@/features/Media/tables/columns';
@@ -54,7 +54,11 @@ const MediaManagement = () => {
 			throw error;
 		}
 	};
-	const { data: mediaContents, refetch } = useQuery({
+	const {
+		data: mediaContents,
+		refetch,
+		isLoading,
+	} = useQuery({
 		queryKey: ['mediaContents', storeId],
 		queryFn: () => getAllMediaFiles({ storeId: storeId! }),
 	});
@@ -114,7 +118,11 @@ const MediaManagement = () => {
 					</Button>
 				</section>
 
-				<MediaDataTable columns={mediaColumns} data={mediaObjects} />
+				{isLoading ? (
+					<Loader className="h-5 w-5 animate-spin" />
+				) : (
+					<MediaDataTable columns={mediaColumns} data={mediaObjects} />
+				)}
 			</section>
 		</section>
 	);

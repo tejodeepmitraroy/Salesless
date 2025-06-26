@@ -8,11 +8,14 @@ import { getMediaDetails } from '@/features/Media/services';
 
 const MediaDetails = () => {
 	const navigate = useNavigate();
-	const { fileId, storeId } = useParams<{ fileId: string; storeId: string }>();
+	const { mediaId, storeId } = useParams<{
+		mediaId: string;
+		storeId: string;
+	}>();
 
 	const { data: mediaContent } = useQuery({
-		queryKey: ['mediaContent', storeId, fileId],
-		queryFn: () => getMediaDetails({ mediaId: fileId!, storeId: storeId! }),
+		queryKey: ['mediaContent', storeId, mediaId],
+		queryFn: () => getMediaDetails({ mediaId: mediaId!, storeId: storeId! }),
 	});
 
 	const backToMedia = () => {

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Sidebar from '@/components/layouts/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Label } from './ui/label';
 import { Bell } from 'lucide-react';
-import { Link, useParams } from 'react-router';
+import { Link, Outlet, useParams } from 'react-router';
 import ChatButton from './ChatButton';
 
-const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AdminLayout = () => {
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
 	const mainVariants = {
@@ -105,7 +105,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 								variants={pageVariants}
 								transition={pageTransition}
 							>
-								{children}
+								<Outlet />
 							</motion.div>
 						</AnimatePresence>
 					</motion.div>

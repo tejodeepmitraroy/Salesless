@@ -1,3 +1,4 @@
+CREATE TYPE "public"."status" AS ENUM('active', 'draft', 'archive');--> statement-breakpoint
 CREATE TABLE "cart" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"store_id" integer,
@@ -17,8 +18,10 @@ CREATE TABLE "cart_items" (
 --> statement-breakpoint
 CREATE TABLE "category" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"title" varchar,
+	"name" varchar,
+	"slug" varchar,
 	"description" varchar,
+	"parent_id" integer,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -157,7 +160,7 @@ CREATE TABLE "permissions" (
 CREATE TABLE "product" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"store_id" integer NOT NULL,
-	"category_id" integer NOT NULL,
+	"category_id" integer,
 	"title" varchar(255) NOT NULL,
 	"description" varchar(255),
 	"status" "status",
@@ -189,6 +192,24 @@ CREATE TABLE "product_metadata" (
 	CONSTRAINT "product_metadata_product_id_unique" UNIQUE("product_id")
 );
 --> statement-breakpoint
+CREATE TABLE "product_options" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"product_id" integer NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"position" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "product_options_values" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"option_id" integer NOT NULL,
+	"value" varchar(255) NOT NULL,
+	"position" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "product_to_collection" (
 	"product_id" integer NOT NULL,
 	"collection_id" integer NOT NULL,
@@ -202,7 +223,7 @@ CREATE TABLE "product_variant" (
 	"barcode" varchar,
 	"price" numeric,
 	"compare_at_price" numeric,
-	"cost_price" numeric,
+	"cost_per_item" numeric,
 	"manage_inventory" boolean DEFAULT true NOT NULL,
 	"inventory_quantity" integer DEFAULT 0 NOT NULL,
 	"low_stock_threshold" integer DEFAULT 5 NOT NULL,
@@ -327,6 +348,8 @@ ALTER TABLE "product" ADD CONSTRAINT "product_category_id_category_id_fk" FOREIG
 ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_media" ADD CONSTRAINT "product_media_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_metadata" ADD CONSTRAINT "product_metadata_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_options" ADD CONSTRAINT "product_options_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_options_values" ADD CONSTRAINT "product_options_values_option_id_product_options_id_fk" FOREIGN KEY ("option_id") REFERENCES "public"."product_options"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_to_collection" ADD CONSTRAINT "product_to_collection_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_to_collection" ADD CONSTRAINT "product_to_collection_collection_id_collection_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collection"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_variant" ADD CONSTRAINT "product_variant_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

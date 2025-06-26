@@ -77,7 +77,7 @@ const itemVariants = {
 // 	{ value: 'IN', label: 'India', code: '+91' },
 // ];
 
-const Settings = () => {
+const Settings2 = () => {
 	// const { toast } = useToast();
 	// const [storeData, setStoreData] = useState({
 	// 	name: 'VendorSphere Store',
@@ -271,4 +271,4 @@ const Settings = () => {
 	);
 };
 
-export default Settings;
+export default Settings2;

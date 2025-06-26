@@ -45,14 +45,14 @@ import { Label } from '@/components/ui/label';
 import ProductVariantOptionManager from '@/features/Products/components/ProductVariantOptionsManager';
 
 const ProductDetails = () => {
-	const { id } = useParams<{ id: string }>();
+	const { productId } = useParams<{ productId: string }>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { storeId } = useParams<{ storeId: string }>();
 	const navigate = useNavigate();
 
 	const { data: productData, isLoading } = useQuery({
-		queryKey: ['product', id],
-		queryFn: () => getProductByIdService({ productId: id! }),
+		queryKey: ['product', productId],
+		queryFn: () => getProductByIdService({ productId: productId! }),
 	});
 
 	const form = useForm<ProductFormValues>({
@@ -70,7 +70,7 @@ const ProductDetails = () => {
 			setIsSubmitting(true);
 
 			const response = await updateProductService({
-				productId: Number(id),
+				productId: Number(productId),
 				formData: data,
 			});
 
@@ -90,7 +90,7 @@ const ProductDetails = () => {
 	const handelDeleteProduct = async () => {
 		try {
 			setIsSubmitting(true);
-			await deleteProductService({ productId: Number(id) });
+			await deleteProductService({ productId: Number(productId) });
 			toast.success('Product deleted successfully!');
 			navigate(`/store/${storeId}/products`);
 			form.reset();

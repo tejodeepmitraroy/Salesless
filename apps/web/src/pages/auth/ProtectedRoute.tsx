@@ -1,13 +1,13 @@
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, Outlet, useLocation } from 'react-router';
 import { useAuth } from '@/context/AuthContext';
 import type { UserRole } from '@/context/AuthContext';
+
 // import Cookies from 'js-cookie';
 interface ProtectedRouteProps {
-	children: React.ReactNode;
 	allowedRoles?: UserRole[];
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
 	const { isAuthenticated, isLoading } = useAuth();
 	// const storeId = Cookies.get('storeId');
 	const location = useLocation();
@@ -27,7 +27,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 	}
 
 	// Render children if authenticated and authorized
-	return <>{children}</>;
+	return (
+		<>
+			{/* {children} */}
+			<Outlet />
+		</>
+	);
 };
 
 export default ProtectedRoute;
