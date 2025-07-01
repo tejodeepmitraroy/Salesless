@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
@@ -15,6 +15,7 @@ import {
 	Boxes,
 	ChevronsUpDown,
 	Home,
+	Plus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -22,14 +23,16 @@ import SidebarItem from './SidebarItem';
 import { motion } from 'framer-motion';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
+import { useStoreStore } from '@/stores/useStore-Store';
+import Cookies from 'js-cookie';
 import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '../ui/dialog';
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 
 const sidebarVariants = {
 	open: { width: '18rem', x: 0 },
@@ -161,6 +164,20 @@ const Sidebar: React.FC<{
 }> = ({ sidebarOpen, toggleSidebar }) => {
 	const { storeId } = useParams<{ storeId: string }>();
 
+	const stores = useStoreStore((state) => state.stores);
+	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
+	const selectedStore = useStoreStore((state) => state.selectedStore);
+	const navigate = useNavigate();
+	const handleStoreSelected = (storeId: string) => {
+		Cookies.set('storeId', storeId);
+		setSelectedStore(storeId);
+		navigate(`/store/${storeId}`);
+	};
+
+	const handleCreateStore = () => {
+		navigate('/store/create');
+	};
+
 	return (
 		<motion.aside
 			variants={sidebarVariants}
@@ -193,29 +210,44 @@ const Sidebar: React.FC<{
 						<PanelsTopLeft />
 					</Button>
 				</section>
-
-				<Dialog>
-					<DialogTrigger className="mt-6 w-full">
+				<DropdownMenu>
+					<DropdownMenuTrigger className="mt-6 w-full">
 						<section className="flex w-full items-center justify-between border py-1 pl-4">
 							<div className="g flex items-center">
 								<Store />
-								<Label className="mx-2 my-2">Stores</Label>
+								<Label className="mx-2 my-2 text-sm">
+									{selectedStore?.name}
+								</Label>
 							</div>
 							<div className="mx-3 my-2">
 								<ChevronsUpDown />
 							</div>
 						</section>
-					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Are you absolutely sure?</DialogTitle>
-							<DialogDescription>
-								This action cannot be undone. This will permanently delete your
-								account and remove your data from our servers.
-							</DialogDescription>
-						</DialogHeader>
-					</DialogContent>
-				</Dialog>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent className="w-56" align="start" sideOffset={5}>
+						<DropdownMenuLabel className="text-sm text-gray-500">
+							Stores
+						</DropdownMenuLabel>
+
+						{stores.map((store: unknown) => (
+							<DropdownMenuItem
+								onClick={() =>
+									handleStoreSelected((store as { id: string }).id)
+								}
+								key={(store as { id: string }).id}
+							>
+								{(store as { name: string }).name}
+							</DropdownMenuItem>
+						))}
+
+						<DropdownMenuSeparator />
+
+						<DropdownMenuItem onClick={() => handleCreateStore()}>
+							<Plus />
+							Create Store
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
 
 				<nav className="mt-4 space-y-1">
 					{SidebarLinks.map((link) => (

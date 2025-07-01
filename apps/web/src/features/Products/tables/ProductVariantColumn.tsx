@@ -3,7 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Control } from 'react-hook-form';
 import { ProductVariant, ProductVariantOption } from '../schema';
 
-import { ProductFormValues } from '@/pages/app/Products/CreateNewProduct';
+import { ProductFormValues } from '@/routes/app/Products/CreateNewProduct';
 
 export const ProductVariantColumns = (
 	control: Control<ProductFormValues>

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-
+import { useCallback, useEffect, useState } from 'react';
 import Sidebar from '@/components/layouts/Sidebar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -7,9 +6,22 @@ import { Label } from './ui/label';
 import { Bell } from 'lucide-react';
 import { Link, Outlet, useParams } from 'react-router';
 import ChatButton from './ChatButton';
+import { getStoreDetails } from '@/features/Store/services';
+import { useStoreStore } from '@/stores/useStore-Store';
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+import {
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 const AdminLayout = () => {
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+	const { storeId } = useParams<{ storeId: string }>();
+	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
+	const setStores = useStoreStore((state) => state.setStores);
 
 	const mainVariants = {
 		expanded: {
@@ -53,7 +65,22 @@ const AdminLayout = () => {
 		ease: 'easeInOut',
 		duration: 0.3,
 	};
-	const { storeId } = useParams<{ storeId: string }>();
+
+	const getStoreDataById = useCallback(async () => {
+		try {
+			if (!storeId) return;
+			const store = await getStoreDetails({ storeId: storeId });
+			setSelectedStore(store);
+			setStores([store]);
+		} catch (error) {
+			console.log(error);
+		}
+	}, [setSelectedStore, setStores, storeId]);
+
+	useEffect(() => {
+		getStoreDataById();
+	}, [getStoreDataById]);
+
 	return (
 		<section className="bg-background text-foreground flex min-h-screen w-full">
 			<Sidebar
@@ -69,9 +96,9 @@ const AdminLayout = () => {
 					initial={false}
 					animate={sidebarOpen ? 'expanded' : 'collapsed'}
 					// className={`relative h-[calc(100vh-4rem)] w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
-					className={`relative min-h-dvh w-full flex-1 bg-white transition-all duration-300`}
+					className={`relative min-h-dvh w-full flex-1 overflow-hidden bg-white transition-all duration-300`}
 				>
-					<section className="w-full border-b py-2">
+					<header className="z-50 w-full border-b bg-white py-2">
 						<section className="mx-auto flex w-full items-center justify-end gap-5 px-10">
 							<Link
 								to={`/store/${storeId}/notifications`}
@@ -80,17 +107,29 @@ const AdminLayout = () => {
 								<Bell className="h-5 w-5" />
 							</Link>
 
-							<div className="flex items-center gap-2">
-								<Avatar className="h-9 w-9 rounded-lg border">
-									<AvatarImage src="https://github.com/shadcn.png" />
-									<AvatarFallback>CN</AvatarFallback>
-								</Avatar>
-								<Label className="text-sm font-medium">John Doe</Label>
-							</div>
+							<DropdownMenu>
+								<DropdownMenuTrigger>
+									<div className="flex items-center gap-2">
+										<Avatar className="h-9 w-9 rounded-lg border">
+											<AvatarImage src="https://github.com/shadcn.png" />
+											<AvatarFallback>CN</AvatarFallback>
+										</Avatar>
+										<Label className="text-sm font-medium">John Doe</Label>
+									</div>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuLabel>My Account</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem>Profile</DropdownMenuItem>
+									<DropdownMenuItem>Billing</DropdownMenuItem>
+									<DropdownMenuItem>Team</DropdownMenuItem>
+									<DropdownMenuItem>Subscription</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
 						</section>
-					</section>
+					</header>
 
-					<motion.div
+					<motion.section
 						initial="initial"
 						animate="animate"
 						exit="exit"
@@ -108,7 +147,7 @@ const AdminLayout = () => {
 								<Outlet />
 							</motion.div>
 						</AnimatePresence>
-					</motion.div>
+					</motion.section>
 				</motion.main>
 			</AnimatePresence>
 		</section>

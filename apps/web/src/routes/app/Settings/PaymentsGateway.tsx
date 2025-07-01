@@ -34,13 +34,13 @@ const PaymentsGateway = () => {
 					<Button className="bg-primary text-white">Add Payment Gateway</Button>
 				</section>
 			</section>
-			<section className="mt-10 grid w-full grid-cols-4 gap-4 p-2">
+			<section className="mt-10 grid w-full grid-cols-3 gap-4 p-2">
 				{payments.map((payment) => (
 					<Link
 						to={`/store/${storeId}/settings/payments/${payment.slug}`}
 						className="h-full cursor-pointer"
 					>
-						<Card className="bg-background flex items-center justify-start py-6 text-left shadow-none">
+						<Card className="bg-background flex h-full items-center justify-start py-6 text-left shadow-none">
 							<CardHeader className="mx-4 flex w-full items-start justify-start gap-3">
 								<div className="flex aspect-square h-11 w-11 items-center justify-center rounded-lg border bg-white p-2">
 									<img src={payment.icon} alt="" />

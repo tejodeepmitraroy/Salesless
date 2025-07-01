@@ -24,7 +24,7 @@ import {
 import { nanoid } from 'nanoid';
 import { Label } from '@/components/ui/label';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { ProductFormValues } from '@/pages/app/Products/CreateNewProduct';
+import { ProductFormValues } from '@/routes/app/Products/CreateNewProduct';
 import { useState } from 'react';
 
 const ProductVariantOptionManager = () => {

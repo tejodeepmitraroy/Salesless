@@ -33,8 +33,10 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { useStoreStore } from '@/stores/useStore-Store';
 
 const AddressSettings = () => {
+	const selectedStore = useStoreStore((state) => state.selectedStore);
 	// Country options
 	const countryOptions = [
 		{ value: 'US', label: 'United States', code: '+1' },
@@ -50,12 +52,11 @@ const AddressSettings = () => {
 		// mode: 'onChange',
 		resolver: zodResolver(storeAddressSchema),
 		defaultValues: {
-			country: '',
-			address1: '',
-			address2: '',
-			city: '',
-			state: '',
-			zip: '',
+			country: selectedStore?.country || '',
+			address1: selectedStore?.address1 || '',
+			address2: selectedStore?.address2 || '',
+			city: selectedStore?.city || '',
+			zip: selectedStore?.zip || '',
 			phone: '',
 			country_code: '',
 			timezone: '',
@@ -147,7 +148,7 @@ const AddressSettings = () => {
 								</FormItem>
 							)}
 						/>
-						<FormField
+						{/* <FormField
 							control={form.control}
 							name="state"
 							render={({ field }) => (
@@ -160,7 +161,7 @@ const AddressSettings = () => {
 									<FormMessage />
 								</FormItem>
 							)}
-						/>
+						/> */}
 
 						<FormField
 							control={form.control}

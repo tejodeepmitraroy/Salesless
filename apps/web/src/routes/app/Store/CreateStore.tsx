@@ -24,10 +24,11 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { createStoreSchema } from '@/features/Store/schema';
-import { createStoreService } from '@/features/Store/services';
+
 import { useState } from 'react';
 import ChatButton from '@/components/ChatButton';
 import { Label } from '@/components/ui/label';
+import { createStoreService } from '@/features/Store/services';
 
 const CreateStore: React.FC = () => {
 	const navigate = useNavigate();

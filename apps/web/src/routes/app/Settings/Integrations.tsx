@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
 	Card,
@@ -24,13 +23,13 @@ const Integrations = () => {
 	];
 	return (
 		<section className="w-full">
-			<section className="w-full">
+			{/* <section className="w-full">
 				<section className="flex w-full items-center justify-between">
 					<h2 className="text-2xl font-medium">Payments Gateway</h2>
 					<Button className="bg-primary text-white">Add Payment Gateway</Button>
 				</section>
-			</section>
-			<section className="mt-10 grid w-full grid-cols-4 gap-4 p-2">
+			</section> */}
+			<section className="mt-10 grid w-full grid-cols-3 gap-4 p-2">
 				{integrations.map((integration) => (
 					<Card className="bg-background flex items-center justify-start py-6 text-left shadow-none">
 						<CardHeader className="mx-4 flex w-full items-start justify-start gap-3">

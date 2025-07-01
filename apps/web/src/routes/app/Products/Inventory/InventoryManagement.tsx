@@ -62,7 +62,7 @@ const InventoryManagement: React.FC = () => {
 	return isLoading ? (
 		<Loader className="h-5 w-5 animate-spin" />
 	) : (
-		<div className="space-y-6">
+		<div className="mx-auto w-full max-w-7xl space-y-6">
 			<HeaderSection
 				icon={<Package />}
 				title="Inventory Management"

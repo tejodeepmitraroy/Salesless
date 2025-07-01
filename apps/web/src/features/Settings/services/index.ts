@@ -63,3 +63,8 @@ export const getAllCategoriesService = async (): Promise<
 	const response = await customAxios.get(`/category`);
 	return response.data.data;
 };
+
+export const deleteStoreService = async ({ storeId }: { storeId: number }) => {
+	const response = await customAxios.delete(`/stores/${storeId}`);
+	return response.data;
+};

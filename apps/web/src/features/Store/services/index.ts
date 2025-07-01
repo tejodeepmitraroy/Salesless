@@ -1,16 +1,18 @@
-import { getToken } from '@/config/auth';
 import { customAxios } from '@/api/axios-custom';
 
 export const getAllStoreService = async () => {
-	const token = getToken();
+	const response = await customAxios(`/store`);
+	return response.data.data;
+};
 
-	const response = await customAxios(`/store`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	});
-	return response;
+export const getStoreByIdService = async ({ storeId }: { storeId: string }) => {
+	const response = await customAxios(`/store/${storeId}`);
+	return response.data.data;
+};
+
+export const getStoreDetails = async ({ storeId }: { storeId: string }) => {
+	const response = await customAxios.get(`/store/${storeId}`);
+	return response.data.data;
 };
 
 export const createStoreService = async ({
@@ -27,37 +29,14 @@ export const createStoreService = async ({
 	country: string;
 	address: string;
 	phone: string;
-}): Promise<{ id: string }> => {
-	const token = getToken();
-
-	const response = await customAxios.post(
-		`/store`,
-		{
-			name,
-			description,
-			type,
-			country,
-			address,
-			phone,
-		},
-		{
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-	return response.data.data;
-};
-
-export const getStoreDetails = async ({ storeId }: { storeId: string }) => {
-	const token = getToken();
-	const response = await customAxios.get(`/store/${storeId}`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
+}) => {
+	const response = await customAxios.post(`/store`, {
+		name,
+		description,
+		type,
+		country,
+		address,
+		phone,
 	});
-
-	return response;
+	return response.data.data;
 };

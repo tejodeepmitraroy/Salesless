@@ -18,27 +18,20 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect } from 'react';
 import { Label } from '@radix-ui/react-dropdown-menu';
 import ChatButton from '@/components/ChatButton';
-
-// const storeVariants = {
-// 	hidden: { opacity: 0, y: 20 },
-// 	visible: (i: number) => ({
-// 		opacity: 1,
-// 		y: 0,
-// 		transition: {
-// 			delay: i * 0.1,
-// 			duration: 0.5,
-// 			type: 'spring',
-// 			stiffness: 100,
-// 		},
-// 	}),
-// };
+import { useStoreStore } from '@/stores/useStore-Store';
 
 const StoreSelection: React.FC = () => {
 	const { user, storeId } = useAuth();
 	const navigate = useNavigate();
 
+	const stores = useStoreStore((state) => state.stores);
+	// const fetchStores = useStoreStore((state) => state.fetchStores());
+	const setStores = useStoreStore((state) => state.setStores);
+	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
+
 	const handleStoreSelected = (storeId: string) => {
 		Cookies.set('storeId', storeId);
+		setSelectedStore(storeId);
 		navigate(`/store/${storeId}`);
 	};
 
@@ -50,6 +43,12 @@ const StoreSelection: React.FC = () => {
 		queryKey: ['storeData'],
 		queryFn: async () => await getAllStoreService(),
 	});
+
+	useEffect(() => {
+		if (data) {
+			setStores(data);
+		}
+	}, [data, setStores]);
 
 	useEffect(() => {
 		if (user && storeId) {
@@ -72,12 +71,7 @@ const StoreSelection: React.FC = () => {
 					</div>
 				</div>
 			</section>
-			{/* <motion.div
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5 }}
-				className="mx-auto w-full max-w-lg"
-			> */}
+
 			<Card className="h-[calc(100dvh-15rem)] w-full max-w-lg py-10">
 				<CardHeader className="px-10">
 					{/* <section className="mb-5 flex items-center gap-2">
@@ -100,7 +94,7 @@ const StoreSelection: React.FC = () => {
 				</CardHeader>
 				<CardContent className="px-10">
 					<section className="mt-6 flex flex-col gap-4">
-						{data?.data?.data?.map((store: unknown) => (
+						{stores.map((store: unknown) => (
 							<div
 								key={(store as { id: string }).id}
 								className={`flex w-full cursor-pointer items-center rounded p-3 transition-all hover:shadow-md`}
@@ -121,36 +115,11 @@ const StoreSelection: React.FC = () => {
 										id:{(store as { id: string }).id}
 									</p>
 								</div>
-								{/* <div className="text-muted-foreground text-sm">
-										Last accessed:{' '}
-										{(store as { lastAccessed: string }).lastAccessed}
-									</div> */}
-								{/* {selectedStore === store.id && (
-										<div className="ml-4">
-											<div className="bg-primary flex h-6 w-6 items-center justify-center rounded-full">
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													width="14"
-													height="14"
-													viewBox="0 0 24 24"
-													fill="none"
-													stroke="currentColor"
-													strokeWidth="3"
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													className="text-white"
-												>
-													<polyline points="20 6 9 17 4 12"></polyline>
-												</svg>
-											</div>
-										</div>
-									)} */}
 							</div>
 						))}
 					</section>
 				</CardContent>
 			</Card>
-			{/* </motion.div> */}
 		</section>
 	);
 };

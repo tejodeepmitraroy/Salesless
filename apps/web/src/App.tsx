@@ -2,62 +2,64 @@ import React, { Suspense } from 'react';
 import './App.css';
 import { Loader } from 'lucide-react';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
+import AdminDashboard from './routes/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
-import AppLauncher from './pages/app/Dashboard/AppLauncher';
+import AppLauncher from './routes/app/Dashboard/AppLauncher';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import NotFound from './pages/NotFound';
-import Index from './pages/home/Index';
-import ProtectedRoute from './pages/auth/ProtectedRoute';
-import CustomerDetails from './pages/app/Customer/CustomerDetails';
-import LoginPage from './pages/auth/Login';
+import NotFound from './routes/NotFound';
+import Index from './routes/home/Index';
+import ProtectedRoute from './routes/auth/ProtectedRoute';
+import CustomerDetails from './routes/app/Customer/CustomerDetails';
+import LoginPage from './routes/auth/Login';
 import { AuthProvider } from './context/AuthContext';
-import ProductDetails from './pages/app/Products/ProductDetails';
-import MediaDetails from './pages/app/Media/MediaDetails';
-import GeneralSettings from './pages/app/Settings/GeneralSettings';
-import ApiKeysSettings from './pages/settings/settings/Screens/ApiKeysSettings';
-import Integrations from './pages/app/Settings/Integrations';
-import PaymentsGateway from './pages/app/Settings/PaymentsGateway';
-import Settings2 from './pages/settings/settings/Settings2';
+import ProductDetails from './routes/app/Products/ProductDetails';
+import MediaDetails from './routes/app/Media/MediaDetails';
+import GeneralSettings from './routes/app/Settings/GeneralSettings';
+import ApiKeysSettings from './routes/settings/settings/Screens/ApiKeysSettings';
+import Integrations from './routes/app/Settings/Integrations';
+import PaymentsGateway from './routes/app/Settings/PaymentsGateway';
+import Settings2 from './routes/settings/settings/Settings2';
 
-import AnalyticsSettings from './pages/app/Settings/AnalyticsSettings';
+import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
 
 const queryClient = new QueryClient();
 function App() {
-	const SignUp = React.lazy(() => import('./pages/auth/Signup'));
+	const SignUp = React.lazy(() => import('./routes/auth/Signup'));
 	const ForgotPassword = React.lazy(
-		() => import('./pages/auth/ForgotPassword')
+		() => import('./routes/auth/ForgotPassword')
 	);
-	const Unauthorized = React.lazy(() => import('./pages/Unauthorized'));
+	const Unauthorized = React.lazy(() => import('./routes/Unauthorized'));
 	const StoreSelection = React.lazy(
-		() => import('./pages/app/Store/StoreSelection')
+		() => import('./routes/app/Store/StoreSelection')
 	);
-	const CreateStore = React.lazy(() => import('./pages/app/Store/CreateStore'));
-	const Settings = React.lazy(() => import('./pages/app/Settings/Settings'));
+	const CreateStore = React.lazy(
+		() => import('./routes/app/Store/CreateStore')
+	);
+	const Settings = React.lazy(() => import('./routes/app/Settings/Settings'));
 	const ProductManagement = React.lazy(
-		() => import('./pages/app/Products/ProductManagement')
+		() => import('./routes/app/Products/ProductManagement')
 	);
 	const MediaManagement = React.lazy(
-		() => import('./pages/app/Media/MediaManagement')
+		() => import('./routes/app/Media/MediaManagement')
 	);
 	const CreateNewProduct = React.lazy(
-		() => import('./pages/app/Products/CreateNewProduct')
+		() => import('./routes/app/Products/CreateNewProduct')
 	);
 	const OrderManagement = React.lazy(
-		() => import('./pages/app/Orders/OrderManagement')
+		() => import('./routes/app/Orders/OrderManagement')
 	);
 	const InventoryManagement = React.lazy(
-		() => import('./pages/app/Products/Inventory/InventoryManagement')
+		() => import('./routes/app/Products/Inventory/InventoryManagement')
 	);
 	const Notifications = React.lazy(
-		() => import('./pages/settings/notifications/Notifications')
+		() => import('./routes/settings/notifications/Notifications')
 	);
 	const CustomerManagement = React.lazy(
-		() => import('./pages/app/Customer/CustomerManagement')
+		() => import('./routes/app/Customer/CustomerManagement')
 	);
 	const CollectionManagement = React.lazy(
-		() => import('./pages/app/Products/Collections/CollectionManagement')
+		() => import('./routes/app/Products/Collections/CollectionManagement')
 	);
 
 	const Loading = () => (

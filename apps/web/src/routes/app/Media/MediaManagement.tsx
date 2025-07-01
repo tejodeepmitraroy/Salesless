@@ -93,7 +93,7 @@ const MediaManagement = () => {
 	}, [mediaContents, refetch]);
 
 	return (
-		<section>
+		<section className="mx-auto w-full max-w-7xl">
 			<HeaderSection
 				icon={<Image className="h-7 w-7" />}
 				title="Media Store"

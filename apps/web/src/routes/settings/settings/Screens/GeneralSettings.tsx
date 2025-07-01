@@ -26,15 +26,17 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useStoreStore } from '@/stores/useStore-Store';
 
 const General = () => {
+	const selectedStore = useStoreStore((state) => state.selectedStore);
 	const form = useForm<GeneralSettingsSchema>({
 		// mode: 'onChange',
 		resolver: zodResolver(generalSettingsSchema),
 		defaultValues: {
-			storeName: '',
-			storeDescription: '',
-			storeDomain: '',
+			storeName: selectedStore?.name || '',
+			storeDescription: selectedStore?.description || '',
+			storeDomain: selectedStore?.domain || '',
 		},
 	});
 
