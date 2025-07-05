@@ -21,7 +21,6 @@ const AdminLayout = () => {
 	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 	const { storeId } = useParams<{ storeId: string }>();
 	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
-	const setStores = useStoreStore((state) => state.setStores);
 
 	const mainVariants = {
 		expanded: {
@@ -71,11 +70,10 @@ const AdminLayout = () => {
 			if (!storeId) return;
 			const store = await getStoreDetails({ storeId: storeId });
 			setSelectedStore(store);
-			setStores([store]);
 		} catch (error) {
 			console.log(error);
 		}
-	}, [setSelectedStore, setStores, storeId]);
+	}, [setSelectedStore, storeId]);
 
 	useEffect(() => {
 		getStoreDataById();
@@ -87,6 +85,7 @@ const AdminLayout = () => {
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
 			/>
+
 			<ChatButton />
 
 			<AnimatePresence mode="wait">
@@ -96,7 +95,7 @@ const AdminLayout = () => {
 					initial={false}
 					animate={sidebarOpen ? 'expanded' : 'collapsed'}
 					// className={`relative h-[calc(100vh-4rem)] w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
-					className={`relative min-h-dvh w-full flex-1 overflow-hidden bg-white transition-all duration-300`}
+					className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
 				>
 					<header className="z-50 w-full border-b bg-white py-2">
 						<section className="mx-auto flex w-full items-center justify-end gap-5 px-10">

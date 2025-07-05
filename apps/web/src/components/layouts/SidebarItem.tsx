@@ -54,7 +54,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 	const isSubVisible =
 		!collapsed && location.pathname.startsWith(`/store/${storeId}${href}`);
 
-	console.log(location.pathname, isActive);
+	// console.log(location.pathname, isActive);
 	return (
 		<motion.div variants={itemVariants}>
 			<motion.div

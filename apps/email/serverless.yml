@@ -1,0 +1,36 @@
+
+org: ddkkhaaa
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: ddkkhaaa-app
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: email-service
+useDotenv: true
+ 
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  stage: prod
+  memorySize: 512
+  timeout: 10
+  environment:
+    PORT: 8000
+ 
+functions:
+  sendEmail:
+    handler: src/index.handler
+    memorySize: 128
+    description: Submit candidate information and starts interview process.
+    events:
+      - http: 
+          path: send-email
+          method: post
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+  
+
+custom:
+  serverless-offline:
+    httpPort: 8000

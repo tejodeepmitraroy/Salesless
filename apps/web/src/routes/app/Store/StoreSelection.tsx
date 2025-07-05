@@ -10,12 +10,8 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
-import { useQuery } from '@tanstack/react-query';
-import { getAllStoreService } from '@/features/Store/services';
-import Cookies from 'js-cookie';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Label } from '@radix-ui/react-dropdown-menu';
 import ChatButton from '@/components/ChatButton';
 import { useStoreStore } from '@/stores/useStore-Store';
@@ -25,12 +21,11 @@ const StoreSelection: React.FC = () => {
 	const navigate = useNavigate();
 
 	const stores = useStoreStore((state) => state.stores);
-	// const fetchStores = useStoreStore((state) => state.fetchStores());
-	const setStores = useStoreStore((state) => state.setStores);
+	const fetchStores = useStoreStore((state) => state.fetchStores);
+	// const setStores = useStoreStore((state) => state.setStores);
 	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
 
 	const handleStoreSelected = (storeId: string) => {
-		Cookies.set('storeId', storeId);
 		setSelectedStore(storeId);
 		navigate(`/store/${storeId}`);
 	};
@@ -39,16 +34,17 @@ const StoreSelection: React.FC = () => {
 		navigate('/store/create');
 	};
 
-	const { data } = useQuery({
-		queryKey: ['storeData'],
-		queryFn: async () => await getAllStoreService(),
-	});
+	// const { data } = useQuery({
+	// 	queryKey: ['storeData'],
+	// 	queryFn: async () => await getAllStoreService(),
+	// });
+	const fetchStoresData = useCallback(async () => {
+		await fetchStores();
+	}, [fetchStores]);
 
 	useEffect(() => {
-		if (data) {
-			setStores(data);
-		}
-	}, [data, setStores]);
+		fetchStoresData();
+	}, [fetchStoresData]);
 
 	useEffect(() => {
 		if (user && storeId) {

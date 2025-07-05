@@ -58,6 +58,7 @@ export const useStoreStore = create<StoreStore>()(
 		fetchStores: async () => {
 			try {
 				const data = await getAllStoreService();
+				console.log('fetch strore from StoreStore', data);
 				set({ stores: data });
 			} catch (error) {
 				console.error(error);
