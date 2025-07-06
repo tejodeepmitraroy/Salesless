@@ -41,6 +41,7 @@ export const registerClient = asyncHandler(
 						phone,
 					})
 					.returning();
+
 				response
 					.status(200)
 					.json(new ApiResponse(200, createdUser[0], 'New User Created'));

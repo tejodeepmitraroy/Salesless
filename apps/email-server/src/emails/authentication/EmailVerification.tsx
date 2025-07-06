@@ -1,14 +1,14 @@
-import * as React from 'react';
+import React from 'react';
 
 interface EmailVerificationProps {
-	userFirstName: string;
+	userName: string;
 	verificationLink: string;
 }
 
-export const EmailVerification: React.FC<EmailVerificationProps> = ({
-	userFirstName,
+const EmailVerification = ({
+	userName,
 	verificationLink,
-}) => {
+}: EmailVerificationProps) => {
 	return (
 		<div
 			style={{
@@ -30,7 +30,7 @@ export const EmailVerification: React.FC<EmailVerificationProps> = ({
 				Verify Your Email Address
 			</h1>
 
-			<p>Hello {userFirstName},</p>
+			<p>Hello {userName},</p>
 
 			<p>
 				Thank you for signing up! Please verify your email address by clicking
