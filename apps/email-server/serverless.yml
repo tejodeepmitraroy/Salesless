@@ -13,17 +13,13 @@ provider:
   memorySize: 512
   timeout: 10
   environment:
-    PORT: 8000
+    PORT: 8001
 
 functions:
-  sendEmail:
+  api:
     handler: src/index.handler
-    memorySize: 128
-    description: Submit candidate information and starts interview process.
     events:
-      - http:
-          path: send-email
-          method: post
+      - httpApi: '*'
 
 plugins:
   - serverless-offline
@@ -31,4 +27,4 @@ plugins:
 
 custom:
   serverless-offline:
-    httpPort: 8000
+    httpPort: 8001

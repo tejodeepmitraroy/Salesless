@@ -6,7 +6,7 @@ import pluginReact from 'eslint-plugin-react';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
-	{ ignores: ['dist'] },
+	{ ignores: ['dist', '.serverless'] },
 	{
 		files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		plugins: { js },

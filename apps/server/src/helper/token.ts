@@ -25,6 +25,7 @@ export const generateAccessToken = ({
 		expiresIn: accessTokenExpiry,
 	});
 };
+
 export const generateRefreshToken = (id: string | number) => {
 	const refreshTokenSecretKey = process.env.REFRESH_TOKEN_SECRET!;
 	const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY! as `${number}${
@@ -49,6 +50,22 @@ export const generateResetPasswordToken = (id: number) => {
 	return jwt.sign({ id }, resetPasswordTokenSecretKey, {
 		expiresIn: '15m',
 	});
+};
+
+export const generateEmailVerifyToken = (email: string) => {
+	const emailVerifyTokenSecretKey = process.env.VERIFY_EMAIL_TOKEN_SECRET!;
+	return jwt.sign({ email }, emailVerifyTokenSecretKey, {
+		expiresIn: '60min',
+	});
+};
+
+export const verifyEmailVerifyToken = (token: string) => {
+	try {
+		const data = jwt.verify(token, process.env.VERIFY_EMAIL_TOKEN_SECRET!);
+		return data;
+	} catch (error) {
+		return error;
+	}
 };
 
 export const verifyResetPasswordJwtToken = (token: string) => {
