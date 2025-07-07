@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import {
 	LayoutDashboard,
 	Package,
@@ -11,9 +11,9 @@ import {
 	Image,
 	PanelsTopLeft,
 	Boxes,
-	ChevronsUpDown,
+	// ChevronsUpDown,
 	Home,
-	Plus,
+	// Plus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -21,8 +21,6 @@ import SidebarItem from './SidebarItem';
 import { motion } from 'framer-motion';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { useStoreStore } from '@/stores/useStore-Store';
-
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -30,7 +28,18 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
+} from '@radix-ui/react-dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+// import { useStoreStore } from '@/stores/useStore-Store';
+
+// import {
+// 	DropdownMenu,
+// 	DropdownMenuContent,
+// 	DropdownMenuItem,
+// 	DropdownMenuLabel,
+// 	DropdownMenuSeparator,
+// 	DropdownMenuTrigger,
+// } from '../ui/dropdown-menu';
 
 const sidebarVariants = {
 	open: { width: '18rem', x: 0 },
@@ -136,7 +145,7 @@ const mainLinks = [
 	{
 		icon: Settings,
 		label: 'Settings',
-		href: '/settings',
+		href: '/settings/general',
 		active: false,
 		collapsed: false,
 	},
@@ -155,24 +164,25 @@ const Sidebar: React.FC<{
 }> = ({ sidebarOpen, toggleSidebar }) => {
 	const { storeId } = useParams<{ storeId: string }>();
 
-	const stores = useStoreStore((state) => state.stores);
-	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
-	const selectedStore = useStoreStore((state) => state.selectedStore);
-	const fetchStores = useStoreStore((state) => state.fetchStores);
-	const navigate = useNavigate();
-	const handleStoreSelected = (storeId: string) => {
-		navigate(`/store/${storeId}`);
-		setSelectedStore(storeId);
-	};
+	// const stores = useStoreStore((state) => state.stores);
+	// const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
+	// const selectedStore = useStoreStore((state) => state.selectedStore);
+	// const fetchStores = useStoreStore((state) => state.fetchStores);
+	// const navigate = useNavigate();
 
-	const handleCreateStore = () => {
-		navigate('/store/create');
-	};
+	// const handleStoreSelected = (storeId: string) => {
+	// 	navigate(`/store/${storeId}`);
+	// 	setSelectedStore(storeId);
+	// };
 
-	const handleFetchStores = () => {
-		fetchStores();
-		console.log('Fetched');
-	};
+	// const handleCreateStore = () => {
+	// 	navigate('/store/create');
+	// };
+
+	// const handleFetchStores = () => {
+	// 	fetchStores();
+	// 	console.log('Fetched');
+	// };
 
 	return (
 		<motion.aside
@@ -206,7 +216,7 @@ const Sidebar: React.FC<{
 						<PanelsTopLeft />
 					</Button>
 				</section>
-				<DropdownMenu>
+				{/* <DropdownMenu>
 					<DropdownMenuTrigger className="mt-6 w-full">
 						<section
 							onClick={() => handleFetchStores()}
@@ -246,9 +256,9 @@ const Sidebar: React.FC<{
 							Create Store
 						</DropdownMenuItem>
 					</DropdownMenuContent>
-				</DropdownMenu>
+				</DropdownMenu> */}
 
-				<nav className="mt-4 space-y-1">
+				<nav className="mt-4 space-y-1 border">
 					{SidebarLinks.map((link) => (
 						<SidebarItem
 							key={link.label}
@@ -285,6 +295,28 @@ const Sidebar: React.FC<{
 						/>
 					))}
 				</nav>
+				<Separator className="my-3 md:my-4" />
+				<section>
+					<DropdownMenu>
+						<DropdownMenuTrigger>
+							<div className="flex items-center gap-2">
+								<Avatar className="h-9 w-9 rounded-lg border">
+									<AvatarImage src="https://github.com/shadcn.png" />
+									<AvatarFallback>CN</AvatarFallback>
+								</Avatar>
+								<Label className="text-sm font-medium">John Doe</Label>
+							</div>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DropdownMenuLabel>My Account</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem>Profile</DropdownMenuItem>
+							<DropdownMenuItem>Billing</DropdownMenuItem>
+							<DropdownMenuItem>Team</DropdownMenuItem>
+							<DropdownMenuItem>Subscription</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</section>
 			</div>
 			{/* <Sheet>
 				<SheetTrigger>Open</SheetTrigger>
