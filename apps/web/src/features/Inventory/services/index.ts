@@ -1,27 +1,9 @@
+import { customAxios } from '@/api/axios-custom';
 import axios from 'axios';
 
-export const loginService = async ({
-	email,
-	password,
-}: {
-	email: string;
-	password: string;
-}) => {
-	const response = await axios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/auth/user/login`,
-		{
-			email,
-			password,
-		},
-		{
-			withCredentials: true,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		}
-	);
-
-	return response;
+export const getAllInventory = async ({ storeId }: { storeId: string }) => {
+	const response = await customAxios.get(`/inventory/?storeId=${storeId}`);
+	return response.data.data;
 };
 
 export const signUpService = async ({

@@ -1,1 +1,0 @@
-CREATE TYPE "public"."status" AS ENUM('active', 'draft', 'archive');

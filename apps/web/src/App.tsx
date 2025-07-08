@@ -2,55 +2,64 @@ import React, { Suspense } from 'react';
 import './App.css';
 import { Loader } from 'lucide-react';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import AdminDashboard from './pages/app/Dashboard/AdminDashboard';
+import AdminDashboard from './routes/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
-import AppLauncher from './pages/app/Dashboard/AppLauncher';
+import AppLauncher from './routes/app/Dashboard/AppLauncher';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import NotFound from './pages/NotFound';
-import Index from './pages/home/Index';
-import ProtectedRoute from './pages/auth/ProtectedRoute';
-import CustomerDetails from './pages/app/Customer/CustomerDetails';
-import LoginPage from './pages/auth/Login';
+import NotFound from './routes/NotFound';
+import Index from './routes/home/Index';
+import ProtectedRoute from './routes/auth/ProtectedRoute';
+import CustomerDetails from './routes/app/Customer/CustomerDetails';
+import LoginPage from './routes/auth/Login';
 import { AuthProvider } from './context/AuthContext';
-import ProductDetails from './pages/app/Products/ProductDetails';
-import MediaManagement from './pages/app/Media/MediaManagement';
-import MediaDetails from './pages/app/Media/MediaDetails';
+import ProductDetails from './routes/app/Products/ProductDetails';
+import MediaDetails from './routes/app/Media/MediaDetails';
+import GeneralSettings from './routes/app/Settings/GeneralSettings';
+import ApiKeysSettings from './routes/settings/settings/Screens/ApiKeysSettings';
+import Integrations from './routes/app/Settings/Integrations';
+import PaymentsGateway from './routes/app/Settings/PaymentsGateway';
+import Settings2 from './routes/settings/settings/Settings2';
+
+import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
 
 const queryClient = new QueryClient();
 function App() {
-	const SignUp = React.lazy(() => import('./pages/auth/Signup'));
+	const SignUp = React.lazy(() => import('./routes/auth/Signup'));
 	const ForgotPassword = React.lazy(
-		() => import('./pages/auth/ForgotPassword')
+		() => import('./routes/auth/ForgotPassword')
 	);
-	const Unauthorized = React.lazy(() => import('./pages/Unauthorized'));
+	const Unauthorized = React.lazy(() => import('./routes/Unauthorized'));
 	const StoreSelection = React.lazy(
-		() => import('./pages/app/Store/StoreSelection')
+		() => import('./routes/app/Store/StoreSelection')
 	);
-	const CreateStore = React.lazy(() => import('./pages/app/Store/CreateStore'));
-	const Settings = React.lazy(
-		() => import('./pages/settings/settings/Settings')
+	const CreateStore = React.lazy(
+		() => import('./routes/app/Store/CreateStore')
 	);
+	const Settings = React.lazy(() => import('./routes/app/Settings/Settings'));
 	const ProductManagement = React.lazy(
-		() => import('./pages/app/Products/ProductManagement')
+		() => import('./routes/app/Products/ProductManagement')
+	);
+	const MediaManagement = React.lazy(
+		() => import('./routes/app/Media/MediaManagement')
 	);
 	const CreateNewProduct = React.lazy(
-		() => import('./pages/app/Products/CreateNewProduct')
+		() => import('./routes/app/Products/CreateNewProduct')
 	);
 	const OrderManagement = React.lazy(
-		() => import('./pages/app/Orders/OrderManagement')
+		() => import('./routes/app/Orders/OrderManagement')
 	);
 	const InventoryManagement = React.lazy(
-		() => import('./pages/app/Products/Inventory/InventoryManagement')
+		() => import('./routes/app/Products/Inventory/InventoryManagement')
 	);
 	const Notifications = React.lazy(
-		() => import('./pages/settings/notifications/Notifications')
+		() => import('./routes/settings/notifications/Notifications')
 	);
 	const CustomerManagement = React.lazy(
-		() => import('./pages/app/Customer/CustomerManagement')
+		() => import('./routes/app/Customer/CustomerManagement')
 	);
 	const CollectionManagement = React.lazy(
-		() => import('./pages/app/Products/Collections/CollectionManagement')
+		() => import('./routes/app/Products/Collections/CollectionManagement')
 	);
 
 	const Loading = () => (
@@ -77,172 +86,69 @@ function App() {
 							<Route path="*" element={<NotFound />} />
 							<Route path="/" element={<Index />} />
 
-							{/* Protected admin routes */}
-							<Route
-								path="/store"
-								element={
-									<ProtectedRoute>
-										<StoreSelection />
-									</ProtectedRoute>
-								}
-							/>
-							<Route path="/store/undefined" element={<NotFound />} />
-							<Route
-								path="/store/create"
-								element={
-									<ProtectedRoute>
-										<CreateStore />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<AppLauncher />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/dashboard"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<AdminDashboard />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<ProductManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products/create"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<CreateNewProduct />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products/:id"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<ProductDetails />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products/collections"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<CollectionManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products/inventory"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<InventoryManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/products/inventory"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<InventoryManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/orders"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<OrderManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/media"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<MediaManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/media/:fileId"
-								element={
-									<ProtectedRoute>
-										<MediaDetails />
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:id/settings"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<Settings />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/notifications"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<Notifications />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/customers"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<CustomerManagement />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
-							<Route
-								path="/store/:storeId/customers/:customerId"
-								element={
-									<ProtectedRoute>
-										<AdminLayout>
-											<CustomerDetails />
-										</AdminLayout>
-									</ProtectedRoute>
-								}
-							/>
+							{/* Protected Routes */}
+							<Route path="/store" element={<ProtectedRoute />}>
+								<Route index element={<StoreSelection />} />
+								<Route path="undefined" element={<NotFound />} />
+								<Route path="create" element={<CreateStore />} />
+
+								{/* Store-Specific Nested Routes */}
+								<Route path=":storeId" element={<AdminLayout />}>
+									<Route index element={<AppLauncher />} />
+									<Route path="dashboard" element={<AdminDashboard />} />
+									<Route path="products">
+										<Route index element={<ProductManagement />} />
+										<Route path="create" element={<CreateNewProduct />} />
+										<Route
+											path="collections"
+											element={<CollectionManagement />}
+										/>
+										<Route path="inventory" element={<InventoryManagement />} />
+										<Route path=":productId" element={<ProductDetails />} />
+									</Route>
+
+									<Route path="orders">
+										<Route index element={<OrderManagement />} />
+										{/* <Route path=":orderId" element={<OrderDetails />} /> */}
+									</Route>
+									<Route path="media">
+										<Route index element={<MediaManagement />} />
+										<Route path=":mediaId" element={<MediaDetails />} />
+									</Route>
+
+									{/* Settings */}
+									<Route path="settings" element={<Settings />}>
+										<Route path="general" element={<GeneralSettings />} />
+										<Route path="api-keys" element={<ApiKeysSettings />} />
+										<Route path="integrations" element={<Integrations />} />
+										<Route path="payments">
+											<Route index element={<PaymentsGateway />} />
+											<Route
+												path=":paymentSlug"
+												element={<PaymentsGateway />}
+											/>
+										</Route>
+										<Route path="analytics" element={<AnalyticsSettings />} />
+									</Route>
+									{/* Settings */}
+									<Route path="settings2" element={<Settings2 />}>
+										<Route path="general" element={<GeneralSettings />} />
+										<Route path="api-keys" element={<ApiKeysSettings />} />
+										<Route path="integrations" element={<Integrations />} />
+										<Route
+											path="payments"
+											element={<PaymentsGateway />}
+										></Route>
+									</Route>
+
+									{/* Notification */}
+									<Route path="notifications" element={<Notifications />} />
+									<Route path="customers">
+										<Route index element={<CustomerManagement />} />
+										<Route path=":customerId" element={<CustomerDetails />} />
+									</Route>
+								</Route>
+							</Route>
 						</Routes>
 					</Suspense>
 				</BrowserRouter>

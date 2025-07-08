@@ -1,59 +1,97 @@
-import React, { useState } from 'react';
+// import { useCallback, useEffect, } from 'react';
+// import Sidebar from '@/components/layouts/Sidebar';
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+// import { Label } from './ui/label';
+// import { Bell } from 'lucide-react';
+// import { Link, Outlet, useParams } from 'react-router';
+// import ChatButton from './ChatButton';
+// import { getStoreDetails } from '@/features/Store/services';
+// import { useStoreStore } from '@/stores/useStore-Store';
+// import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+// import {
+// 	DropdownMenuContent,
+// 	DropdownMenuItem,
+// 	DropdownMenuLabel,
+// 	DropdownMenuSeparator,
+// 	DropdownMenuTrigger,
+// } from './ui/dropdown-menu';
+import { SidebarProvider, SidebarTrigger } from './ui/sidebar';
+import { AppSidebar } from './Sidebar/app-sidebar';
+import { Link, Outlet, useParams } from 'react-router';
+import { Bell } from 'lucide-react';
+import { Button } from './ui/button';
 
-import Sidebar from '@/components/layouts/Sidebar';
-import { motion, AnimatePresence } from 'framer-motion';
+const AdminLayout = () => {
+	// const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+	const { storeId } = useParams<{ storeId: string }>();
+	// const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
 
-const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+	// const mainVariants = {
+	// 	expanded: {
+	// 		marginLeft: '18rem',
+	// 		transition: {
+	// 			type: 'spring',
+	// 			stiffness: 200,
+	// 			damping: 30,
+	// 		},
+	// 	},
+	// 	collapsed: {
+	// 		marginLeft: '6.5rem',
+	// 		transition: {
+	// 			type: 'spring',
+	// 			stiffness: 200,
+	// 			damping: 30,
+	// 		},
+	// 	},
+	// };
 
-	const mainVariants = {
-		expanded: {
-			marginLeft: '18rem',
-			transition: {
-				type: 'spring',
-				stiffness: 200,
-				damping: 30,
-			},
-		},
-		collapsed: {
-			marginLeft: '6.5rem',
-			transition: {
-				type: 'spring',
-				stiffness: 200,
-				damping: 30,
-			},
-		},
-	};
+	// const contentVariants = {
+	// 	initial: { opacity: 0 },
+	// 	animate: {
+	// 		opacity: 1,
+	// 		transition: { duration: 0.3, ease: 'easeInOut' },
+	// 	},
+	// 	exit: {
+	// 		opacity: 0,
+	// 		transition: { duration: 0.2, ease: 'easeInOut' },
+	// 	},
+	// };
 
-	const contentVariants = {
-		initial: { opacity: 0 },
-		animate: {
-			opacity: 1,
-			transition: { duration: 0.3, ease: 'easeInOut' },
-		},
-		exit: {
-			opacity: 0,
-			transition: { duration: 0.2, ease: 'easeInOut' },
-		},
-	};
+	// const pageVariants = {
+	// 	initial: { opacity: 0, x: -10 },
+	// 	animate: { opacity: 1, x: 0 },
+	// 	exit: { opacity: 0, x: 10 },
+	// };
 
-	const pageVariants = {
-		initial: { opacity: 0, x: -10 },
-		animate: { opacity: 1, x: 0 },
-		exit: { opacity: 0, x: 10 },
-	};
+	// const pageTransition = {
+	// 	type: 'tween',
+	// 	ease: 'easeInOut',
+	// 	duration: 0.3,
+	// };
 
-	const pageTransition = {
-		type: 'tween',
-		ease: 'easeInOut',
-		duration: 0.3,
-	};
+	// const getStoreDataById = useCallback(async () => {
+	// 	try {
+	// 		if (!storeId) return;
+	// 		// const store = await getStoreDetails({ storeId: storeId });
+	// 		// setSelectedStore(store);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+	// }, [setSelectedStore, storeId]);
+
+	// useEffect(() => {
+	// 	getStoreDataById();
+	// }, [getStoreDataById]);
+
 	return (
 		<section className="bg-background text-foreground flex min-h-screen w-full">
-			<Sidebar
+			{/* <Sidebar
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
 			/>
+
+			<ChatButton />
 
 			<AnimatePresence mode="wait">
 				<motion.main
@@ -62,14 +100,45 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 					initial={false}
 					animate={sidebarOpen ? 'expanded' : 'collapsed'}
 					// className={`relative h-[calc(100vh-4rem)] w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
-					className={`relative min-h-dvh w-full flex-1 overflow-y-auto p-4 transition-all duration-300 md:p-6 md:pt-4`}
+					className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
 				>
-					<motion.div
+					<header className="z-50 w-full border-b bg-white py-2">
+						<section className="mx-auto flex w-full items-center justify-end gap-5 px-10">
+							<Link
+								to={`/store/${storeId}/notifications`}
+								className="flex h-9 w-9 items-center justify-center rounded-lg border"
+							>
+								<Bell className="h-5 w-5" />
+							</Link>
+
+							<DropdownMenu>
+								<DropdownMenuTrigger>
+									<div className="flex items-center gap-2">
+										<Avatar className="h-9 w-9 rounded-lg border">
+											<AvatarImage src="https://github.com/shadcn.png" />
+											<AvatarFallback>CN</AvatarFallback>
+										</Avatar>
+										<Label className="text-sm font-medium">John Doe</Label>
+									</div>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuLabel>My Account</DropdownMenuLabel>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem>Profile</DropdownMenuItem>
+									<DropdownMenuItem>Billing</DropdownMenuItem>
+									<DropdownMenuItem>Team</DropdownMenuItem>
+									<DropdownMenuItem>Subscription</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</section>
+					</header>
+
+					<motion.section
 						initial="initial"
 						animate="animate"
 						exit="exit"
 						variants={contentVariants}
-						className="mx-auto h-full w-full"
+						className="mx-auto h-full w-full overflow-y-auto p-4 md:p-6 md:pt-4"
 					>
 						<AnimatePresence mode="wait">
 							<motion.div
@@ -79,12 +148,35 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 								variants={pageVariants}
 								transition={pageTransition}
 							>
-								{children}
+								<Outlet />
 							</motion.div>
 						</AnimatePresence>
-					</motion.div>
+					</motion.section>
 				</motion.main>
-			</AnimatePresence>
+			</AnimatePresence> */}
+			<SidebarProvider>
+				<AppSidebar />
+				<main
+					className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
+				>
+					<header className="z-50 w-full border-b bg-white py-2">
+						<section className="mx-auto flex w-full items-center justify-between gap-5 px-10">
+							<Button variant="ghost" size="icon">
+								<SidebarTrigger />
+							</Button>
+							<Link
+								to={`/store/${storeId}/notifications`}
+								className="flex h-9 w-9 items-center justify-center rounded-lg border"
+							>
+								<Bell className="h-5 w-5" />
+							</Link>
+						</section>
+					</header>
+					<section className="mx-auto h-full w-full overflow-y-auto p-4 md:p-6 md:pt-4">
+						<Outlet />
+					</section>
+				</main>
+			</SidebarProvider>
 		</section>
 	);
 };

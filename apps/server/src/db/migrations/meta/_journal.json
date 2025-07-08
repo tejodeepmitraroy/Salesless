@@ -5,36 +5,8 @@
 		{
 			"idx": 0,
 			"version": "7",
-			"when": 1749542044579,
-			"tag": "0000_unknown_machine_man",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1749542291830,
-			"tag": "0001_loving_moondragon",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "7",
-			"when": 1749544379979,
-			"tag": "0002_shallow_red_skull",
-			"breakpoints": true
-		},
-		{
-			"idx": 3,
-			"version": "7",
-			"when": 1749659350545,
-			"tag": "0003_supreme_may_parker",
-			"breakpoints": true
-		},
-		{
-			"idx": 4,
-			"version": "7",
-			"when": 1750051553702,
-			"tag": "0004_swift_agent_brand",
+			"when": 1750968689540,
+			"tag": "0000_nappy_warhawk",
 			"breakpoints": true
 		}
 	]

@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { MediaContent } from '@/pages/app/Media/MediaManagement';
+import { MediaContent } from '@/routes/app/Media/MediaManagement';
 
 export const mediaColumns: ColumnDef<MediaContent>[] = [
 	{

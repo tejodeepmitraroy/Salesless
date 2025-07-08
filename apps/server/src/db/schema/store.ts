@@ -3,6 +3,7 @@ import {
 	pgTable,
 	primaryKey,
 	serial,
+	text,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
@@ -45,6 +46,7 @@ export const storeRelations = relations(store, ({ many }) => ({
 	media: many(media, {
 		relationName: 'storeMedia',
 	}),
+	apiKeys: many(apiKey),
 }));
 
 export const userStore = pgTable(
@@ -109,5 +111,27 @@ export const customerStoreRelations = relations(customerStore, ({ one }) => ({
 	customer: one(customer, {
 		fields: [customerStore.customerId],
 		references: [customer.id],
+	}),
+}));
+
+export const apiKey = pgTable('api_keys', {
+	id: serial('id').primaryKey(),
+	store_id: integer('store_id')
+		.references(() => store.id)
+		.notNull(),
+	key: text('key').unique().notNull(),
+	secret_hash: text('secret_hash').notNull(),
+	label: varchar('label', { length: 255 }),
+	scopes: text('scopes').default('read:store,read:orders'),
+	platform: varchar('platform', { length: 50 }),
+	createdAt: timestamp('created_at', { mode: 'string' }).defaultNow(),
+	expiresAt: timestamp('expires_at', { mode: 'string' }),
+	revokedAt: timestamp('revoked_at', { mode: 'string' }),
+});
+
+export const apiKeyRelations = relations(apiKey, ({ one }) => ({
+	store: one(store, {
+		fields: [apiKey.store_id],
+		references: [store.id],
 	}),
 }));

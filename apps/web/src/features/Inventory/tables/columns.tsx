@@ -84,9 +84,9 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
 		cell: ({ row }) => {
 			return (
 				<div className="text-center">
-					${row.original.retailPrice.toFixed(2)}
+					${row.original.price.toFixed(2)}
 					<div className="text-muted-foreground text-xs">
-						Cost: ${row.original.costPrice.toFixed(2)}
+						Cost: ${row.original.comparedAtPrice.toFixed(2)}
 					</div>
 				</div>
 			);

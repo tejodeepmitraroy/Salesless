@@ -13,62 +13,70 @@ export const getInventory = asyncHandler(
 			response.status(400).json(new ApiError(400, 'storeId is required'));
 		}
 		try {
-			const productData = await db.query.product.findMany({
-				where: eq(product.storeId, parseInt(storeId)),
-				with: {
-					media: {
-						with: {
-							media: true,
+			db.transaction(async (trx) => {
+				const productData = await trx.query.product.findMany({
+					where: eq(product.storeId, parseInt(storeId)),
+					with: {
+						media: {
+							with: {
+								media: true,
+							},
+							columns: {
+								productId: false,
+								mediaId: false,
+							},
 						},
-						columns: {
-							productId: false,
-							mediaId: false,
-						},
+						category: true,
+						variant: true,
 					},
-					category: true,
-					variant: true,
-				},
-			});
+				});
 
-			const inventory = await productData.map((product, index) => {
-				const variant = product.variant;
-				const media = product.media[0].media;
-				const category = product.category;
-				const isVariantEnabled = product.isVariantEnabled;
+				const inventory = await productData.map((product) => {
+					const variant = product.variant;
+					// const media = product.media[0].media.url ?? null;
+					const category = product.category?.name ?? null;
+					const isVariantEnabled = product.isVariantEnabled;
 
-				if (isVariantEnabled) {
-					variant.map((variant) => {
+					if (isVariantEnabled) {
+						variant.map((variant) => {
+							return {
+								// id: index,
+								productId: variant.productId,
+								variantId: variant.id,
+								productName: product.title,
+								// media: media,
+								sku: variant.sku,
+								category: category,
+								inStock: variant.inventoryQuantity,
+								// reorderPoint: variant.reorderPoint,
+								// onOrder: variant.onOrder,
+								lastUpdated: variant.updatedAt,
+								price: variant.price || 0,
+								comparedAtPrice: variant.comparedAtPrice || 0,
+							};
+						});
+					} else {
 						return {
-							id: index,
-							productId: variant.productId,
+							// id: index,
+							productId: product.id,
+							variantId: null,
 							productName: product.title,
-							media: media.url,
-							sku: variant.sku,
-							category: category?.name,
-							inStock: variant.inventoryQuantity,
-							// reorderPoint: variant.reorderPoint,
-							// onOrder: variant.onOrder,
-							lastUpdated: variant.updatedAt,
-							price: variant.price,
-							comparedAtPrice: variant.comparedAtPrice,
+							// media: media,
+							sku: product.variant[0].sku,
+							category: category,
+							inStock: product.variant[0].inventoryQuantity,
+							lastUpdated: product.updatedAt,
+							price: product.variant[0].price || 0,
+							comparedAtPrice: product.variant[0].comparedAtPrice || 0,
 						};
-					});
-				} else {
-					return {
-						id: index,
-						productId: product.id,
-						productName: product.title,
-						media: media.url,
-						sku: product.variant[0].sku,
-						category: category?.name,
-						inStock: product.variant[0].inventoryQuantity,
-						lastUpdated: product.updatedAt,
-						price: product.variant[0].price,
-						comparedAtPrice: product.variant[0].comparedAtPrice,
-					};
-				}
+					}
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, inventory, 'Product fetched successfully')
+					);
 			});
-
 			// const InventoryData = [
 			// 	{
 			// 		id: 1,
@@ -87,9 +95,6 @@ export const getInventory = asyncHandler(
 			// 		retailPrice: 59.99,
 			// 	},
 			// ];
-			response
-				.status(200)
-				.json(new ApiResponse(200, inventory, 'Product fetched successfully'));
 		} catch (error) {
 			console.log(error);
 			response

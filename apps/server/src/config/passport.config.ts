@@ -1,30 +1,32 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import passport from 'passport';
 import passportJwt from 'passport-jwt';
 import { comparePassword } from '../helper/hasher';
 import passportLocal from 'passport-local';
 import { generateRefreshToken } from '../helper/token';
-// import passportOAuth from "passport-google-oauth20";
+import passportOAuth from 'passport-google-oauth20';
 import { db } from '../db';
 import { eq } from 'drizzle-orm';
 import { customer, user } from '../db/schema/user';
 import { customerStore } from '../db/schema';
 import { Request } from 'express';
 
-// interface GoogleUserProfile {
-//   id: string;
-//   displayName: string;
-//   name: { familyName: string; givenName: string };
-//   emails: Array<{ value: string; verified: boolean }>;
-//   photos: Array<{
-//     value: string;
-//   }>;
-//   provider: string;
-// }
+interface GoogleUserProfile {
+	id: string;
+	displayName: string;
+	name: { familyName: string; givenName: string };
+	emails: Array<{ value: string; verified: boolean }>;
+	photos: Array<{
+		value: string;
+	}>;
+	provider: string;
+}
 
 const localStrategy = passportLocal.Strategy;
 const JwtStrategy = passportJwt.Strategy;
 
-// const OAuth2Strategy = passportOAuth.Strategy;
+const OAuth2Strategy = passportOAuth.Strategy;
 
 const accessTokenSecretKey = process.env.ACCESS_TOKEN_SECRET!;
 
@@ -190,50 +192,53 @@ export const initializePassportStrategies = () => {
 		)
 	);
 
-	// passport.use(
-	//   new OAuth2Strategy(
-	//     {
-	//       clientID: process.env.OAUTH_CLIENT_ID!,
-	//       clientSecret: process.env.OAUTH_CLIENT_SECRET!,
-	//       callbackURL: "/api/v1/auth/google/callback",
-	//     },
-	//     async function (accessToken, refreshToken, profile, done) {
-	//       const userProfile = profile as GoogleUserProfile;
-	//       try {
-	//         let user = await prisma.user.findUnique({
-	//           where: {
-	//             googleId: profile.id,
-	//           },
-	//         });
+	passport.use(
+		new OAuth2Strategy(
+			{
+				clientID: process.env.OAUTH_CLIENT_ID!,
+				clientSecret: process.env.OAUTH_CLIENT_SECRET!,
+				callbackURL:
+					process.env.OAUTH_CALLBACK_URL ||
+					'http://localhost:8000/api/v1/auth/google/callback',
+			},
+			async function (accessToken, refreshToken, profile, done) {
+				const userProfile = profile as GoogleUserProfile;
+				try {
+					let userData = await db.query.user.findFirst({
+						where:
+							eq(user.googleId, userProfile.id) ||
+							eq(user.email, userProfile.emails[0].value),
+					});
 
-	//         if (!user) {
-	//           user = await prisma.user.create({
-	//             data: {
-	//               googleId: userProfile.id,
-	//               email: userProfile.emails[0].value,
-	//               fullName: userProfile.displayName,
-	//               avatar: userProfile.photos[0]?.value,
-	//               isEmailVerified: true,
-	//             },
-	//           });
-	//         }
+					if (!userData) {
+						[userData] = await db
+							.insert(user)
+							.values({
+								googleId: userProfile.id,
+								email: userProfile.emails[0].value,
+								firstName: userProfile.name.givenName,
+								lastName: userProfile.name.familyName,
+								avatar: userProfile.photos[0]?.value,
+								emailVerified: true,
+							})
+							.returning();
+					}
 
-	//         const refreshToken = generateRefreshToken(user.id);
+					const refreshToken = await generateRefreshToken(userData.id);
 
-	//         const updatedUser = await prisma.user.update({
-	//           where: {
-	//             id: user.id,
-	//           },
-	//           data: {
-	//             refreshToken,
-	//           },
-	//         });
+					const [updatedUser] = await db
+						.update(user)
+						.set({
+							refreshToken,
+						})
+						.where(eq(user.id, userData!.id))
+						.returning();
 
-	//         return done(null, updatedUser);
-	//       } catch (error) {
-	//         return done(error, false);
-	//       }
-	//     }
-	//   )
-	// );
+					return done(null, updatedUser);
+				} catch (error) {
+					return done(error, false);
+				}
+			}
+		)
+	);
 };

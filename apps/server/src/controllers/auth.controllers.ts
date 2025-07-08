@@ -13,45 +13,44 @@ interface User {
 	email: string;
 	refreshToken: string;
 }
-// export const googleCallback = asyncHandler(
-// 	async (request: Request, response: Response) => {
-// 		try {
-// 			const prismaUser = request.user as User;
-// 			console.log();
+export const googleCallback = asyncHandler(
+	async (request: Request, response: Response) => {
+		try {
+			const user = request.user as User;
+			console.log();
 
-// 			const accessToken = generateAccessToken({
-// 				id: prismaUser.id,
-// 				email: prismaUser.email,
-// 				role: prismaUser.role,
-// 			});
+			const accessToken = generateAccessToken({
+				id: user.id,
+				email: user.email,
+			});
 
-// 			response.cookie('access_token', accessToken, {
-// 				// httpOnly: true,
-// 				secure: true,
-// 				maxAge: 15 * 60 * 1000, // 15 minutes
-// 				sameSite: 'none',
-// 			});
+			response.cookie('access_token', accessToken, {
+				// httpOnly: true,
+				secure: true,
+				maxAge: 15 * 60 * 1000, // 15 minutes
+				sameSite: 'none',
+			});
 
-// 			// Set HTTP-only cookies
+			// Set HTTP-only cookies
 
-// 			response.cookie('refresh_token', prismaUser.refreshToken, {
-// 				httpOnly: true,
-// 				secure: true,
-// 				sameSite: 'none',
-// 				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-// 			});
+			response.cookie('refresh_token', user.refreshToken, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'none',
+				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+			});
 
-// 			response.redirect(`${process.env.FRONTEND_ENDPOINT_URL}/dashboard`);
-// 		} catch (error) {
-// 			console.log(error);
-// 			response.status(500).json({ error });
-// 		}
-// 		// console.log(prismaUser);
-// 		// const accessToken = generateAccessToken(prismaUser.id);
+			response.redirect(`${process.env.FRONTEND_ENDPOINT_URL}/dashboard`);
+		} catch (error) {
+			console.log(error);
+			response.status(500).json({ error });
+		}
+		// console.log(prismaUser);
+		// const accessToken = generateAccessToken(prismaUser.id);
 
-// 		// Generate JWT Tokens
-// 	}
-// );
+		// Generate JWT Tokens
+	}
+);
 
 export const generateRefreshToken = asyncHandler(
 	async (request: Request, response: Response) => {

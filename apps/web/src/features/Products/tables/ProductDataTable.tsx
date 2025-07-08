@@ -43,7 +43,7 @@ export function ProductDataTable<TData, TValue>({
 	};
 
 	return (
-		<div className="rounded-md border">
+		<div className="rounded-md">
 			<Table>
 				<TableHeader className="rounded-t-md">
 					{table.getHeaderGroups().map((headerGroup) => (
