@@ -11,9 +11,7 @@ import {
 	Image,
 	PanelsTopLeft,
 	Boxes,
-	// ChevronsUpDown,
 	Home,
-	// Plus,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
@@ -30,16 +28,6 @@ import {
 	DropdownMenuTrigger,
 } from '@radix-ui/react-dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-// import { useStoreStore } from '@/stores/useStore-Store';
-
-// import {
-// 	DropdownMenu,
-// 	DropdownMenuContent,
-// 	DropdownMenuItem,
-// 	DropdownMenuLabel,
-// 	DropdownMenuSeparator,
-// 	DropdownMenuTrigger,
-// } from '../ui/dropdown-menu';
 
 const sidebarVariants = {
 	open: { width: '18rem', x: 0 },

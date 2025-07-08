@@ -68,9 +68,6 @@
 
 }
 
-
-
-
 /* body {
   margin: 0;
   display: flex;
@@ -96,8 +93,6 @@
   transition: border-color 0.25s;
 } */
 
-
-
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -106,7 +101,7 @@
   /* a:hover {
     color: #747bff;
   } */
-  
+
 }
 
 @theme inline {

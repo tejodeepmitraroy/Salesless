@@ -1,87 +1,92 @@
-import { useCallback, useEffect, useState } from 'react';
-import Sidebar from '@/components/layouts/Sidebar';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Label } from './ui/label';
-import { Bell } from 'lucide-react';
+// import { useCallback, useEffect, } from 'react';
+// import Sidebar from '@/components/layouts/Sidebar';
+// import { motion, AnimatePresence } from 'framer-motion';
+// import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+// import { Label } from './ui/label';
+// import { Bell } from 'lucide-react';
+// import { Link, Outlet, useParams } from 'react-router';
+// import ChatButton from './ChatButton';
+// import { getStoreDetails } from '@/features/Store/services';
+// import { useStoreStore } from '@/stores/useStore-Store';
+// import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+// import {
+// 	DropdownMenuContent,
+// 	DropdownMenuItem,
+// 	DropdownMenuLabel,
+// 	DropdownMenuSeparator,
+// 	DropdownMenuTrigger,
+// } from './ui/dropdown-menu';
+import { SidebarProvider, SidebarTrigger } from './ui/sidebar';
+import { AppSidebar } from './Sidebar/app-sidebar';
 import { Link, Outlet, useParams } from 'react-router';
-import ChatButton from './ChatButton';
-import { getStoreDetails } from '@/features/Store/services';
-import { useStoreStore } from '@/stores/useStore-Store';
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-import {
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+import { Bell } from 'lucide-react';
+import { Button } from './ui/button';
 
 const AdminLayout = () => {
-	const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+	// const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 	const { storeId } = useParams<{ storeId: string }>();
-	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
+	// const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
 
-	const mainVariants = {
-		expanded: {
-			marginLeft: '18rem',
-			transition: {
-				type: 'spring',
-				stiffness: 200,
-				damping: 30,
-			},
-		},
-		collapsed: {
-			marginLeft: '6.5rem',
-			transition: {
-				type: 'spring',
-				stiffness: 200,
-				damping: 30,
-			},
-		},
-	};
+	// const mainVariants = {
+	// 	expanded: {
+	// 		marginLeft: '18rem',
+	// 		transition: {
+	// 			type: 'spring',
+	// 			stiffness: 200,
+	// 			damping: 30,
+	// 		},
+	// 	},
+	// 	collapsed: {
+	// 		marginLeft: '6.5rem',
+	// 		transition: {
+	// 			type: 'spring',
+	// 			stiffness: 200,
+	// 			damping: 30,
+	// 		},
+	// 	},
+	// };
 
-	const contentVariants = {
-		initial: { opacity: 0 },
-		animate: {
-			opacity: 1,
-			transition: { duration: 0.3, ease: 'easeInOut' },
-		},
-		exit: {
-			opacity: 0,
-			transition: { duration: 0.2, ease: 'easeInOut' },
-		},
-	};
+	// const contentVariants = {
+	// 	initial: { opacity: 0 },
+	// 	animate: {
+	// 		opacity: 1,
+	// 		transition: { duration: 0.3, ease: 'easeInOut' },
+	// 	},
+	// 	exit: {
+	// 		opacity: 0,
+	// 		transition: { duration: 0.2, ease: 'easeInOut' },
+	// 	},
+	// };
 
-	const pageVariants = {
-		initial: { opacity: 0, x: -10 },
-		animate: { opacity: 1, x: 0 },
-		exit: { opacity: 0, x: 10 },
-	};
+	// const pageVariants = {
+	// 	initial: { opacity: 0, x: -10 },
+	// 	animate: { opacity: 1, x: 0 },
+	// 	exit: { opacity: 0, x: 10 },
+	// };
 
-	const pageTransition = {
-		type: 'tween',
-		ease: 'easeInOut',
-		duration: 0.3,
-	};
+	// const pageTransition = {
+	// 	type: 'tween',
+	// 	ease: 'easeInOut',
+	// 	duration: 0.3,
+	// };
 
-	const getStoreDataById = useCallback(async () => {
-		try {
-			if (!storeId) return;
-			const store = await getStoreDetails({ storeId: storeId });
-			setSelectedStore(store);
-		} catch (error) {
-			console.log(error);
-		}
-	}, [setSelectedStore, storeId]);
+	// const getStoreDataById = useCallback(async () => {
+	// 	try {
+	// 		if (!storeId) return;
+	// 		// const store = await getStoreDetails({ storeId: storeId });
+	// 		// setSelectedStore(store);
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+	// }, [setSelectedStore, storeId]);
 
-	useEffect(() => {
-		getStoreDataById();
-	}, [getStoreDataById]);
+	// useEffect(() => {
+	// 	getStoreDataById();
+	// }, [getStoreDataById]);
 
 	return (
 		<section className="bg-background text-foreground flex min-h-screen w-full">
-			<Sidebar
+			{/* <Sidebar
 				sidebarOpen={sidebarOpen}
 				toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
 			/>
@@ -148,7 +153,30 @@ const AdminLayout = () => {
 						</AnimatePresence>
 					</motion.section>
 				</motion.main>
-			</AnimatePresence>
+			</AnimatePresence> */}
+			<SidebarProvider>
+				<AppSidebar />
+				<main
+					className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
+				>
+					<header className="z-50 w-full border-b bg-white py-2">
+						<section className="mx-auto flex w-full items-center justify-between gap-5 px-10">
+							<Button variant="ghost" size="icon">
+								<SidebarTrigger />
+							</Button>
+							<Link
+								to={`/store/${storeId}/notifications`}
+								className="flex h-9 w-9 items-center justify-center rounded-lg border"
+							>
+								<Bell className="h-5 w-5" />
+							</Link>
+						</section>
+					</header>
+					<section className="mx-auto h-full w-full overflow-y-auto p-4 md:p-6 md:pt-4">
+						<Outlet />
+					</section>
+				</main>
+			</SidebarProvider>
 		</section>
 	);
 };
