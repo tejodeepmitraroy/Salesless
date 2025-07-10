@@ -1,4 +1,3 @@
-import { getToken } from '@/config/auth';
 import { customAxios } from '@/api/axios-custom';
 
 export const generatePresignedUrl = async ({
@@ -15,18 +14,11 @@ export const generatePresignedUrl = async ({
 	mediaId: number;
 }> => {
 	try {
-		const token = getToken();
 		const response = await customAxios.post(
 			`/media/upload-url?storeId=${storeId}`,
 			{
 				fileName: file.name,
 				contentType: file.type,
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-					'Content-Type': 'application/json',
-				},
 			}
 		);
 
@@ -46,15 +38,9 @@ export const deleteObject = async (
 	key: string
 ): Promise<{ uploadUrl: string; fileName: string; publicS3Url: string }> => {
 	try {
-		const token = getToken();
-
 		const response = await customAxios.delete('/contents', {
 			data: {
 				key,
-			},
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
 			},
 		});
 

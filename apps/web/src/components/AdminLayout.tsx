@@ -159,7 +159,7 @@ const AdminLayout = () => {
 				<main
 					className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
 				>
-					<header className="z-50 w-full border-b bg-white py-2">
+					<header className="fixed z-50 w-full border-b bg-white py-2">
 						<section className="mx-auto flex w-full items-center justify-between gap-5 px-10">
 							<Button variant="ghost" size="icon">
 								<SidebarTrigger />
@@ -172,7 +172,7 @@ const AdminLayout = () => {
 							</Link>
 						</section>
 					</header>
-					<section className="mx-auto h-full w-full overflow-y-auto p-4 md:p-6 md:pt-4">
+					<section className="mx-auto mt-12 h-full w-full overflow-y-auto p-4 md:p-6 md:pt-4">
 						<Outlet />
 					</section>
 				</main>

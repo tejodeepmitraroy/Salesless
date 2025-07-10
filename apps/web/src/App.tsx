@@ -21,6 +21,7 @@ import PaymentsGateway from './routes/app/Settings/PaymentsGateway';
 import Settings2 from './routes/settings/settings/Settings2';
 
 import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
+import OrderDetails from './routes/app/Orders/OrderDetails';
 
 const queryClient = new QueryClient();
 function App() {
@@ -109,7 +110,7 @@ function App() {
 
 									<Route path="orders">
 										<Route index element={<OrderManagement />} />
-										{/* <Route path=":orderId" element={<OrderDetails />} /> */}
+										<Route path=":orderId" element={<OrderDetails />} />
 									</Route>
 									<Route path="media">
 										<Route index element={<MediaManagement />} />

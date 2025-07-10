@@ -42,10 +42,8 @@ export function OrderDataTable<TData, TValue>({
 		},
 	});
 
-	const OpenProductDetails = (row: TData) => {
-		navigate(
-			`/store/${storeId}/products/${(row as { productId: string }).productId}`
-		);
+	const openOrderDetails = (row: TData) => {
+		navigate(`/store/${storeId}/orders/${(row as { id: string }).id}`);
 	};
 
 	return (
@@ -87,7 +85,7 @@ export function OrderDataTable<TData, TValue>({
 										</TableCell>
 									) : (
 										<TableCell
-											onClick={() => OpenProductDetails(row.original)}
+											onClick={() => openOrderDetails(row.original)}
 											key={cell.id}
 										>
 											{flexRender(
