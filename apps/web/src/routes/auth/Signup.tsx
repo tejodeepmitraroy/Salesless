@@ -24,9 +24,8 @@ import {
 import { signUpSchema } from '@/features/users/schema';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { signUpService } from '@/features/users/services';
 import { Label } from '@/components/ui/label';
-import { googleLoginService } from '@/features/Auth/services';
+import { googleLoginService, signUpService } from '@/features/Auth/services';
 import ChatButton from '@/components/ChatButton';
 
 const SignupPage = () => {

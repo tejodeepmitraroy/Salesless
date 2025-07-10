@@ -8,12 +8,14 @@ import React, {
 } from 'react';
 import { getUserData } from '@/features/users/services';
 import Cookies from 'js-cookie';
+import { logoutService } from '@/features/Auth/services';
 // Define user types
 export type UserRole = 'admin' | 'employee' | 'vendor';
 
 export interface User {
 	id: string;
-	name: string;
+	firstName: string;
+	lastName: string;
 	email: string;
 	mobile?: string;
 	role: UserRole;
@@ -26,6 +28,7 @@ interface AuthContextType {
 	isLoading: boolean;
 	setUser: React.Dispatch<React.SetStateAction<User | null>>;
 	storeId: string | null;
+	logOut: () => void;
 }
 
 // Create the auth context
@@ -38,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	const [storeId, setStoreId] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
-	// Check if user is already logged in (from localStorage)
+	// Check if user is already logged in (from cookies)
 	const getUserDetails = useCallback(async () => {
 		setIsLoading(true);
 		try {
@@ -50,6 +53,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 			setUser(null);
 			setIsLoading(false);
 		}
+	}, []);
+
+	const logOut = useCallback(() => {
+		setIsLoading(true);
+		setUser(null);
+		setStoreId(null);
+		logoutService();
+		setIsLoading(false);
 	}, []);
 
 	const getStoreId = useCallback(() => {
@@ -74,6 +85,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		<AuthContext.Provider
 			value={{
 				user,
+				logOut,
 				isAuthenticated,
 				isLoading,
 				setUser,

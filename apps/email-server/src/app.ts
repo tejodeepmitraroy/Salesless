@@ -9,7 +9,6 @@ import authRouter from './routes/auth.routes';
 import orderRouter from './routes/order.routes';
 import marketingRouter from './routes/marketing.routes';
 import utilityRouter from './routes/utility.routes';
-
 const app: Application = express();
 
 const corsOptions = {

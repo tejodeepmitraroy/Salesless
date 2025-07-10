@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { forgotPasswordSchema } from '@/features/users/schema';
-import { forgetPassword } from '@/features/users/services';
+import { forgetPassword } from '@/features/Auth/services';
 
 const ForgotPasswordPage = () => {
 	const form = useForm({

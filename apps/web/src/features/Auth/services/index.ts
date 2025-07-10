@@ -81,7 +81,7 @@ export const forgetPassword = async (email: string) => {
 
 export const logoutService = async () => {
 	const response = await customAxios.post(
-		`/auth/user/logout`,
+		`/auth/logout`,
 		{},
 		{
 			withCredentials: true,

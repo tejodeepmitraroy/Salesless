@@ -28,7 +28,7 @@ const UserProfile = () => {
 	const { user } = useAuth();
 	// const { toast } = useToast();
 
-	const [name, setName] = useState(user?.name || '');
+	const [name, setName] = useState(user?.firstName || '');
 	const [email, setEmail] = useState(user?.email || '');
 	const [mobile, setMobile] = useState(user?.mobile || '');
 	const [currentPassword, setCurrentPassword] = useState('');
@@ -108,14 +108,14 @@ const UserProfile = () => {
 								<Avatar className="h-24 w-24">
 									<AvatarImage
 										src={user?.avatar || '/placeholder.svg'}
-										alt={user?.name}
+										alt={user?.firstName}
 									/>
 									<AvatarFallback>
-										{user?.name.slice(0, 2).toUpperCase()}
+										{user?.firstName.slice(0, 2).toUpperCase()}
 									</AvatarFallback>
 								</Avatar>
 								<div className="text-center">
-									<h2 className="text-xl font-bold">{user?.name}</h2>
+									<h2 className="text-xl font-bold">{user?.firstName}</h2>
 									<p className="text-muted-foreground text-sm capitalize">
 										{user?.role}
 									</p>

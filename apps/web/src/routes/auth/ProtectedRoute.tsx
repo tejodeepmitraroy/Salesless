@@ -12,6 +12,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
 	// const storeId = Cookies.get('storeId');
 	const location = useLocation();
 
+	console.log('Authenticated--->', isAuthenticated, isLoading);
+
 	// Show loading state if authentication status is being determined
 	if (isLoading) {
 		return (

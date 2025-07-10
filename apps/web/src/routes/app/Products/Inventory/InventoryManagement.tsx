@@ -20,10 +20,10 @@ import MovementHistoryDialog from '@/features/Inventory/components/MovementHisto
 import LowStockAlert from '@/features/Inventory/components/LowStockAlert';
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { InventoryDataTable } from '@/features/Inventory/tables/InventoryDataTable';
-import { inventoryColumns } from '@/features/Inventory/tables/columns';
 import { useQuery } from '@tanstack/react-query';
 import { getAllInventory } from '@/features/Inventory/services';
 import { useParams } from 'react-router';
+import { inventoryColumns } from '@/features/Inventory/tables/InventoryColumns';
 
 const InventoryManagement: React.FC = () => {
 	const { storeId } = useParams<{ storeId: string }>();
@@ -115,20 +115,7 @@ const InventoryManagement: React.FC = () => {
 							setCategoryFilter={setCategoryFilter}
 							setStatusFilter={setStatusFilter}
 						/>
-						{/* <InventoryTable
-							filteredInventory={filteredInventory}
-							sortField={sortField}
-							sortDirection={sortDirection}
-							handleSort={handleSort}
-							onAdjustStock={(item) => {
-								setCurrentItem(item);
-								setIsAdjustStockOpen(true);
-							}}
-							onViewHistory={(item) => {
-								setCurrentItem(item);
-								setIsMovementHistoryOpen(true);
-							}}
-						/> */}
+
 						<InventoryDataTable
 							columns={inventoryColumns}
 							data={inventoryData}

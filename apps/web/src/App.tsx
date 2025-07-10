@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Routes } from 'react-router';
 import AdminDashboard from './routes/app/Dashboard/AdminDashboard';
 import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
-import AppLauncher from './routes/app/Dashboard/AppLauncher';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotFound from './routes/NotFound';
 import Index from './routes/home/Index';
@@ -86,7 +85,7 @@ function App() {
 							<Route path="*" element={<NotFound />} />
 							<Route path="/" element={<Index />} />
 
-							{/* Protected Routes */}
+							{/* Protected Routes for Store */}
 							<Route path="/store" element={<ProtectedRoute />}>
 								<Route index element={<StoreSelection />} />
 								<Route path="undefined" element={<NotFound />} />
@@ -94,8 +93,9 @@ function App() {
 
 								{/* Store-Specific Nested Routes */}
 								<Route path=":storeId" element={<AdminLayout />}>
-									<Route index element={<AppLauncher />} />
-									<Route path="dashboard" element={<AdminDashboard />} />
+									{/* <Route index element={<AppLauncher />} /> */}
+									<Route index element={<AdminDashboard />} />
+									{/* <Route path="dashboard" element={<AdminDashboard />} /> */}
 									<Route path="products">
 										<Route index element={<ProductManagement />} />
 										<Route path="create" element={<CreateNewProduct />} />
@@ -148,6 +148,13 @@ function App() {
 										<Route path=":customerId" element={<CustomerDetails />} />
 									</Route>
 								</Route>
+							</Route>
+
+							{/* Protected Routes for User */}
+							<Route path="/accounts" element={<ProtectedRoute />}>
+								{/* <Route path=":accountId" element={<AccountLayout />}>
+									<Route index element={<Accounts />} />
+								</Route> */}
 							</Route>
 						</Routes>
 					</Suspense>

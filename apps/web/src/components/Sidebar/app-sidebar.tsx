@@ -11,13 +11,13 @@ import {
 
 import {
 	AudioWaveform,
+	CircuitBoard,
 	Command,
 	CreditCard,
 	Database,
 	FileText,
 	GalleryVerticalEnd,
 	HelpCircle,
-	Home,
 	Image,
 	LayoutDashboard,
 	Package,
@@ -41,14 +41,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			avatar: '/avatars/shadcn.jpg',
 		},
 		navMain: [
-			{
-				title: 'Home',
-				url: `/store/${storeId}`,
-				icon: Home,
-			},
+			// {
+			// 	title: 'Home',
+			// 	url: `/store/${storeId}`,
+			// 	icon: Home,
+			// },
 			{
 				title: 'Dashboard',
-				url: `/store/${storeId}/dashboard`,
+				url: `/store/${storeId}`,
 				icon: LayoutDashboard,
 			},
 			{
@@ -62,11 +62,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						url: `/store/${storeId}/orders`,
 						icon: ShoppingCart,
 					},
-					{
-						title: 'Draft ',
-						url: `/store/${storeId}/orders/drafts`,
-						icon: ShoppingCart,
-					},
+					// {
+					// 	title: 'Draft ',
+					// 	url: `/store/${storeId}/orders/drafts`,
+					// 	icon: ShoppingCart,
+					// },
 				],
 			},
 			{
@@ -115,6 +115,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				title: 'Media Store',
 				url: `/store/${storeId}/media`,
 				icon: Image,
+				isActive: false,
+			},
+			{
+				title: 'Integrations',
+				url: `/store/${storeId}/integrations`,
+				icon: CircuitBoard,
 				isActive: false,
 			},
 		],
@@ -233,7 +239,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<NavSecondary items={data.navSecondary} className="mt-auto" />
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser user={data.user} />
+				<NavUser />
 			</SidebarFooter>
 		</Sidebar>
 	);
