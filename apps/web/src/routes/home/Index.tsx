@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
 	ArrowRight,
@@ -22,6 +22,7 @@ import MarqueeSection from '@/components/landing/MarqueeSection';
 import ProductOverview from '@/components/landing/ProductOverview';
 import PricingSection from '@/components/landing/PricingSection';
 import CompanyLogos from '@/components/landing/CompanyLogos';
+import { useNavigate } from 'react-router';
 
 // Animation variants for staggered animations
 const containerVariants = {
@@ -66,6 +67,11 @@ const Index = () => {
 		});
 		alert("Thanks for signing up! We'll be in touch soon.");
 	};
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		navigate('/login', { replace: true });
+	}, [navigate]);
 	return (
 		<div className="flex min-h-screen flex-col">
 			{/* Navbar */}

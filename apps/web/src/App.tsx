@@ -3,7 +3,6 @@ import './App.css';
 import { Loader } from 'lucide-react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import AdminDashboard from './routes/app/Dashboard/AdminDashboard';
-import AdminLayout from './components/AdminLayout';
 import { Toaster } from './components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import NotFound from './routes/NotFound';
@@ -19,9 +18,12 @@ import ApiKeysSettings from './routes/settings/settings/Screens/ApiKeysSettings'
 import Integrations from './routes/app/Settings/Integrations';
 import PaymentsGateway from './routes/app/Settings/PaymentsGateway';
 import Settings2 from './routes/settings/settings/Settings2';
-
 import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
 import OrderDetails from './routes/app/Orders/OrderDetails';
+import Accounts from './routes/accounts/Accounts';
+import AdminLayout from './components/layouts/AdminLayout';
+import IntegrationManagement from './routes/app/Integrations/IntegrationManagement';
+import PaymentsDashboard from './routes/app/Integrations/PaymentsDashboard';
 
 const queryClient = new QueryClient();
 function App() {
@@ -94,9 +96,7 @@ function App() {
 
 								{/* Store-Specific Nested Routes */}
 								<Route path=":storeId" element={<AdminLayout />}>
-									{/* <Route index element={<AppLauncher />} /> */}
 									<Route index element={<AdminDashboard />} />
-									{/* <Route path="dashboard" element={<AdminDashboard />} /> */}
 									<Route path="products">
 										<Route index element={<ProductManagement />} />
 										<Route path="create" element={<CreateNewProduct />} />
@@ -115,6 +115,12 @@ function App() {
 									<Route path="media">
 										<Route index element={<MediaManagement />} />
 										<Route path=":mediaId" element={<MediaDetails />} />
+									</Route>
+									<Route path="integrations">
+										<Route index element={<IntegrationManagement />} />
+									</Route>
+									<Route path="finances">
+										<Route path="payments" element={<PaymentsDashboard />} />
 									</Route>
 
 									{/* Settings */}
@@ -153,9 +159,7 @@ function App() {
 
 							{/* Protected Routes for User */}
 							<Route path="/accounts" element={<ProtectedRoute />}>
-								{/* <Route path=":accountId" element={<AccountLayout />}>
-									<Route index element={<Accounts />} />
-								</Route> */}
+								<Route path=":accountId" element={<Accounts />} />
 							</Route>
 						</Routes>
 					</Suspense>

@@ -23,7 +23,7 @@ const Settings = () => {
 			value: 'api-keys',
 		},
 		{ label: 'Payments', value: 'payments' },
-		{ label: 'Integrations', value: 'integrations' },
+		// { label: 'Integrations', value: 'integrations' },
 		// { label: 'Legal', value: 'legal' },
 		{ label: 'Analytics', value: 'analytics' },
 	];
@@ -42,19 +42,17 @@ const Settings = () => {
 				description="Manage your products"
 			/>
 
-			<section className="w-full">
-				<section className="flex w-full gap-1">
-					{tabs.map((tab) => (
-						<div
-							onClick={() => settingsTab(tab.value)}
-							key={tab.value}
-							className={`${location.pathname === `/store/${storeId}/settings/${tab.value}` && 'border-black'} border-background flex w-fit cursor-pointer items-center gap-1 border-b-2 p-2 py-1 text-sm`}
-						>
-							{/* {tab.icon} */}
-							<Label className="font-medium">{tab.label}</Label>
-						</div>
-					))}
-				</section>
+			<section className="flex w-full gap-1">
+				{tabs.map((tab) => (
+					<div
+						onClick={() => settingsTab(tab.value)}
+						key={tab.value}
+						className={`${location.pathname === `/store/${storeId}/settings/${tab.value}` && 'border-black'} border-background flex w-fit cursor-pointer items-center gap-1 border-b-2 p-2 py-1 text-sm`}
+					>
+						{/* {tab.icon} */}
+						<Label className="font-medium">{tab.label}</Label>
+					</div>
+				))}
 			</section>
 
 			<Separator className="mb-4" />

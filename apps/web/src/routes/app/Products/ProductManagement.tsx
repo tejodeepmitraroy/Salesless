@@ -61,16 +61,6 @@ const ProductManagement = () => {
 		navigate(`/store/${storeId}/products/create`);
 	};
 
-	// const handleDeleteProduct = (productId: number) => {
-	// 	const productToDelete = products.find((p) => p.id === productId);
-	// 	if (!productToDelete) return;
-
-	// 	toast('Product Deleted', {
-	// 		description: `${productToDelete.title} has been successfully removed.`,
-	// 		// variant: 'destructive',
-	// 	});
-	// };
-
 	const handleExportProducts = (tab: string) => {
 		const dataToExport = filteredProducts(tab);
 

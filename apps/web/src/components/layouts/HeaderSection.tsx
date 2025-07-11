@@ -9,7 +9,7 @@ interface HeaderProps {
 const HeaderSection: FC<HeaderProps> = ({
 	// icon,
 	title,
-	//  description,
+	description,
 	children,
 }) => {
 	// const { storeId } = useParams<{ storeId: string }>();
@@ -20,13 +20,9 @@ const HeaderSection: FC<HeaderProps> = ({
 					{/* {icon} */}
 					{title}
 				</h1>
-				{/* <p className="text-muted-foreground">{description}</p> */}
+				<p className="text-muted-foreground">{description}</p>
 			</div>
-			<div className="flex items-center gap-2">
-				{children}
-
-				{/* <UserProfileDropdown /> */}
-			</div>
+			<div className="flex items-center gap-2">{children}</div>
 		</header>
 	);
 };
