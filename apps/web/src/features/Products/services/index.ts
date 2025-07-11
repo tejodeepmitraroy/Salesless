@@ -2,7 +2,6 @@ import { customAxios } from '@/api/axios-custom';
 
 export const createProductService = async (formData: any) => {
 	const response = await customAxios.post(`/products`, formData);
-
 	return response;
 };
 
@@ -42,10 +41,7 @@ export const deleteProductService = async ({
 
 ///Categories
 export const createCategoryService = async (formData: any) => {
-	const response = await customAxios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/categories`,
-		formData
-	);
+	const response = await customAxios.post(`/categories`, formData);
 	return response.data.data;
 };
 

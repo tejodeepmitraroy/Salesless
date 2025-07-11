@@ -10,16 +10,21 @@ import PasswordResetEmail from '../emails/authentication/PasswordReset';
 // Email Verification
 export const sendEmailVerification = asyncHandler(
 	async (request: Request, response: Response) => {
-		const { to, data } = request.body;
+		const { to, userName, verificationLink } = request.body;
 
-		const { userName, verificationLink } = data;
+		if (!userName || !verificationLink) {
+			response
+				.status(400)
+				.json(
+					new ApiResponse(
+						400,
+						request.body,
+						'User name and verification link is required'
+					)
+				);
+		}
 
 		try {
-			if (!verificationLink) {
-				response
-					.status(400)
-					.json(new ApiResponse(400, null, 'Verification link is required'));
-			}
 			const { data } = await resend.emails.send({
 				from: 'Salesless <support@salesless.tejodeepmitraroy.com>',
 				to: to,

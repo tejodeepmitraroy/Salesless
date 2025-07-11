@@ -25,9 +25,9 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { loginService } from '@/features/users/services';
+
 import { useAuth } from '@/context/AuthContext';
-import { googleLoginService } from '@/features/Auth/services';
+import { googleLoginService, loginService } from '@/features/Auth/services';
 import ChatButton from '@/components/ChatButton';
 
 const LoginPage = () => {

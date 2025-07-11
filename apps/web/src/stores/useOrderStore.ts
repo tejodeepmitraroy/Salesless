@@ -1,143 +1,256 @@
 import { create } from 'zustand';
-import { ProductImage, ProductVariant } from '@/features/Products/schema';
 import { devtools } from 'zustand/middleware';
 
-export type Product = {
-	id: number;
-	storeId: number;
-	title: string;
-	description?: string;
-	price: number;
-	comparedAtPrice: number;
+export interface Order {
+	id: string;
+	customer: string;
+	date: string;
+	total: number;
+	items: number;
 	status: string;
-	images?: ProductImage[];
-	categoryId: string;
-	stockQuantity: number;
-	variants?: ProductVariant[];
-	seoTitle?: string;
-	seoDescription?: string;
-	seoKeywords?: string;
-	seoScore?: number;
-};
+	payment: string;
+	address?: string;
+	email?: string;
+	phone?: string;
+	products?: { name: string; price: number; quantity: number }[];
+}
 
-interface ProductState {
-	products: Product[];
-	selectedProduct: Product | null;
+interface OrderState {
+	orders: Order[];
+	filteredOrders: Order[];
+	status: string[];
+	selectedOrder: Order | null;
+	statusFilter: string;
+	sortOrders: string;
 	searchQuery: string;
-	filterCategory: string;
 	filterStatus: string;
 }
 
-interface ProductActions {
-	addProduct: (product: Product) => void;
-	setProducts: (products: Product[]) => void;
-	updateProduct: (product: Product) => void;
-	getProductsById: (productId: number) => Product | null;
-	deleteProduct: (productId: number) => void;
-	setSelectedProduct: (product: Product | null) => void;
+interface OrderActions {
+	setStatusFilter: (status: string) => void;
+	setSortOrders: (status: string) => void;
+
+	addOrder: (order: Order) => void;
+	setOrders: (orders: Order[]) => void;
+	updateOrder: (order: Order) => void;
+	getOrdersById: (orderId: string) => Order | null;
+	deleteOrder: (orderId: string) => void;
+	setSelectedOrder: (order: Order | null) => void;
 	setSearchQuery: (query: string) => void;
-	setFilterCategory: (category: string) => void;
 	setFilterStatus: (status: string) => void;
-	getFilteredProducts: () => Product[];
+	// getFilteredOrders: () => Order[];
 }
 
-type ProductStore = ProductState & ProductActions;
+type OrderStore = OrderState & OrderActions;
 
-const initialState: ProductState = {
-	// products: [
-	// 	{
-	// 		id: 1,
-	// 		storeId: 1,
-	// 		title: 'Artisan Coffee Mug',
-	// 		categoryId: 'Home',
-	// 		price: 24.99,
-	// 		stock_quantity: 45,
-	// 		status: 'Active',
-	// 		images: [
-	// 			{
-	// 				id: 'img1',
-	// 				url: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3',
-	// 				name: 'Coffee Mug',
-	// 				isFeatured: true,
-	// 			},
-	// 		],
-	// 	},
-	// 	{
-	// 		id: 2,
-	// 		storeId: 1,
-	// 		title: 'Wireless Earbuds Pro',
-	// 		categoryId: 'Electronics',
-	// 		price: 79.99,
-	// 		stock_quantity: 12,
-	// 		status: 'Active',
-	// 	},
-	// 	{
-	// 		id: 3,
-	// 		storeId: 1,
-	// 		title: 'Leather Wallet',
-	// 		categoryId: 'Fashion',
-	// 		price: 49.99,
-	// 		stock_quantity: 28,
-	// 		status: 'Active',
-	// 	},
-	// 	{
-	// 		id: 4,
-	// 		storeId: 1,
-	// 		title: 'Scented Candle Set',
-	// 		categoryId: 'Home',
-	// 		price: 34.99,
-	// 		stock_quantity: 0,
-	// 		status: 'Out of stock',
-	// 	},
-	// 	{
-	// 		id: 5,
-	// 		storeId: 1,
-	// 		title: 'Facial Serum',
-	// 		categoryId: 'Beauty',
-	// 		price: 29.99,
-	// 		stock_quantity: 5,
-	// 		status: 'Low stock',
-	// 	},
-	// ],
-	products: [],
-	selectedProduct: null,
+const initialState: OrderState = {
+	orders: [
+		{
+			id: 'ORD-7452',
+			customer: 'John Doe',
+			date: '2023-06-18',
+			total: 124.95,
+			items: 3,
+			status: 'Delivered',
+			payment: 'Paid',
+			address: '123 Main St, Anytown, CA 94582',
+			email: 'john.doe@example.com',
+			phone: '(555) 123-4567',
+			products: [
+				{ name: 'Artisan Coffee Mug', price: 24.99, quantity: 2 },
+				{ name: 'Leather Wallet', price: 74.97, quantity: 1 },
+			],
+		},
+		{
+			id: 'ORD-7451',
+			customer: 'Jane Smith',
+			date: '2023-06-17',
+			total: 89.99,
+			items: 1,
+			status: 'Shipped',
+			payment: 'Paid',
+		},
+		{
+			id: 'ORD-7450',
+			customer: 'Bob Johnson',
+			date: '2023-06-17',
+			total: 54.25,
+			items: 2,
+			status: 'Processing',
+			payment: 'Paid',
+		},
+		{
+			id: 'ORD-7449',
+			customer: 'Sarah Williams',
+			date: '2023-06-16',
+			total: 210.5,
+			items: 4,
+			status: 'Pending',
+			payment: 'Awaiting',
+		},
+		{
+			id: 'ORD-7448',
+			customer: 'Mike Brown',
+			date: '2023-06-15',
+			total: 45.0,
+			items: 1,
+			status: 'Cancelled',
+			payment: 'Refunded',
+		},
+	],
+	filteredOrders: [
+		{
+			id: 'ORD-7452',
+			customer: 'John Doe',
+			date: '2023-06-18',
+			total: 124.95,
+			items: 3,
+			status: 'Delivered',
+			payment: 'Paid',
+			address: '123 Main St, Anytown, CA 94582',
+			email: 'john.doe@example.com',
+			phone: '(555) 123-4567',
+			products: [
+				{ name: 'Artisan Coffee Mug', price: 24.99, quantity: 2 },
+				{ name: 'Leather Wallet', price: 74.97, quantity: 1 },
+			],
+		},
+		{
+			id: 'ORD-7451',
+			customer: 'Jane Smith',
+			date: '2023-06-17',
+			total: 89.99,
+			items: 1,
+			status: 'Shipped',
+			payment: 'Paid',
+		},
+		{
+			id: 'ORD-7450',
+			customer: 'Bob Johnson',
+			date: '2023-06-17',
+			total: 54.25,
+			items: 2,
+			status: 'Processing',
+			payment: 'Paid',
+		},
+		{
+			id: 'ORD-7449',
+			customer: 'Sarah Williams',
+			date: '2023-06-16',
+			total: 210.5,
+			items: 4,
+			status: 'Pending',
+			payment: 'Awaiting',
+		},
+		{
+			id: 'ORD-7448',
+			customer: 'Mike Brown',
+			date: '2023-06-15',
+			total: 45.0,
+			items: 1,
+			status: 'Cancelled',
+			payment: 'Refunded',
+		},
+	],
+	status: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+	selectedOrder: null,
 	searchQuery: '',
-	filterCategory: 'all',
+	statusFilter: 'all',
+	sortOrders: 'asc',
+
 	filterStatus: 'all',
 };
 
-export const useProductStore = create<ProductStore>()(
+export const useOrderStore = create<OrderStore>()(
 	devtools((set, get) => ({
 		...initialState,
 
-		addProduct: (product: Product) =>
-			set((state) => ({
-				products: [...state.products, product],
-			})),
-		getProductsById: (productId: number) => {
-			const product = get().products.find((p) => p.id === productId);
-			return product;
+		setStatusFilter: (status: string) => {
+			switch (status.toLowerCase()) {
+				case 'all':
+					set(() => ({ filteredOrders: get().orders, statusFilter: status }));
+					break;
+				case 'pending':
+					set(() => ({
+						filteredOrders: get().orders.filter(
+							(order) => order.status === 'Pending'
+						),
+						statusFilter: status,
+					}));
+					break;
+				case 'processing':
+					set(() => ({
+						filteredOrders: get().orders.filter(
+							(order) => order.status === 'Processing'
+						),
+						statusFilter: status,
+					}));
+					break;
+				case 'shipped':
+					set(() => ({
+						filteredOrders: get().orders.filter(
+							(order) => order.status === 'Shipped'
+						),
+						statusFilter: status,
+					}));
+					break;
+				case 'delivered':
+					set(() => ({
+						filteredOrders: get().orders.filter(
+							(order) => order.status === 'Delivered'
+						),
+						statusFilter: status,
+					}));
+					break;
+				case 'cancelled':
+					set(() => ({
+						filteredOrders: get().orders.filter(
+							(order) => order.status === 'Cancelled'
+						),
+						statusFilter: status,
+					}));
+					break;
+				default:
+					set(() => ({ filteredOrders: get().orders }));
+					break;
+			}
 		},
-		setProducts: (products: Product[]) =>
+		setSortOrders: (sort: string) => {
 			set(() => ({
-				products: products,
-			})),
+				sortOrders: sort,
+				filteredOrders:
+					sort === 'asc'
+						? get().filteredOrders.sort()
+						: get().filteredOrders.reverse(),
+			}));
+		},
 
-		updateProduct: (product: Product) =>
+		addOrder: (order: Order) =>
 			set((state) => ({
-				products: state.products.map((p) =>
-					p.id === product.id ? product : p
-				),
+				orders: [...state.orders, order],
 			})),
-
-		deleteProduct: (productId: number) =>
-			set((state) => ({
-				products: state.products.filter((p) => p.id !== productId),
-			})),
-
-		setSelectedProduct: (product: Product | null) =>
+		getOrdersById: (orderId: string) => {
+			const order = get().orders.find((o) => o.id === orderId);
+			return order;
+		},
+		setOrders: (orders: Order[]) =>
 			set(() => ({
-				selectedProduct: product,
+				orders: orders,
+			})),
+
+		updateOrder: (order: Order) =>
+			set((state) => ({
+				orders: state.orders.map((o) => (o.id === order.id ? order : o)),
+			})),
+
+		deleteOrder: (orderId: string) =>
+			set((state) => ({
+				orders: state.orders.filter((o) => o.id !== orderId),
+			})),
+
+		setSelectedOrder: (order: Order | null) =>
+			set(() => ({
+				selectedOrder: order,
 			})),
 
 		setSearchQuery: (query: string) =>
@@ -145,45 +258,35 @@ export const useProductStore = create<ProductStore>()(
 				searchQuery: query,
 			})),
 
-		setFilterCategory: (category: string) =>
-			set(() => ({
-				filterCategory: category,
-			})),
+		// setStatusFilter: (status: string) =>
+		// 	set(() => ({
+		// 		statusFilter: status,
+		// 	})),
 
-		setFilterStatus: (status: string) =>
-			set(() => ({
-				filterStatus: status,
-			})),
+		// getFilteredOrders: () => {
+		// 	const state = get();
+		// 	let filtered = state.orders;
 
-		getFilteredProducts: () => {
-			const state = get();
-			let filtered = state.products;
+		// 	// Apply search filter
+		// 	if (state.searchQuery) {
+		// 		const query = state.searchQuery.toLowerCase();
+		// 		filtered = filtered.filter(
+		// 			(order) =>
+		// 				order.customer.toLowerCase().includes(query) ||
+		// 				order.id.toLowerCase().includes(query)
+		// 		);
+		// 	}
 
-			// Apply search filter
-			if (state.searchQuery) {
-				const query = state.searchQuery.toLowerCase();
-				filtered = filtered.filter(
-					(product) =>
-						product.title.toLowerCase().includes(query) ||
-						product.categoryId.toLowerCase().includes(query)
-				);
-			}
+		// 	console.log('getFilteredOrders--------------->', state.statusFilter);
 
-			// Apply category filter
-			if (state.filterCategory !== 'all') {
-				filtered = filtered.filter(
-					(product) => product.categoryId === state.filterCategory
-				);
-			}
+		// 	// Apply category filter
+		// 	if (state.statusFilter !== 'all') {
+		// 		filtered = filtered.filter(
+		// 			(order) => order.status.toLowerCase() === state.statusFilter
+		// 		);
+		// 	}
 
-			// Apply status filter
-			if (state.filterStatus !== 'all') {
-				filtered = filtered.filter(
-					(product) => product.status === state.filterStatus
-				);
-			}
-
-			return filtered;
-		},
+		// 	return filtered;
+		// },
 	}))
 );

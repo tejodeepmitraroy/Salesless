@@ -20,7 +20,6 @@ export type Product = {
 	price: number;
 	comparedAtPrice: number;
 	status: string;
-
 	media: Array<ProductMedia>;
 	categoryId: string;
 	stockQuantity: number;

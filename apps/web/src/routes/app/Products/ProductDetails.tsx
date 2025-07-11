@@ -45,9 +45,11 @@ import { Label } from '@/components/ui/label';
 import ProductVariantOptionManager from '@/features/Products/components/ProductVariantOptionsManager';
 
 const ProductDetails = () => {
-	const { productId } = useParams<{ productId: string }>();
+	const { productId, storeId } = useParams<{
+		productId: string;
+		storeId: string;
+	}>();
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const { storeId } = useParams<{ storeId: string }>();
 	const navigate = useNavigate();
 
 	const { data: productData, isLoading } = useQuery({
