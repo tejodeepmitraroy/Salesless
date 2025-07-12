@@ -317,58 +317,54 @@ export const updateStoreGeneralSettings = asyncHandler(
 				return;
 			}
 
-			res.status(200).json(
-				new ApiResponse(200, updatedStore[0], 'General settings updated')
-			);
+			res
+				.status(200)
+				.json(
+					new ApiResponse(200, updatedStore[0], 'General settings updated')
+				);
 		} catch (error) {
-			res.status(500).json(
-				new ApiError(500, 'Failed to update settings', error)
-			);
+			res
+				.status(500)
+				.json(new ApiError(500, 'Failed to update settings', error));
 		}
 	}
 );
 export const updateStoreAddressSettings = asyncHandler(
-  async (req: Request, res: Response): Promise<void> => {
-    const storeId = parseInt(req.params.storeId);
-    const {
-      addressLine1,
-      addressLine2,
-      city,
-      country,
-      zip,
-      phone,
-    } = req.body;
+	async (req: Request, res: Response): Promise<void> => {
+		const storeId = parseInt(req.params.storeId);
+		const { addressLine1, addressLine2, city, country, zip, phone } = req.body;
 
-    try {
-      const updatedStore = await db
-        .update(store)
-        .set({
-          address1: addressLine1,
-          address2: addressLine2,
-          city,
-          country,
-          zip,
-          phone,
-        })
-        .where(eq(store.id, storeId))
-        .returning();
+		try {
+			const updatedStore = await db
+				.update(store)
+				.set({
+					address1: addressLine1,
+					address2: addressLine2,
+					city,
+					country,
+					zip,
+					phone,
+				})
+				.where(eq(store.id, storeId))
+				.returning();
 
-      if (!updatedStore.length) {
-        res.status(404).json(new ApiError(404, 'Store not found'));
-        return;
-      }
+			if (!updatedStore.length) {
+				res.status(404).json(new ApiError(404, 'Store not found'));
+				return;
+			}
 
-      res.status(200).json(
-        new ApiResponse(200, updatedStore[0], 'Address settings updated')
-      );
-    } catch (error) {
-      res.status(500).json(
-        new ApiError(500, 'Failed to update address settings', error)
-      );
-    }
-  }
+			res
+				.status(200)
+				.json(
+					new ApiResponse(200, updatedStore[0], 'Address settings updated')
+				);
+		} catch (error) {
+			res
+				.status(500)
+				.json(new ApiError(500, 'Failed to update address settings', error));
+		}
+	}
 );
-
 
 // export const updateStoreSettings = async (
 // 	req: Request<{ id: string }, {}, Partial<StoreSettings>>,

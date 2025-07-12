@@ -25,7 +25,6 @@ router
 	.get(jwtAuthMiddleware, getStores)
 	.post(jwtAuthMiddleware, createStore)
 	.put(jwtAuthMiddleware, updateStore);
-	
 
 router
 	.route('/:storeId')
@@ -50,9 +49,5 @@ router
 router
 	.route('/:storeId/general-settings')
 	.put(jwtAuthMiddleware, updateStoreGeneralSettings);
-
-
-
-
 
 export default router;
