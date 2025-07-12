@@ -24,11 +24,17 @@ import {
 	useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router';
 
 export function NavUser() {
 	const { isMobile } = useSidebar();
+	const navigate = useNavigate();
 
 	const { user, logOut } = useAuth();
+
+	const redirectToAccountPage = () => {
+		navigate('/accounts', { replace: true });
+	};
 
 	return (
 		<SidebarMenu>
@@ -81,7 +87,7 @@ export function NavUser() {
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
+							<DropdownMenuItem onClick={() => redirectToAccountPage()}>
 								<BadgeCheck />
 								Account
 							</DropdownMenuItem>

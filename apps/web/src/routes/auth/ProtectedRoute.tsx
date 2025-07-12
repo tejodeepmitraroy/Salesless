@@ -8,9 +8,10 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
-	const { isAuthenticated, isLoading } = useAuth();
+	const { isAuthenticated, isLoading, user } = useAuth();
 	// const storeId = Cookies.get('storeId');
 	const location = useLocation();
+	const pathName = location.pathname;
 
 	console.log('Authenticated--->', isAuthenticated, isLoading);
 
@@ -20,6 +21,16 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
 			<div className="flex min-h-screen items-center justify-center">
 				<div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
 			</div>
+		);
+	}
+
+	if (pathName === '/accounts') {
+		return (
+			<Navigate
+				to={`/accounts/${user?.id}`}
+				state={{ from: location }}
+				replace
+			/>
 		);
 	}
 

@@ -41,11 +41,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			avatar: '/avatars/shadcn.jpg',
 		},
 		navMain: [
-			// {
-			// 	title: 'Home',
-			// 	url: `/store/${storeId}`,
-			// 	icon: Home,
-			// },
 			{
 				title: 'Dashboard',
 				url: `/store/${storeId}`,
@@ -98,11 +93,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						url: `/store/${storeId}/finances/payments`,
 						icon: CreditCard,
 					},
-					{
-						title: 'Expenses',
-						url: `/store/${storeId}/finances/expenses`,
-						icon: CreditCard,
-					},
 				],
 			},
 			{
@@ -124,40 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				isActive: false,
 			},
 		],
-		// navClouds: [
-		// 	{
-		// 		title: 'Capture',
-		// 		icon: Camera,
-		// 		isActive: true,
-		// 		url: '#',
-		// 		items: [
-		// 			{
-		// 				title: 'Active Proposals',
-		// 				url: '#',
-		// 			},
-		// 			{
-		// 				title: 'Archived',
-		// 				url: '#',
-		// 			},
-		// 		],
-		// 	},
-		// 	{
-		// 		title: 'Capture',
-		// 		icon: Camera,
-		// 		isActive: true,
-		// 		url: '#',
-		// 		items: [
-		// 			{
-		// 				title: 'Active Proposals',
-		// 				url: '#',
-		// 			},
-		// 			{
-		// 				title: 'Archived',
-		// 				url: '#',
-		// 			},
-		// 		],
-		// 	},
-		// ],
+
 		navSecondary: [
 			{
 				title: 'Docs',

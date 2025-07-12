@@ -1,26 +1,8 @@
-// import { useCallback, useEffect, } from 'react';
-// import Sidebar from '@/components/layouts/Sidebar';
-// import { motion, AnimatePresence } from 'framer-motion';
-// import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-// import { Label } from './ui/label';
-// import { Bell } from 'lucide-react';
-// import { Link, Outlet, useParams } from 'react-router';
-// import ChatButton from './ChatButton';
-// import { getStoreDetails } from '@/features/Store/services';
-// import { useStoreStore } from '@/stores/useStore-Store';
-// import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-// import {
-// 	DropdownMenuContent,
-// 	DropdownMenuItem,
-// 	DropdownMenuLabel,
-// 	DropdownMenuSeparator,
-// 	DropdownMenuTrigger,
-// } from './ui/dropdown-menu';
-import { SidebarProvider, SidebarTrigger } from './ui/sidebar';
-import { AppSidebar } from './Sidebar/app-sidebar';
 import { Link, Outlet, useParams } from 'react-router';
 import { Bell } from 'lucide-react';
-import { Button } from './ui/button';
+import { SidebarProvider, SidebarTrigger } from '../ui/sidebar';
+import { AppSidebar } from '../Sidebar/app-sidebar';
+import { Button } from '../ui/button';
 
 const AdminLayout = () => {
 	// const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
