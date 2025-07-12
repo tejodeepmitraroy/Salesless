@@ -8,6 +8,8 @@ import {
 	getStoreSettings,
 	getStoreCustomers,
 	getStoreOrders,
+	updateStoreAddressSettings,
+	updateStoreGeneralSettings,
 
 	// updateStore,
 	// deleteStore,
@@ -23,6 +25,7 @@ router
 	.get(jwtAuthMiddleware, getStores)
 	.post(jwtAuthMiddleware, createStore)
 	.put(jwtAuthMiddleware, updateStore);
+	
 
 router
 	.route('/:storeId')
@@ -41,5 +44,15 @@ router
 	.route('/:storeId/orders/:orderId')
 	.get(jwtAuthMiddleware, getStoreOrders);
 // .put(jwtAuthMiddleware, updateStoreSettings);
+router
+	.route('/:storeId/address-settings')
+	.put(jwtAuthMiddleware, updateStoreAddressSettings);
+router
+	.route('/:storeId/general-settings')
+	.put(jwtAuthMiddleware, updateStoreGeneralSettings);
+
+
+
+
 
 export default router;
