@@ -1,8 +1,9 @@
-import AddressSettings from '@/routes/settings/settings/Screens/AddressSettings';
-import RegionalSettings from '@/routes/settings/settings/Screens/RegionalSettings';
+import AddressSettings from '@/features/Settings/components/AddressSettings';
+import RegionalSettings from '@/features/Settings/components/RegionalSettings';
 // import DeactivateStore from '@/routes/settings/settings/Screens/DeactivateStore';
-import DangerZone from '@/routes/settings/settings/Screens/DangerZone';
-import General from '@/routes/settings/settings/Screens/GeneralSettings';
+import DangerZone from '@/features/Settings/components/DangerZone';
+import General from '@/features/Settings/components/GeneralSettings';
+import DeactivateStore from '@/features/Settings/components/DeactivateStore';
 
 const GeneralSettings = () => {
 	return (
@@ -10,7 +11,7 @@ const GeneralSettings = () => {
 			<General />
 			<AddressSettings />
 			<RegionalSettings />
-			{/* <DeactivateStore /> */}
+			<DeactivateStore />
 			<DangerZone />
 		</>
 	);

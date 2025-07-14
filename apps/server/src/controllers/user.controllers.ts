@@ -100,7 +100,7 @@ export const updateUserProfile = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof user>;
 
-		const { firstName, lastName, email, password, avatar, gender, age, phone } =
+		const { firstName, lastName, email, avatar, gender, age, phone } =
 			request.body;
 
 		try {
@@ -110,7 +110,6 @@ export const updateUserProfile = asyncHandler(
 					firstName,
 					lastName,
 					email,
-					password,
 					avatar,
 					gender,
 					age,
@@ -122,6 +121,35 @@ export const updateUserProfile = asyncHandler(
 			response
 				.status(200)
 				.json(new ApiResponse(200, userProfile[0], 'Profile is Updated'));
+		} catch (error) {
+			response.status(400).json(new ApiError(400, 'Error Happened', error));
+		}
+	}
+);
+
+export const updateUserSecurity = asyncHandler(
+	async (request: Request, response: Response) => {
+		const authUser = request.user as InferSelectModel<typeof user>;
+
+		const { password } = request.body;
+
+		try {
+			const hashedPassword = await passwordHashed(password);
+
+			console.log('Hashed Password', hashedPassword);
+			const userSecurity = await db
+				.update(user)
+				.set({
+					password: hashedPassword,
+				})
+				.where(eq(user.id, authUser.id))
+				.returning();
+
+			response
+				.status(200)
+				.json(
+					new ApiResponse(200, userSecurity[0], 'Security Details is Updated')
+				);
 		} catch (error) {
 			response.status(400).json(new ApiError(400, 'Error Happened', error));
 		}
@@ -161,6 +189,7 @@ export const getUserSettings = asyncHandler(
 		}
 	}
 );
+
 export const updateUserSettings = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof user>;

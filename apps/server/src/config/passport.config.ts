@@ -47,7 +47,7 @@ export const initializePassportStrategies = () => {
 						return done(null, false, { message: 'Incorrect email' });
 					}
 
-					console.debug('user Details', userDetails);
+					console.debug('user Profile Details', userDetails);
 
 					const isPasswordMatched = await comparePassword(
 						password,

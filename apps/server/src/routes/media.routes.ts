@@ -25,4 +25,9 @@ router.route('/view').get(viewUrl);
 
 router.route('/').get(listAllObjects).delete(deleteAObject);
 
+router.route('/profile-pic/:userId');
+// .post(uploadProfileImage)
+// .get(getProfileImage)
+// .put(updateProfileImage);
+
 export default router;

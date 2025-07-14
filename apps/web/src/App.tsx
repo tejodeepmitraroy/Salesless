@@ -14,16 +14,16 @@ import { AuthProvider } from './context/AuthContext';
 import ProductDetails from './routes/app/Products/ProductDetails';
 import MediaDetails from './routes/app/Media/MediaDetails';
 import GeneralSettings from './routes/app/Settings/GeneralSettings';
-import ApiKeysSettings from './routes/settings/settings/Screens/ApiKeysSettings';
-import Integrations from './routes/app/Settings/Integrations';
+import ApiKeysSettings from './routes/app/Settings/ApiKeysSettings';
 import PaymentsGateway from './routes/app/Settings/PaymentsGateway';
-import Settings2 from './routes/settings/settings/Settings2';
 import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
 import OrderDetails from './routes/app/Orders/OrderDetails';
-import Accounts from './routes/accounts/Accounts';
 import AdminLayout from './components/layouts/AdminLayout';
 import IntegrationManagement from './routes/app/Integrations/IntegrationManagement';
 import PaymentsDashboard from './routes/app/Integrations/PaymentsDashboard';
+import AccountLayout from './components/layouts/AccountLayout';
+import AccountGeneral from './routes/accounts/AccountGeneral';
+import AccountSecurity from './routes/accounts/AccountSecurity';
 
 const queryClient = new QueryClient();
 function App() {
@@ -88,78 +88,76 @@ function App() {
 							<Route path="*" element={<NotFound />} />
 							<Route path="/" element={<Index />} />
 
-							{/* Protected Routes for Store */}
-							<Route path="/store" element={<ProtectedRoute />}>
-								<Route index element={<StoreSelection />} />
-								<Route path="undefined" element={<NotFound />} />
-								<Route path="create" element={<CreateStore />} />
+							{/* Protected Routes for App*/}
+							<Route element={<ProtectedRoute />}>
+								{/* Store Section */}
+								<Route path="/store">
+									<Route index element={<StoreSelection />} />
+									<Route path="undefined" element={<NotFound />} />
+									<Route path="create" element={<CreateStore />} />
 
-								{/* Store-Specific Nested Routes */}
-								<Route path=":storeId" element={<AdminLayout />}>
-									<Route index element={<AdminDashboard />} />
-									<Route path="products">
-										<Route index element={<ProductManagement />} />
-										<Route path="create" element={<CreateNewProduct />} />
-										<Route
-											path="collections"
-											element={<CollectionManagement />}
-										/>
-										<Route path="inventory" element={<InventoryManagement />} />
-										<Route path=":productId" element={<ProductDetails />} />
-									</Route>
-
-									<Route path="orders">
-										<Route index element={<OrderManagement />} />
-										<Route path=":orderId" element={<OrderDetails />} />
-									</Route>
-									<Route path="media">
-										<Route index element={<MediaManagement />} />
-										<Route path=":mediaId" element={<MediaDetails />} />
-									</Route>
-									<Route path="integrations">
-										<Route index element={<IntegrationManagement />} />
-									</Route>
-									<Route path="finances">
-										<Route path="payments" element={<PaymentsDashboard />} />
-									</Route>
-
-									{/* Settings */}
-									<Route path="settings" element={<Settings />}>
-										<Route path="general" element={<GeneralSettings />} />
-										<Route path="api-keys" element={<ApiKeysSettings />} />
-										<Route path="integrations" element={<Integrations />} />
-										<Route path="payments">
-											<Route index element={<PaymentsGateway />} />
+									{/* Store-Specific Nested Routes */}
+									<Route path=":storeId" element={<AdminLayout />}>
+										<Route index element={<AdminDashboard />} />
+										<Route path="products">
+											<Route index element={<ProductManagement />} />
+											<Route path="create" element={<CreateNewProduct />} />
 											<Route
-												path=":paymentSlug"
-												element={<PaymentsGateway />}
+												path="collections"
+												element={<CollectionManagement />}
 											/>
+											<Route
+												path="inventory"
+												element={<InventoryManagement />}
+											/>
+											<Route path=":productId" element={<ProductDetails />} />
 										</Route>
-										<Route path="analytics" element={<AnalyticsSettings />} />
-									</Route>
-									{/* Settings */}
-									<Route path="settings2" element={<Settings2 />}>
-										<Route path="general" element={<GeneralSettings />} />
-										<Route path="api-keys" element={<ApiKeysSettings />} />
-										<Route path="integrations" element={<Integrations />} />
-										<Route
-											path="payments"
-											element={<PaymentsGateway />}
-										></Route>
-									</Route>
 
-									{/* Notification */}
-									<Route path="notifications" element={<Notifications />} />
-									<Route path="customers">
-										<Route index element={<CustomerManagement />} />
-										<Route path=":customerId" element={<CustomerDetails />} />
+										<Route path="orders">
+											<Route index element={<OrderManagement />} />
+											<Route path=":orderId" element={<OrderDetails />} />
+										</Route>
+										<Route path="media">
+											<Route index element={<MediaManagement />} />
+											<Route path=":mediaId" element={<MediaDetails />} />
+										</Route>
+										<Route path="integrations">
+											<Route index element={<IntegrationManagement />} />
+										</Route>
+										<Route path="finances">
+											<Route path="payments" element={<PaymentsDashboard />} />
+										</Route>
+
+										{/* Settings */}
+										<Route path="settings" element={<Settings />}>
+											<Route path="general" element={<GeneralSettings />} />
+											<Route path="api-keys" element={<ApiKeysSettings />} />
+											<Route path="payments">
+												<Route index element={<PaymentsGateway />} />
+												<Route
+													path=":paymentSlug"
+													element={<PaymentsGateway />}
+												/>
+											</Route>
+											<Route path="analytics" element={<AnalyticsSettings />} />
+										</Route>
+										{/* Settings */}
+
+										{/* Notification */}
+										<Route path="notifications" element={<Notifications />} />
+										<Route path="customers">
+											<Route index element={<CustomerManagement />} />
+											<Route path=":customerId" element={<CustomerDetails />} />
+										</Route>
 									</Route>
 								</Route>
-							</Route>
-
-							{/* Protected Routes for User */}
-							<Route path="/accounts" element={<ProtectedRoute />}>
-								<Route path=":accountId" element={<Accounts />} />
+								{/* Protected Routes for User */}
+								<Route path="/accounts">
+									<Route path=":accountId" element={<AccountLayout />}>
+										<Route path="general" element={<AccountGeneral />} />
+										<Route path="security" element={<AccountSecurity />} />
+									</Route>
+								</Route>
 							</Route>
 						</Routes>
 					</Suspense>

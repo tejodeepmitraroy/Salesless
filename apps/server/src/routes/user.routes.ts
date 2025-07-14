@@ -7,6 +7,7 @@ import {
 	registerClient,
 	resetLink,
 	updateUserProfile,
+	updateUserSecurity,
 	updateUserSettings,
 	userProfile,
 } from '../controllers/user.controllers';
@@ -22,6 +23,8 @@ router
 	.get(jwtAuthMiddleware, userProfile)
 	.put(jwtAuthMiddleware, updateUserProfile)
 	.delete(jwtAuthMiddleware, deleteUserProfile);
+
+router.route('/security').patch(jwtAuthMiddleware, updateUserSecurity);
 
 router
 	.route('/settings')
