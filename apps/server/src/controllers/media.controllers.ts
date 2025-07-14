@@ -32,6 +32,7 @@ export const uploadFileToS3 = asyncHandler(
 			const { uploadUrl, publicS3Url, key } = await uploadToS3({
 				fileName: uploadFileName,
 				contentType,
+				rootFolder: 'products',
 			});
 
 			const storeMedia = await db
@@ -52,6 +53,41 @@ export const uploadFileToS3 = asyncHandler(
 					publicS3Url: storedObject.url,
 					key: storedObject.key,
 					mediaId: storedObject.id,
+				})
+			);
+		} catch (error) {
+			console.error('Error generating presigned URL:', error);
+			response
+				.status(500)
+				.json(new ApiError(500, 'Upload Url not generated', error));
+		}
+	}
+);
+
+export const uploadProfileImage = asyncHandler(
+	async (request: Request, response: Response) => {
+		const { fileName: uploadFileName, contentType } = request.body;
+
+		if (!uploadFileName || !contentType) {
+			response
+				.status(400)
+				.json({ message: 'fileName and contentType are required' });
+		}
+
+		console.log(contentType);
+		try {
+			const { uploadUrl, publicS3Url, key } = await uploadToS3({
+				fileName: uploadFileName,
+				contentType,
+				rootFolder: 'profile',
+			});
+
+			response.status(200).json(
+				new ApiResponse(200, {
+					uploadUrl,
+					fileName: uploadFileName,
+					publicS3Url: publicS3Url,
+					key: key,
 				})
 			);
 		} catch (error) {

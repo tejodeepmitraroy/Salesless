@@ -5,6 +5,7 @@ import {
 	getMediaFiles,
 	listAllObjects,
 	uploadFileToS3,
+	uploadProfileImage,
 	viewUrl,
 } from '../controllers/media.controllers';
 
@@ -25,8 +26,7 @@ router.route('/view').get(viewUrl);
 
 router.route('/').get(listAllObjects).delete(deleteAObject);
 
-router.route('/profile-pic/:userId');
-// .post(uploadProfileImage)
+router.route('/profile-pic').post(uploadProfileImage);
 // .get(getProfileImage)
 // .put(updateProfileImage);
 

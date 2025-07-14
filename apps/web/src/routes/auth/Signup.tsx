@@ -21,7 +21,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { signUpSchema } from '@/features/users/schema';
+import { signUpSchema } from '@/features/Account/schema';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';

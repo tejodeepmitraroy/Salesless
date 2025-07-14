@@ -5,7 +5,7 @@ export const generatePresignedUrl = async ({
 	storeId,
 }: {
 	file: File;
-	storeId: string;
+	storeId?: string;
 }): Promise<{
 	uploadUrl: string;
 	fileName: string;
@@ -34,11 +34,38 @@ export const generatePresignedUrl = async ({
 	}
 };
 
+export const generateProfileImagePresignedUrl = async ({
+	file,
+}: {
+	file: File;
+}): Promise<{
+	uploadUrl: string;
+	fileName: string;
+	publicS3Url: string;
+	key: string;
+}> => {
+	try {
+		const response = await customAxios.post(`/media/profile-pic`, {
+			fileName: file.name,
+			contentType: file.type,
+		});
+
+		if (response.status !== 200) {
+			throw new Error('Failed to generate upload URL');
+		}
+		const { uploadUrl, fileName, publicS3Url, key } = response.data.data;
+		return { uploadUrl, fileName, publicS3Url, key };
+	} catch (error) {
+		console.error('Error generating presigned URL:', error);
+		throw error;
+	}
+};
+
 export const deleteObject = async (
 	key: string
 ): Promise<{ uploadUrl: string; fileName: string; publicS3Url: string }> => {
 	try {
-		const response = await customAxios.delete('/contents', {
+		const response = await customAxios.delete('/media', {
 			data: {
 				key,
 			},

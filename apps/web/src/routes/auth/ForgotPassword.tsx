@@ -23,7 +23,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { forgotPasswordSchema } from '@/features/users/schema';
+import { forgotPasswordSchema } from '@/features/Account/schema';
 import { forgetPassword } from '@/features/Auth/services';
 
 const ForgotPasswordPage = () => {

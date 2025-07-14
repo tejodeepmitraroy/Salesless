@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -6,7 +5,6 @@ import {
 	CardFooter,
 	CardHeader,
 } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Form,
 	FormControl,
@@ -18,13 +16,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import AccountDangerZone from '@/features/Account/components/AccountDangerZone';
+import ProfileAvatar from '@/features/Account/components/ProfileAvatar';
 import {
 	generalAccountDetailsSchema,
 	GeneralAccountDetailsSchema,
 } from '@/features/Account/schema';
-import { getUserData } from '@/features/users/services';
+import { getUserData } from '@/features/Account/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
+import { CircleCheckBig } from 'lucide-react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 
@@ -34,14 +36,29 @@ const AccountGeneral = () => {
 		queryFn: () => getUserData(),
 	});
 
+	console.log('userData', userData);
+
 	const form = useForm<GeneralAccountDetailsSchema>({
 		resolver: zodResolver(generalAccountDetailsSchema),
-		defaultValues: {
-			firstName: userData?.firstName || '',
-			lastName: userData?.lastName || '',
-			email: userData?.email || '',
-		},
 	});
+
+	const {
+		formState: { isDirty, dirtyFields },
+	} = form;
+
+	console.log('isDirty', isDirty);
+	console.log('dirtyFields', dirtyFields);
+	useEffect(() => {
+		if (userData) {
+			console.log(userData);
+			form.reset({
+				firstName: userData.firstName,
+				lastName: userData.lastName,
+				email: userData.email,
+				avatar: userData.avatar,
+			});
+		}
+	}, [userData, form]);
 
 	const onSubmit = (data: GeneralAccountDetailsSchema) => {
 		console.log(data);
@@ -49,6 +66,13 @@ const AccountGeneral = () => {
 
 	return (
 		<section className="mx-auto w-full max-w-5xl">
+			{/* <Alert className="border border-green-500 text-left text-green-500">
+				<CircleCheckBig />
+				<AlertTitle>Verify the Email</AlertTitle>
+				<AlertDescription>
+					Your email is not verified. Please verify your email to continue.
+				</AlertDescription>
+			</Alert> */}
 			<header className="flex w-full items-start justify-between pt-4">
 				<div className="mb-4 flex flex-col items-start">
 					<h1 className="mb-2 flex items-center gap-3 text-3xl font-bold text-black">
@@ -60,7 +84,7 @@ const AccountGeneral = () => {
 			</header>
 			<Separator />
 			<section className="mt-6 flex w-full flex-col gap-6">
-				<section className="grid grid-cols-3 space-y-4">
+				<section className="grid grid-cols-3 gap-4 space-y-4">
 					<section className="col-span-1">
 						<Label className="text-lg font-medium">Details</Label>
 					</section>
@@ -71,15 +95,21 @@ const AccountGeneral = () => {
 									onSubmit={form.handleSubmit(onSubmit)}
 									className="space-y-6"
 								>
-									<CardHeader className="flex items-center justify-between">
-										<Avatar className="flex items-center justify-center">
-											<AvatarImage src={userData?.avatar} />
-											<AvatarFallback>AN</AvatarFallback>
-										</Avatar>
-										<div className="flex items-center gap-2">
-											<Button variant="outline">Change</Button>
-											<Button variant="outline">Update</Button>
-										</div>
+									<CardHeader className="flex items-center justify-start gap-10">
+										<FormField
+											control={form.control}
+											name="avatar"
+											render={({ field }) => (
+												<FormItem className="w-full">
+													<FormControl>
+														<ProfileAvatar
+															avatar={field.value}
+															onChange={field.onChange}
+														/>
+													</FormControl>
+												</FormItem>
+											)}
+										/>
 									</CardHeader>
 									<Separator />
 									<CardContent className="space-y-4">
@@ -121,7 +151,7 @@ const AccountGeneral = () => {
 									</CardContent>
 									<Separator />
 									<CardFooter className="flex flex-col">
-										<section className="flex w-full items-center gap-4 space-y-4">
+										<section className="flex w-full flex-col items-center gap-4 space-y-4">
 											<FormField
 												control={form.control}
 												name="email"
@@ -129,69 +159,39 @@ const AccountGeneral = () => {
 													<FormItem className="w-full">
 														<FormLabel>Email</FormLabel>
 														<FormControl>
-															<Input
-																placeholder="john@example.com"
-																{...field}
-															/>
+															<div className="flex items-center gap-2">
+																<section className="flex w-full items-center gap-2">
+																	<CircleCheckBig />
+
+																	<Input
+																		placeholder="john@example.com"
+																		{...field}
+																		readOnly
+																	/>
+																</section>
+																<Button variant="outline">Update</Button>
+															</div>
 														</FormControl>
 
 														<FormMessage />
 													</FormItem>
 												)}
 											/>
-											<FormField
-												control={form.control}
-												name="emailVerified"
-												render={({ field }) => (
-													<FormItem>
-														<FormControl>
-															<Checkbox
-																checked={field.value}
-																onCheckedChange={(checked) => {
-																	return checked
-																		? field.onChange(true)
-																		: field.onChange(false);
-																}}
-															/>
-														</FormControl>
 
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
-										</section>
-										<section className="flex w-full items-center gap-4 space-y-4">
 											<FormField
 												control={form.control}
 												name="phone"
 												render={({ field }) => (
 													<FormItem className="w-full">
-														<FormLabel>Email</FormLabel>
+														<FormLabel>Phone</FormLabel>
 														<FormControl>
-															<Input
-																placeholder="john@example.com"
-																{...field}
-															/>
-														</FormControl>
-
-														<FormMessage />
-													</FormItem>
-												)}
-											/>
-											<FormField
-												control={form.control}
-												name="phoneVerified"
-												render={({ field }) => (
-													<FormItem>
-														<FormControl>
-															<Checkbox
-																checked={field.value}
-																onCheckedChange={(checked) => {
-																	return checked
-																		? field.onChange(true)
-																		: field.onChange(false);
-																}}
-															/>
+															<div className="flex items-center gap-2">
+																<Input
+																	placeholder="john@example.com"
+																	{...field}
+																/>
+																<Button variant="outline">Update</Button>
+															</div>
 														</FormControl>
 
 														<FormMessage />
@@ -206,7 +206,9 @@ const AccountGeneral = () => {
 					</section>
 				</section>
 
-				<section className="grid grid-cols-3 space-y-4">
+				<Separator />
+
+				<section className="grid grid-cols-3 gap-4 space-y-4">
 					<section className="col-span-1">
 						<Label className="text-lg font-medium">Stores</Label>
 						<p className="text-muted-foreground text-left text-sm">
@@ -216,12 +218,37 @@ const AccountGeneral = () => {
 					<section className="col-span-2">
 						<Card>
 							<CardHeader className="text-left">
-								<Link to="/stores">View All stores</Link>
+								<Link to="/store">View All stores</Link>
 							</CardHeader>
 						</Card>
 					</section>
 				</section>
+				<Separator />
+
+				{/* <section className="grid grid-cols-3 space-y-4 gap-4">
+					<section className="col-span-1">
+						<Label className="text-lg font-medium">Preferred language</Label>
+						<p className="text-muted-foreground text-left text-sm">
+							When you're logged in to Salesless, this is the language you will
+							see. It doesn't affect the language your customers see on your
+							online store.
+						</p>
+					</section>
+					<section className="col-span-2">
+						<Card>
+							<CardHeader className="text-left">
+								<CardTitle>Preferred Region</CardTitle>
+							</CardHeader>
+							<CardContent>
+								
+								
+							</CardContent>
+						</Card>
+					</section> 
+				</section>*/}
 			</section>
+
+			<AccountDangerZone />
 		</section>
 	);
 };

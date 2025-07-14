@@ -20,3 +20,8 @@ export const getUserData = async (): Promise<{
 	const response = await customAxios(`/user/profile`);
 	return response.data.data;
 };
+
+export const deleteAccountData = async (): Promise<void> => {
+	const response = await customAxios.delete(`/user/account`);
+	return response.data.data;
+};

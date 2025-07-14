@@ -20,9 +20,11 @@ const s3Client = new S3Client({
 export const uploadToS3 = async ({
 	fileName,
 	contentType,
+	rootFolder,
 }: {
 	fileName: string;
 	contentType: string;
+	rootFolder: string;
 }) => {
 	// const newFileName = `pic_${Date.now().toString()}`;
 	//generate a unique Name
@@ -30,7 +32,7 @@ export const uploadToS3 = async ({
 
 	const command = new PutObjectCommand({
 		Bucket: aws_s3_config.bucket,
-		Key: `products/${uniqueFileName}`,
+		Key: `${rootFolder}/${uniqueFileName}`,
 		ContentType: contentType,
 	});
 
@@ -38,13 +40,13 @@ export const uploadToS3 = async ({
 		expiresIn: 3600,
 	});
 
-	const publicS3Url = `https://${aws_s3_config.bucket}.s3.${aws_s3_config.region}.amazonaws.com/products/${uniqueFileName}`;
+	const publicS3Url = `https://${aws_s3_config.bucket}.s3.${aws_s3_config.region}.amazonaws.com/${rootFolder}/${uniqueFileName}`;
 
 	return {
 		uploadUrl,
 		fileName: uniqueFileName,
 		publicS3Url,
-		key: `products/${uniqueFileName}`,
+		key: `${rootFolder}/${uniqueFileName}`,
 	};
 };
 

@@ -6,7 +6,7 @@ import React, {
 	ReactNode,
 	useCallback,
 } from 'react';
-import { getUserData } from '@/features/users/services';
+import { getUserData } from '@/features/Account/services';
 import Cookies from 'js-cookie';
 import { logoutService } from '@/features/Auth/services';
 // Define user types
