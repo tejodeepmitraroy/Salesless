@@ -6,9 +6,10 @@ import {
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
-import { customer } from './user';
+
 import { relations } from 'drizzle-orm';
 import { order } from './order';
+import { customer } from './customer';
 
 export const transaction = pgTable('transaction', {
 	id: serial('id').primaryKey(),

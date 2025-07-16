@@ -1,11 +1,10 @@
+export { user, userRelations } from './user';
 export {
-	user,
 	customer,
-	userRelations,
 	customerRelations,
 	customerAddress,
 	customerAddressRelations,
-} from './user';
+} from './customer';
 export {
 	role,
 	roleRelations,

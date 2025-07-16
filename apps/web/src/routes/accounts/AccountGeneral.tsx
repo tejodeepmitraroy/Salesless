@@ -25,10 +25,10 @@ import {
 import { getUserData } from '@/features/Account/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { CircleCheckBig } from 'lucide-react';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import { toast } from 'sonner';
 
 const AccountGeneral = () => {
 	const { data: userData } = useQuery({
@@ -62,8 +62,29 @@ const AccountGeneral = () => {
 
 	const onSubmit = (data: GeneralAccountDetailsSchema) => {
 		console.log(data);
+
+		toast.success('Event has been created', {
+			description: 'Sunday, December 03, 2023 at 9:00 AM',
+			action: {
+				label: 'Undo',
+				onClick: () => form.reset(),
+			},
+			position: 'top-center',
+		});
 	};
 
+	useEffect(() => {
+		if (isDirty) {
+			toast.loading('Event has been created', {
+				description: 'Sunday, December 03, 2023 at 9:00 AM',
+				action: {
+					label: 'Reset',
+					onClick: () => form.reset(),
+				},
+				position: 'top-center',
+			});
+		}
+	}, [isDirty, form]);
 	return (
 		<section className="mx-auto w-full max-w-5xl">
 			{/* <Alert className="border border-green-500 text-left text-green-500">
@@ -151,7 +172,7 @@ const AccountGeneral = () => {
 									</CardContent>
 									<Separator />
 									<CardFooter className="flex flex-col">
-										<section className="flex w-full flex-col items-center gap-4 space-y-4">
+										{/* <section className="flex w-full flex-col items-center gap-4 space-y-4">
 											<FormField
 												control={form.control}
 												name="email"
@@ -198,6 +219,9 @@ const AccountGeneral = () => {
 													</FormItem>
 												)}
 											/>
+										</section> */}
+										<section className="flex w-full items-center justify-end">
+											<Button type="submit">Update</Button>
 										</section>
 									</CardFooter>
 								</form>

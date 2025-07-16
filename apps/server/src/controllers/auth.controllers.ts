@@ -130,39 +130,3 @@ export const loginUser = asyncHandler(
 		}
 	}
 );
-
-export const logoutUser = asyncHandler(
-	async (request: Request, response: Response) => {
-		request.logout(async (err) => {
-			if (err) {
-				response.status(500).json({ message: 'Logout failed' });
-			}
-
-			const token = request.cookies.refresh_token;
-
-			console.log('Logout, Refresh Token--->', token);
-			try {
-				await db
-					.update(user)
-					.set({ refreshToken: null })
-					.where(eq(user.refreshToken, token));
-
-				response.clearCookie('access_token', {
-					// httpOnly: true,
-					secure: process.env.NODE_ENV === 'production', // Secure in production
-					sameSite: 'strict',
-					path: '/',
-				});
-				response.clearCookie('refresh_token', {
-					httpOnly: true,
-					secure: process.env.NODE_ENV === 'production', // Secure in production
-					sameSite: 'strict',
-					path: '/',
-				});
-				response.status(200).json({ message: 'Logged out successfully' });
-			} catch {
-				response.status(500).json({ error: 'Server error' });
-			}
-		});
-	}
-);

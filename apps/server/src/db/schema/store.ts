@@ -8,12 +8,13 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { user, customer } from './user';
+import { user } from './user';
 import { role } from './role';
 import { product } from './product';
 import { cart } from './cart';
 import { media } from './media';
 import { collection } from './collection';
+import { customer } from './customer';
 
 export const store = pgTable('store', {
 	id: serial('id').primaryKey(),

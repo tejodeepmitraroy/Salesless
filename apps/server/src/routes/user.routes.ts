@@ -4,6 +4,7 @@ import {
 	forgetPassword,
 	getUserNotification,
 	getUserSettings,
+	logoutUser,
 	registerClient,
 	resetLink,
 	updateUserProfile,
@@ -34,5 +35,6 @@ router
 router.route('/notification').get(jwtAuthMiddleware, getUserNotification);
 router.route('/forget-password').post(forgetPassword);
 router.route('/reset-link').post(resetLink);
+router.route('/logout').post(logoutUser);
 
 export default router;

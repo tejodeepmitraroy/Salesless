@@ -8,8 +8,8 @@ import { generateRefreshToken } from '../helper/token';
 import passportOAuth from 'passport-google-oauth20';
 import { db } from '../db';
 import { eq } from 'drizzle-orm';
-import { customer, user } from '../db/schema/user';
-import { customerStore } from '../db/schema';
+import { user } from '../db/schema/user';
+import { customer, customerStore } from '../db/schema';
 import { Request } from 'express';
 
 interface GoogleUserProfile {
