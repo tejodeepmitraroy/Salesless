@@ -1,6 +1,6 @@
 import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
 import { store } from './store';
-import { productVariant } from './product';
+import { product } from './product';
 import { relations } from 'drizzle-orm';
 import { order } from './order';
 import { customer } from './customer';
@@ -29,9 +29,7 @@ export const cartRelations = relations(cart, ({ one, many }) => ({
 export const cartItems = pgTable('cart_items', {
 	id: serial('id').primaryKey(),
 	cartId: integer('cart_id').references(() => cart.id),
-	productVariantId: integer('product_variant_id').references(
-		() => productVariant.id
-	),
+	productId: integer('product_id').references(() => product.id),
 	quantity: integer('quantity'),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
@@ -42,8 +40,8 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
 		fields: [cartItems.cartId],
 		references: [cart.id],
 	}),
-	productVariant: one(productVariant, {
-		fields: [cartItems.productVariantId],
-		references: [productVariant.id],
+	product: one(product, {
+		fields: [cartItems.productId],
+		references: [product.id],
 	}),
 }));

@@ -1,128 +1,193 @@
-// import { Request, Response } from "express";
-// import asyncHandler from "../utils/asyncHandler";
-// import { eq } from "drizzle-orm";
-// import { db } from "../db";
-// import ApiResponse from "../utils/ApiResponse";
-// import ApiError from "../utils/ApiError";
+import { Request, Response } from 'express';
+import asyncHandler from '../utils/asyncHandler';
+import { eq, InferSelectModel } from 'drizzle-orm';
+import { db } from '../db';
+import ApiResponse from '../utils/ApiResponse';
+import ApiError from '../utils/ApiError';
+import { cart, cartItems, store, user } from '../db/schema';
 
-// export const addToCart = asyncHandler(
-// 	async (request: Request, response: Response) => {
-// 		const { name, slug, description, parentId } = request.body;
+export const addItemsToCart = asyncHandler(
+	async (request: Request, response: Response) => {
+		const authUser = request.user as InferSelectModel<typeof user>;
+		const storeId = request.query.storeId as string;
+		const { productId, quantity } = request.body;
 
-// 		console.log(request.body);
+		try {
+			const cartExists = await db.query.cart.findFirst({
+				where:
+					eq(cart.storeId, parseInt(storeId)) &&
+					eq(cart.customerId, authUser.id),
+			});
 
-// 		try {
-// 			const existedCategory = await db.query.category.findFirst({
-// 				where: eq(ca.name, name),
-// 			});
+			console.log('Cart Exists', cartExists);
+			if (cartExists) {
+				const [cartItemsValues] = await db
+					.insert(cartItems)
+					.values({
+						cartId: cartExists.id,
+						productId,
+						quantity,
+					})
+					.returning();
 
-// 			if (existedCategory) {
-// 				response.status(200).json(new ApiError(409, 'Category already exists'));
-// 			} else {
-// 				if (parentId) {
-// 					const [createdCategory] = await db
-// 						.insert(category)
-// 						.values({
-// 							name,
-// 							slug,
-// 							description,
-// 							parentId,
-// 						})
-// 						.returning();
-// 					console.log('Created Category', createdCategory);
-// 					response
-// 						.status(200)
-// 						.json(
-// 							new ApiResponse(200, createdCategory, 'New Category Created')
-// 						);
-// 				} else {
-// 					const [createdCategory] = await db
-// 						.insert(category)
-// 						.values({
-// 							name,
-// 							slug,
-// 							description,
-// 						})
-// 						.returning();
-// 					console.log('Created Category', createdCategory);
-// 					response
-// 						.status(200)
-// 						.json(
-// 							new ApiResponse(200, createdCategory, 'New Category Created')
-// 						);
-// 				}
-// 			}
-// 		} catch (error) {
-// 			console.log(error);
-// 			response.status(500).json(new ApiError(500, 'Error Happens', error));
-// 		}
-// 	}
-// );
+				console.log('Cart Items Values', cartItemsValues);
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, cartItemsValues, 'New Item Added in Cart')
+					);
+			} else {
+				const [createdCart] = await db
+					.insert(cart)
+					.values({
+						storeId: parseInt(storeId),
+						customerId: authUser.id,
+					})
+					.returning();
+				console.log('Created Cart', createdCart);
 
-// export const getCategories = asyncHandler(
-// 	async (request: Request, response: Response) => {
-// 		try {
-// 			const categoryId = parseInt(request.params.categoryId);
-// 			if (categoryId) {
-// 				const categories = await db.query.category.findFirst({
-// 					where: eq(category.id, categoryId),
-// 				});
-// 				response
-// 					.status(200)
-// 					.json(new ApiResponse(200, categories, 'Category fetched'));
-// 				return;
-// 			} else {
-// 				const categories = await db.query.category.findMany();
-// 				response
-// 					.status(200)
-// 					.json(new ApiResponse(200, categories, 'Categories fetched'));
-// 			}
-// 		} catch (error) {
-// 			response.status(400).json(new ApiError(400, 'Error Happened', error));
-// 		}
-// 	}
-// );
+				const [cartItemsValues] = await db
+					.insert(cartItems)
+					.values({
+						cartId: createdCart.id,
+						productId,
+						quantity,
+					})
+					.returning();
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, cartItemsValues, 'New Item Added in Cart')
+					);
+			}
+		} catch (error) {
+			console.log(error);
+			response.status(500).json(new ApiError(500, 'Error Happens', error));
+		}
+	}
+);
 
-// export const updateCategory = asyncHandler(
-// 	async (request: Request, response: Response) => {
-// 		const { name, slug, description, parentId } = request.body;
+export const getCartItems = asyncHandler(
+	async (request: Request, response: Response) => {
+		try {
+			const authUser = request.user as InferSelectModel<typeof user>;
+			const storeId = parseInt(request.query.storeId as string);
+			const cartId = parseInt(request.query.cartId as string);
 
-// 		try {
-// 			const categoryId = parseInt(request.params.categoryId);
-// 			const [updatedCategory] = await db
-// 				.update(category)
-// 				.set({
-// 					name,
-// 					slug,
-// 					description,
-// 					parentId,
-// 				})
-// 				.where(eq(category.id, categoryId))
-// 				.returning();
+			if (!cartId) {
+				const storeDetails = await db.query.store.findFirst({
+					where: eq(store.id, storeId),
+					with: {
+						carts: true,
+					},
+				});
 
-// 			response
-// 				.status(200)
-// 				.json(new ApiResponse(200, updatedCategory, 'Category is Updated'));
-// 		} catch (error) {
-// 			response.status(400).json(new ApiError(400, 'Error Happened', error));
-// 		}
-// 	}
-// );
+				if (!storeDetails) {
+					response.status(400).json(new ApiError(400, 'Store not found'));
+				} else {
+					const cartDetails = await db.query.cart.findFirst({
+						where:
+							eq(cart.storeId, storeId) && eq(cart.customerId, authUser.id),
+					});
 
-// export const deleteCategory = asyncHandler(
-// 	async (request: Request, response: Response) => {
-// 		const categoryId = parseInt(request.params.categoryId);
+					if (!cartDetails) {
+						response.status(400).json(new ApiError(400, 'Cart not found'));
+					} else {
+						const cartItemsDetails = await db.query.cartItems.findMany({
+							where: eq(cartItems.cartId, cartDetails?.id),
+							with: {
+								product: true,
+								cart: true,
+							},
+						});
 
-// 		try {
-// 			const [deletedCategory] = await db
-// 				.delete(category)
-// 				.where(eq(category.id, categoryId))
-// 				.returning();
-// 			response
-// 				.status(200)
-// 				.json(new ApiResponse(200, deletedCategory, 'Category is Deleted'));
-// 		} catch (error) {
-// 			response.status(400).json(new ApiError(400, 'Error Happened', error));
-// 		}
-// 	}
-// );
+						response
+							.status(200)
+							.json(
+								new ApiResponse(200, cartItemsDetails, 'Cart Items fetched')
+							);
+					}
+				}
+			} else {
+				const cartItemsDetails = await db.query.cartItems.findMany({
+					where: eq(cartItems.cartId, cartId),
+					with: {
+						product: true,
+						cart: true,
+					},
+				});
+
+				const cartDetails = cartItemsDetails.map((entry) => ({
+					id: entry.id,
+					quantity: entry.quantity,
+					storeId: entry.product?.storeId,
+					description: entry.product?.description,
+					status: entry.product?.status,
+					categoryId: entry.product?.categoryId,
+					title: entry.product?.title,
+					isVariantEnabled: entry.product?.isVariantEnabled,
+					seoTitle: entry.product?.seoTitle,
+					seoDescription: entry.product?.seoDescription,
+					seoKeywords: entry.product?.seoKeywords,
+					seoScore: entry.product?.seoScore,
+					createdAt: entry.cart?.createdAt,
+					updatedAt: entry.cart?.updatedAt,
+				}));
+
+				response
+					.status(200)
+					.json(new ApiResponse(200, cartDetails, 'Cart Items fetched'));
+			}
+		} catch (error) {
+			response.status(400).json(new ApiError(400, 'Error Happened', error));
+		}
+	}
+);
+
+export const updateCartItem = asyncHandler(
+	async (request: Request, response: Response) => {
+		const { quantity } = request.body;
+
+		const cartItemId = parseInt(request.query.itemId as string);
+		const cartId = parseInt(request.query.cartId as string);
+		console.log('Cart Item Id', cartItemId);
+		console.log('Cart Id', cartId);
+
+		try {
+			const [updatedCart] = await db
+				.update(cartItems)
+				.set({
+					quantity,
+				})
+				.where(eq(cartItems.id, cartItemId))
+				.returning();
+			console.log('Updated Cart', updatedCart);
+			response
+				.status(200)
+				.json(new ApiResponse(200, updatedCart, 'Cart is Updated'));
+		} catch (error) {
+			response.status(400).json(new ApiError(400, 'Error Happened', error));
+		}
+	}
+);
+
+export const removeCartItem = asyncHandler(
+	async (request: Request, response: Response) => {
+		const cartItemId = parseInt(request.query.itemId as string);
+		const cartId = parseInt(request.query.cartId as string);
+		console.log('Cart Item Id', cartItemId);
+		console.log('Cart Id', cartId);
+
+		try {
+			const [deletedCartItem] = await db
+				.delete(cartItems)
+				.where(eq(cartItems.cartId, cartId) && eq(cartItems.id, cartItemId))
+				.returning();
+			response
+				.status(200)
+				.json(new ApiResponse(200, deletedCartItem, 'Cart Item is Deleted'));
+		} catch (error) {
+			response.status(400).json(new ApiError(400, 'Error Happened', error));
+		}
+	}
+);

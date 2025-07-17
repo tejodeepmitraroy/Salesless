@@ -8,6 +8,13 @@
 			"when": 1750968689540,
 			"tag": "0000_nappy_warhawk",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1752747290317,
+			"tag": "0001_pretty_klaw",
+			"breakpoints": true
 		}
 	]
 }
