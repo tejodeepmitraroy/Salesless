@@ -17,7 +17,7 @@ import { Request, Response } from 'express';
 export const uploadFileToS3 = asyncHandler(
 	async (request: Request, response: Response): Promise<void> => {
 		const { fileName: uploadFileName, contentType } = request.body;
-		const storeId = Number(request.query.storeId);
+		const storeId = request.query.storeId as string;
 
 		console.log(storeId);
 
@@ -101,8 +101,8 @@ export const uploadProfileImage = asyncHandler(
 
 export const getMediaFiles = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = Number(request.query.storeId);
-		const mediaId = Number(request.params.mediaId);
+		const storeId = request.query.storeId as string;
+		const mediaId = request.params.mediaId as string;
 		try {
 			if (mediaId) {
 				const mediaFile = await db.query.media.findFirst({

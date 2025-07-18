@@ -3,14 +3,17 @@ import {
 	boolean,
 	integer,
 	pgTable,
-	serial,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { userStore } from './store';
+import { ulid } from 'ulid';
 
 export const user = pgTable('user', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	firstName: varchar('first_name', { length: 255 }).notNull(),
 	lastName: varchar('last_name', { length: 255 }).notNull(),
 	email: varchar('email', { length: 255 }).notNull().unique(),

@@ -1,14 +1,18 @@
-import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { store } from './store';
 import { product } from './product';
 import { relations } from 'drizzle-orm';
 import { order } from './order';
 import { customer } from './customer';
+import { ulid } from 'ulid';
 
 export const cart = pgTable('cart', {
-	id: serial('id').primaryKey(),
-	storeId: integer('store_id').references(() => store.id),
-	customerId: integer('customer_id').references(() => customer.id),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id').references(() => store.id),
+	customerId: varchar('customer_id').references(() => customer.id),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });
@@ -27,9 +31,12 @@ export const cartRelations = relations(cart, ({ one, many }) => ({
 }));
 
 export const cartItems = pgTable('cart_items', {
-	id: serial('id').primaryKey(),
-	cartId: integer('cart_id').references(() => cart.id),
-	productId: integer('product_id').references(() => product.id),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	cartId: varchar('cart_id').references(() => cart.id),
+	productId: varchar('product_id').references(() => product.id),
 	quantity: integer('quantity'),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),

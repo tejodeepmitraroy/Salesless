@@ -3,7 +3,6 @@ import {
 	integer,
 	numeric,
 	pgTable,
-	serial,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
@@ -12,12 +11,16 @@ import { cart } from './cart';
 import { transaction } from './transaction';
 import { productVariant } from './product';
 import { customer } from './customer';
+import { ulid } from 'ulid';
 
 export const order = pgTable('order', {
-	id: serial('id').primaryKey(),
-	customerId: integer('customer_id').references(() => customer.id),
-	cartId: integer('cart_id').references(() => cart.id),
-	contactId: integer('contact_id'),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	customerId: varchar('customer_id').references(() => customer.id),
+	cartId: varchar('cart_id').references(() => cart.id),
+	contactId: varchar('contact_id'),
 	name: varchar('name'),
 	shippingAddressPhone: varchar('shipping_address_phone'),
 	shippingAddressCompany: varchar('shipping_address_company'),
@@ -74,9 +77,12 @@ export const orderRelations = relations(order, ({ one, many }) => ({
 }));
 
 export const orderItems = pgTable('order_items', {
-	id: serial('id').primaryKey(),
-	orderId: integer('order_id').references(() => order.id),
-	productVariantId: integer('product_variant_id').references(
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	orderId: varchar('order_id').references(() => order.id),
+	productVariantId: varchar('product_variant_id').references(
 		() => productVariant.id
 	),
 	quantity: integer('quantity'),

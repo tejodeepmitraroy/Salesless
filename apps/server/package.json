@@ -48,7 +48,9 @@
     "passport-local": "^1.0.0",
     "pg": "^8.14.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "stripe": "^18.3.0",
+    "ulid": "^3.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.0",

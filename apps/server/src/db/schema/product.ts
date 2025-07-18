@@ -16,14 +16,18 @@ import { cartItems } from './cart';
 import { media } from './media';
 import { productToCollection } from './collection';
 import { category } from './category';
+import { ulid } from 'ulid';
 
 export const statusEnum = pgEnum('status', ['active', 'draft', 'archive']);
 export const product = pgTable('product', {
-	id: serial('id').primaryKey(),
-	storeId: integer('store_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id')
 		.notNull()
 		.references(() => store.id),
-	categoryId: integer('category_id').references(() => category.id),
+	categoryId: varchar('category_id').references(() => category.id),
 	title: varchar('title', { length: 255 }).notNull(),
 	description: varchar('description', { length: 255 }),
 	status: statusEnum(),
@@ -59,10 +63,10 @@ export const productMedia = pgTable(
 	'product_media',
 	{
 		index: serial('index').notNull(),
-		productId: integer('product_id')
+		productId: varchar('product_id')
 			.notNull()
 			.references(() => product.id),
-		mediaId: integer('media_id')
+		mediaId: varchar('media_id')
 			.notNull()
 			.references(() => media.id),
 	},
@@ -81,8 +85,11 @@ export const productMediaRelation = relations(productMedia, ({ one }) => ({
 }));
 
 export const productOptions = pgTable('product_options', {
-	id: serial('id').primaryKey(),
-	productId: integer('product_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	productId: varchar('product_id')
 		.notNull()
 		.references(() => product.id),
 
@@ -104,8 +111,11 @@ export const productOptionsRelations = relations(
 );
 
 export const productOptionsValues = pgTable('product_options_values', {
-	id: serial('id').primaryKey(),
-	optionId: integer('option_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	optionId: varchar('option_id')
 		.notNull()
 		.references(() => productOptions.id),
 	value: varchar('value', { length: 255 }).notNull(), // Red, Blue, M, L
@@ -125,8 +135,11 @@ export const productOptionsValuesRelations = relations(
 );
 
 export const productVariant = pgTable('product_variant', {
-	id: serial('id').primaryKey(),
-	productId: integer('product_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	productId: varchar('product_id')
 		.notNull()
 		.references(() => product.id),
 	sku: varchar('sku'),
@@ -167,8 +180,11 @@ export const productVariantRelations = relations(
 );
 
 export const productMetadata = pgTable('product_metadata', {
-	id: serial('id').primaryKey(),
-	productId: integer('product_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	productId: varchar('product_id')
 		.notNull()
 		.references(() => product.id)
 		.unique(),

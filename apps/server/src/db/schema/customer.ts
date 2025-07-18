@@ -4,7 +4,6 @@ import {
 	integer,
 	pgTable,
 	real,
-	serial,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
@@ -12,9 +11,13 @@ import { customerStore } from './store';
 import { order } from './order';
 import { transaction } from './transaction';
 import { cart } from './cart';
+import { ulid } from 'ulid';
 
 export const customer = pgTable('customer', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	firstName: varchar('first_name', { length: 255 }).notNull(),
 	lastName: varchar('last_name', { length: 255 }).notNull(),
 	email: varchar('email', { length: 255 }).notNull().unique(),
@@ -41,8 +44,11 @@ export const customerRelations = relations(customer, ({ many }) => ({
 	carts: many(cart),
 }));
 export const customerAddress = pgTable('customer_address', {
-	id: serial('id').primaryKey(),
-	customerId: integer('customer_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	customerId: varchar('customer_id')
 		.notNull()
 		.references(() => customer.id),
 	firstName: varchar('first_name', { length: 255 }).notNull(),

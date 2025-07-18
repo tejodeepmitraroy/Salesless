@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 dotenv.config();
 
 const resetPasswordTokenSecretKey = process.env.FORGET_PASSWORD_JWT_SECRET!;
+const emailVerifyTokenSecretKey = process.env.VERIFY_EMAIL_TOKEN_SECRET!;
+
 export const generateAccessToken = ({
 	id,
 	email,
@@ -45,7 +47,7 @@ export const generateRefreshToken = (id: string | number) => {
 	});
 };
 
-export const generateResetPasswordToken = (id: number) => {
+export const generateResetPasswordToken = (id: string) => {
 	console.log('resetPasswordTokenSecretKey', resetPasswordTokenSecretKey);
 	return jwt.sign({ id }, resetPasswordTokenSecretKey, {
 		expiresIn: '15m',
@@ -53,7 +55,6 @@ export const generateResetPasswordToken = (id: number) => {
 };
 
 export const generateEmailVerifyToken = (email: string) => {
-	const emailVerifyTokenSecretKey = process.env.VERIFY_EMAIL_TOKEN_SECRET!;
 	return jwt.sign({ email }, emailVerifyTokenSecretKey, {
 		expiresIn: '60min',
 	});

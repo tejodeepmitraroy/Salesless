@@ -2,7 +2,6 @@ import {
 	integer,
 	numeric,
 	pgTable,
-	serial,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
@@ -10,12 +9,16 @@ import {
 import { relations } from 'drizzle-orm';
 import { order } from './order';
 import { customer } from './customer';
+import { ulid } from 'ulid';
 
 export const transaction = pgTable('transaction', {
-	id: serial('id').primaryKey(),
-	order_id: integer('order_id').references(() => order.id),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	order_id: varchar('order_id').references(() => order.id),
 	purchase: varchar('purchase'),
-	customer_id: integer('customer_id').references(() => customer.id),
+	customer_id: varchar('customer_id').references(() => customer.id),
 	amount: numeric('amount'),
 	authorization: varchar('authorization'),
 	currency: varchar('currency'),

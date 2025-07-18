@@ -1,6 +1,6 @@
 {
-	"id": "9f488646-29ff-417a-9d80-4b09c519f6c0",
-	"prevId": "00000000-0000-0000-0000-000000000000",
+	"id": "19423b43-cfa6-44ec-8eed-3381a3c2f9db",
+	"prevId": "545fbb99-917a-480f-b0a4-031428c20b4d",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -658,19 +658,19 @@
 				},
 				"customer_id": {
 					"name": "customer_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
 				"cart_id": {
 					"name": "cart_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
 				"contact_id": {
 					"name": "contact_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
@@ -948,19 +948,19 @@
 			"columns": {
 				"id": {
 					"name": "id",
-					"type": "serial",
+					"type": "varchar",
 					"primaryKey": true,
 					"notNull": true
 				},
 				"order_id": {
 					"name": "order_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
 				"product_variant_id": {
 					"name": "product_variant_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},

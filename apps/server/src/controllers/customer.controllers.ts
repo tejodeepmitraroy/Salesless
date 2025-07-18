@@ -59,7 +59,7 @@ export const registerCustomer = asyncHandler(
 
 export const customerProfile = asyncHandler(
 	async (request: Request, response: Response) => {
-		const authUser = request.user as InferSelectModel<typeof user>;
+		const authUser = request.user as InferSelectModel<typeof customer>;
 
 		try {
 			const userprofile = await db.query.customer.findFirst({
@@ -129,7 +129,7 @@ export const deleteCustomerProfile = asyncHandler(
 //Address Routes
 export const createCustomerAddress = asyncHandler(
 	async (request: Request, response: Response) => {
-		const authUser = request.user as InferSelectModel<typeof user>;
+		const authUser = request.user as InferSelectModel<typeof customer>;
 
 		const {
 			firstName,
@@ -179,9 +179,9 @@ export const createCustomerAddress = asyncHandler(
 
 export const getCustomerAddresses = asyncHandler(
 	async (request: Request, response: Response) => {
-		const authUser = request.user as InferSelectModel<typeof user>;
+		const authUser = request.user as InferSelectModel<typeof customer>;
 
-		const addressId = parseInt(request.params.addressId);
+		const addressId = request.params.addressId;
 
 		try {
 			if (addressId) {
@@ -210,7 +210,7 @@ export const getCustomerAddresses = asyncHandler(
 
 export const updateCustomerAddress = asyncHandler(
 	async (request: Request, response: Response) => {
-		const addressId = parseInt(request.params.addressId);
+		const addressId = request.params.addressId;
 
 		const {
 			firstName,
@@ -266,7 +266,7 @@ export const updateCustomerAddress = asyncHandler(
 
 export const updateCustomerDefaultAddress = asyncHandler(
 	async (request: Request, response: Response) => {
-		const addressId = parseInt(request.params.addressId);
+		const addressId = request.params.addressId;
 
 		try {
 			// Find the address to be set as default
@@ -325,7 +325,7 @@ export const updateCustomerDefaultAddress = asyncHandler(
 
 export const deleteCustomerAddress = asyncHandler(
 	async (request: Request, response: Response) => {
-		const addressId = parseInt(request.params.addressId);
+		const addressId = request.params.addressId;
 
 		try {
 			const [deletedAddress] = await db
@@ -476,11 +476,11 @@ export const resetLink = asyncHandler(
 
 			try {
 				const userProfile = await db
-					.update(user)
+					.update(customer)
 					.set({
 						password: await passwordHashed(newPassword),
 					})
-					.where(eq(user.id, parseInt(id)))
+					.where(eq(customer.id, id))
 					.returning();
 
 				response

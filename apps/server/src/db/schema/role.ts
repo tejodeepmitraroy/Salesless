@@ -1,16 +1,13 @@
 import { relations } from 'drizzle-orm';
-import {
-	integer,
-	pgTable,
-	primaryKey,
-	serial,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { userStore } from './store';
+import { ulid } from 'ulid';
 
 export const role = pgTable('roles', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	name: varchar('name', { length: 100 }).notNull().unique(),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
@@ -22,7 +19,10 @@ export const roleRelations = relations(role, ({ many }) => ({
 }));
 
 export const permissions = pgTable('permissions', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	name: varchar('name', { length: 100 }).notNull().unique(), // e.g., "edit_product"
 });
 
@@ -33,10 +33,10 @@ export const permissionRelations = relations(role, ({ many }) => ({
 export const rolePermissions = pgTable(
 	'role_permissions',
 	{
-		roleId: integer('role_id')
+		roleId: varchar('role_id')
 			.notNull()
 			.references(() => role.id),
-		permissionId: integer('permission_id')
+		permissionId: varchar('permission_id')
 			.notNull()
 			.references(() => permissions.id),
 	},

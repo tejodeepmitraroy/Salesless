@@ -25,7 +25,7 @@ export const createStore = asyncHandler(
 			if (storeName) {
 				response.status(400).json(new ApiError(400, 'Store already exists'));
 			}
-			const newStore = await db
+			const [newStore] = await db
 				.insert(store)
 				.values({
 					name,
@@ -38,14 +38,14 @@ export const createStore = asyncHandler(
 				.returning();
 
 			await db.insert(userStore).values({
-				storeId: newStore[0].id,
+				storeId: newStore.id,
 				userId: authUser.id,
-				roleId: 1,
+				// roleId: 1,
 			});
 
 			response
 				.status(201)
-				.json(new ApiResponse(200, newStore[0], 'Store created successfully'));
+				.json(new ApiResponse(200, newStore, 'Store created successfully'));
 		} catch (error) {
 			response.status(400).json(new ApiError(400, 'Error Happens', error));
 		}
@@ -81,7 +81,7 @@ export const getStoreById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const getStore = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.storeId)),
+				where: eq(store.id, request.params.storeId),
 			});
 			if (!getStore) {
 				response.status(200).json(new ApiError(400, 'Store not found'));
@@ -134,7 +134,7 @@ export const deleteStore = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const getStore = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.storeId)),
+				where: eq(store.id, request.params.storeId),
 			});
 
 			if (!getStore) {
@@ -143,13 +143,10 @@ export const deleteStore = asyncHandler(
 
 			await db
 				.delete(userStore)
-				.where(eq(userStore.storeId, parseInt(request.params.id)))
+				.where(eq(userStore.storeId, request.params.id))
 				.execute();
 
-			await db
-				.delete(store)
-				.where(eq(store.id, parseInt(request.params.id)))
-				.execute();
+			await db.delete(store).where(eq(store.id, request.params.id)).execute();
 
 			response
 				.status(200)
@@ -165,7 +162,7 @@ export const getStoreSettings = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const storeSettings = await db.query.store.findFirst({
-				where: eq(store.id, parseInt(request.params.storeId)),
+				where: eq(store.id, request.params.storeId),
 			});
 
 			if (!storeSettings) {
@@ -189,8 +186,8 @@ export const getStoreSettings = asyncHandler(
 );
 export const getStoreCustomers = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = parseInt(request.params.storeId);
-		const customerId = parseInt(request.params.customerId);
+		const storeId = request.params.storeId;
+		const customerId = request.params.customerId;
 
 		try {
 			if (customerId) {
@@ -270,7 +267,7 @@ export const getStoreCustomers = asyncHandler(
 
 export const getStoreOrders = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = parseInt(request.params.storeId);
+		const storeId = request.params.storeId;
 		// const orderId = parseInt(request.params.orderId);
 		try {
 			const storeSettings = await db.query.store.findFirst({
@@ -298,7 +295,7 @@ export const getStoreOrders = asyncHandler(
 );
 export const updateStoreGeneralSettings = asyncHandler(
 	async (req: Request, res: Response): Promise<void> => {
-		const storeId = parseInt(req.params.storeId);
+		const storeId = req.params.storeId;
 		const { name, description, domain } = req.body;
 
 		try {
@@ -331,7 +328,7 @@ export const updateStoreGeneralSettings = asyncHandler(
 );
 export const updateStoreAddressSettings = asyncHandler(
 	async (req: Request, res: Response): Promise<void> => {
-		const storeId = parseInt(req.params.storeId);
+		const storeId = req.params.storeId;
 		const { addressLine1, addressLine2, city, country, zip, phone } = req.body;
 
 		try {
@@ -367,12 +364,12 @@ export const updateStoreAddressSettings = asyncHandler(
 );
 
 // export const updateStoreSettings = async (
-// 	req: Request<{ id: string }, {}, Partial<StoreSettings>>,
+// 	req: Request,
 // 	res: Response
 // ): Promise<void> => {
 // 	try {
-// 		const store = await db
-// 			.update(stores)
+// 		const storeData = await db
+// 			.update(store)
 // 			.set({ settings: req.body })
 // 			.where(eq(stores.id, parseInt(req.params.id)))
 // 			.returning();

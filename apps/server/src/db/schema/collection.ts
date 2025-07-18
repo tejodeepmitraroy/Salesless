@@ -1,19 +1,16 @@
-import {
-	integer,
-	pgTable,
-	primaryKey,
-	serial,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core';
+import { pgTable, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { store } from './store';
 import { relations } from 'drizzle-orm';
 import { product } from './product';
+import { ulid } from 'ulid';
 
 // Collection table
 export const collection = pgTable('collection', {
-	id: serial('id').primaryKey(),
-	storeId: integer('store_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id')
 		.notNull()
 		.references(() => store.id),
 	title: varchar('title'),
@@ -34,10 +31,10 @@ export const collectionRelations = relations(collection, ({ one, many }) => ({
 export const productToCollection = pgTable(
 	'product_to_collection',
 	{
-		productId: integer('product_id')
+		productId: varchar('product_id')
 			.notNull()
 			.references(() => product.id),
-		collectionId: integer('collection_id')
+		collectionId: varchar('collection_id')
 			.notNull()
 			.references(() => collection.id),
 	},

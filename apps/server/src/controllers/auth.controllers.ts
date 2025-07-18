@@ -2,7 +2,6 @@ import { generateAccessToken, verifyRefreshJwtToken } from '../helper/token';
 import asyncHandler from '../utils/asyncHandler';
 
 import { Request, Response } from 'express';
-// import prisma from '../db/prismaClient';
 import ApiResponse from '../utils/ApiResponse';
 import { eq } from 'drizzle-orm';
 import { user } from '../db/schema';
@@ -64,7 +63,7 @@ export const generateRefreshToken = asyncHandler(
 
 				//Find user in DB
 				const userData = await db.query.user.findFirst({
-					where: eq(user.id, parseInt(decoded.id)),
+					where: eq(user.id, decoded.id),
 				});
 
 				if (!userData || userData.refreshToken !== refreshToken) {

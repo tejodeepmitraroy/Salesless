@@ -95,7 +95,7 @@ export const initializePassportStrategies = () => {
 			async (request, email, password, done) => {
 				//authentication Logic here
 				try {
-					const storeId = parseInt(request.body.storeId);
+					const storeId = request.body.storeId;
 					console.log('Receive Customer Credentials', email, password, storeId);
 
 					const customerStoreDetails = await db.query.customerStore.findMany({

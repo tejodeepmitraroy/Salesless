@@ -1,34 +1,34 @@
 CREATE TYPE "public"."status" AS ENUM('active', 'draft', 'archive');--> statement-breakpoint
 CREATE TABLE "cart" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"store_id" integer,
-	"customer_id" integer,
-	"created_at" timestamp,
-	"updated_at" timestamp
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar,
+	"customer_id" varchar,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "cart_items" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"cart_id" integer,
-	"product_variant_id" integer,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"cart_id" varchar,
+	"product_id" varchar,
 	"quantity" integer,
-	"created_at" timestamp,
-	"updated_at" timestamp
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "category" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"name" varchar,
 	"slug" varchar,
 	"description" varchar,
-	"parent_id" integer,
+	"parent_id" varchar,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "collection" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"store_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar NOT NULL,
 	"title" varchar,
 	"description" varchar,
 	"slug" varchar,
@@ -37,7 +37,7 @@ CREATE TABLE "collection" (
 );
 --> statement-breakpoint
 CREATE TABLE "customer" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"first_name" varchar(255) NOT NULL,
 	"last_name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -58,8 +58,8 @@ CREATE TABLE "customer" (
 );
 --> statement-breakpoint
 CREATE TABLE "customer_address" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"customer_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"customer_id" varchar NOT NULL,
 	"first_name" varchar(255) NOT NULL,
 	"last_name" varchar(255) NOT NULL,
 	"company" varchar,
@@ -78,15 +78,15 @@ CREATE TABLE "customer_address" (
 );
 --> statement-breakpoint
 CREATE TABLE "customer_store" (
-	"store_id" integer NOT NULL,
-	"customer_id" integer NOT NULL,
+	"store_id" varchar NOT NULL,
+	"customer_id" varchar NOT NULL,
 	"register_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "customer_store_store_id_customer_id_pk" PRIMARY KEY("store_id","customer_id")
 );
 --> statement-breakpoint
 CREATE TABLE "media" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"store_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar NOT NULL,
 	"fileName" varchar,
 	"url" varchar,
 	"key" varchar,
@@ -96,7 +96,7 @@ CREATE TABLE "media" (
 );
 --> statement-breakpoint
 CREATE TABLE "order" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"customer_id" integer,
 	"cart_id" integer,
 	"contact_id" integer,
@@ -152,15 +152,15 @@ CREATE TABLE "order_items" (
 );
 --> statement-breakpoint
 CREATE TABLE "permissions" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	CONSTRAINT "permissions_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "product" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"store_id" integer NOT NULL,
-	"category_id" integer,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar NOT NULL,
+	"category_id" varchar,
 	"title" varchar(255) NOT NULL,
 	"description" varchar(255),
 	"status" "status",
@@ -175,14 +175,14 @@ CREATE TABLE "product" (
 --> statement-breakpoint
 CREATE TABLE "product_media" (
 	"index" serial NOT NULL,
-	"product_id" integer NOT NULL,
-	"media_id" integer NOT NULL,
+	"product_id" varchar NOT NULL,
+	"media_id" varchar NOT NULL,
 	CONSTRAINT "product_media_media_id_product_id_pk" PRIMARY KEY("media_id","product_id")
 );
 --> statement-breakpoint
 CREATE TABLE "product_metadata" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"product_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"product_id" varchar NOT NULL,
 	"namespace" varchar(255) NOT NULL,
 	"key" integer NOT NULL,
 	"value" varchar(255),
@@ -193,8 +193,8 @@ CREATE TABLE "product_metadata" (
 );
 --> statement-breakpoint
 CREATE TABLE "product_options" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"product_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"product_id" varchar NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"position" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -202,8 +202,8 @@ CREATE TABLE "product_options" (
 );
 --> statement-breakpoint
 CREATE TABLE "product_options_values" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"option_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"option_id" varchar NOT NULL,
 	"value" varchar(255) NOT NULL,
 	"position" integer NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -211,14 +211,14 @@ CREATE TABLE "product_options_values" (
 );
 --> statement-breakpoint
 CREATE TABLE "product_to_collection" (
-	"product_id" integer NOT NULL,
-	"collection_id" integer NOT NULL,
+	"product_id" varchar NOT NULL,
+	"collection_id" varchar NOT NULL,
 	CONSTRAINT "product_to_collection_product_id_collection_id_pk" PRIMARY KEY("product_id","collection_id")
 );
 --> statement-breakpoint
 CREATE TABLE "product_variant" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"product_id" integer NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"product_id" varchar NOT NULL,
 	"sku" varchar,
 	"barcode" varchar,
 	"price" numeric,
@@ -243,7 +243,7 @@ CREATE TABLE "product_variant" (
 );
 --> statement-breakpoint
 CREATE TABLE "roles" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -251,13 +251,13 @@ CREATE TABLE "roles" (
 );
 --> statement-breakpoint
 CREATE TABLE "role_permissions" (
-	"role_id" integer NOT NULL,
-	"permission_id" integer NOT NULL,
+	"role_id" varchar NOT NULL,
+	"permission_id" varchar NOT NULL,
 	CONSTRAINT "role_permissions_role_id_permission_id_pk" PRIMARY KEY("role_id","permission_id")
 );
 --> statement-breakpoint
 CREATE TABLE "store" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"name" varchar NOT NULL,
 	"description" varchar,
 	"country" varchar NOT NULL,
@@ -275,10 +275,10 @@ CREATE TABLE "store" (
 );
 --> statement-breakpoint
 CREATE TABLE "transaction" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"order_id" integer,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"order_id" varchar,
 	"purchase" varchar,
-	"customer_id" integer,
+	"customer_id" varchar,
 	"amount" numeric,
 	"authorization" varchar,
 	"currency" varchar,
@@ -302,7 +302,7 @@ CREATE TABLE "transaction" (
 );
 --> statement-breakpoint
 CREATE TABLE "user" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" varchar PRIMARY KEY NOT NULL,
 	"first_name" varchar(255) NOT NULL,
 	"last_name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
@@ -323,17 +323,16 @@ CREATE TABLE "user" (
 );
 --> statement-breakpoint
 CREATE TABLE "user_store" (
-	"store_id" integer NOT NULL,
-	"user_id" integer NOT NULL,
-	"role_id" integer NOT NULL,
+	"store_id" varchar NOT NULL,
+	"user_id" varchar NOT NULL,
 	"register_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "user_store_store_id_user_id_role_id_pk" PRIMARY KEY("store_id","user_id","role_id")
+	CONSTRAINT "user_store_store_id_user_id_pk" PRIMARY KEY("store_id","user_id")
 );
 --> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_product_variant_id_product_variant_id_fk" FOREIGN KEY ("product_variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "collection" ADD CONSTRAINT "collection_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "customer_address" ADD CONSTRAINT "customer_address_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "customer_store" ADD CONSTRAINT "customer_store_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -358,5 +357,4 @@ ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_permission_id_pe
 ALTER TABLE "transaction" ADD CONSTRAINT "transaction_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transaction" ADD CONSTRAINT "transaction_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_store" ADD CONSTRAINT "user_store_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_store" ADD CONSTRAINT "user_store_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_store" ADD CONSTRAINT "user_store_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "user_store" ADD CONSTRAINT "user_store_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;

@@ -22,7 +22,7 @@ export const getAllProducts = asyncHandler(
 		}
 		try {
 			const products = await db.query.product.findMany({
-				where: eq(product.storeId, parseInt(storeId)),
+				where: eq(product.storeId, storeId),
 				with: {
 					media: {
 						with: {
@@ -72,7 +72,7 @@ export const getAllProducts = asyncHandler(
 export const getProductById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const productId = parseInt(request.params.productId);
+			const productId = request.params.productId as string;
 
 			db.transaction(async (trx) => {
 				const productDetails = await trx.query.product.findFirst({
@@ -193,12 +193,12 @@ export const createProduct = asyncHandler(
 			variants,
 			seo,
 		}: {
-			storeId: number;
+			storeId: string;
 			title: string;
 			description: string;
-			categoryId: number;
+			categoryId: string;
 			status: string;
-			media: { mediaId: number; index: number }[];
+			media: { mediaId: string; index: number }[];
 			isVariantEnabled: boolean;
 			variant: {
 				sku: string;
@@ -302,7 +302,7 @@ export const createProduct = asyncHandler(
 					const variantResult = await trx
 						.insert(productVariant)
 						.values({
-							productId: Number(productId),
+							productId: productId,
 							sku: variant.sku,
 							barcode: variant.barcode,
 							price: variant.price,
@@ -337,7 +337,7 @@ export const createProduct = asyncHandler(
 						.values(
 							options.map((option) => {
 								return {
-									productId: Number(productId),
+									productId: productId,
 									name: option.name,
 									position: option.position,
 								};
@@ -366,7 +366,7 @@ export const createProduct = asyncHandler(
 						.insert(productVariant)
 						.values(
 							variants.map((variant) => ({
-								productId: Number(productId),
+								productId: productId,
 								sku: variant.sku,
 								barcode: variant.barcode,
 								price: variant.price,
@@ -421,12 +421,12 @@ export const updateProduct = asyncHandler(
 			variants,
 			seo,
 		}: {
-			storeId: number;
+			storeId: string;
 			title: string;
 			description: string;
-			categoryId: number;
+			categoryId: string;
 			status: string;
-			media: { mediaId: number; index: number }[];
+			media: { mediaId: string; index: number }[];
 			isVariantEnabled: boolean;
 			variant: {
 				variantId: number;
@@ -475,7 +475,7 @@ export const updateProduct = asyncHandler(
 			};
 		} = request.body;
 		try {
-			const productId = parseInt(request.params.productId);
+			const productId = request.params.productId as string;
 			console.log('productId', productId, media);
 
 			console.log('Body---->', request.body);
@@ -545,7 +545,7 @@ export const updateProduct = asyncHandler(
 					const variantResult = await trx
 						.insert(productVariant)
 						.values({
-							productId: Number(productId),
+							productId: productId,
 							sku: variant.sku,
 							barcode: variant.barcode,
 							price: variant.price,
@@ -600,7 +600,7 @@ export const updateProduct = asyncHandler(
 						.values(
 							options.map((option) => {
 								return {
-									productId: Number(productId),
+									productId: productId,
 									name: option.name,
 									position: option.position,
 								};
@@ -629,7 +629,7 @@ export const updateProduct = asyncHandler(
 						.insert(productVariant)
 						.values(
 							variants.map((variant) => ({
-								productId: Number(productId),
+								productId: productId,
 								sku: variant.sku,
 								barcode: variant.barcode,
 								price: variant.price,
@@ -673,7 +673,7 @@ export const updateProduct = asyncHandler(
 export const deleteProduct = asyncHandler(
 	async (req: Request, res: Response) => {
 		try {
-			const productId = parseInt(req.params.productId);
+			const productId = req.params.productId as string;
 
 			db.transaction(async (trx) => {
 				await trx

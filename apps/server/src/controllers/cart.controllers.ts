@@ -4,19 +4,17 @@ import { eq, InferSelectModel } from 'drizzle-orm';
 import { db } from '../db';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
-import { cart, cartItems, store, user } from '../db/schema';
+import { cart, cartItems, customer, store } from '../db/schema';
 
 export const addItemsToCart = asyncHandler(
 	async (request: Request, response: Response) => {
-		const authUser = request.user as InferSelectModel<typeof user>;
+		const authUser = request.user as InferSelectModel<typeof customer>;
 		const storeId = request.query.storeId as string;
 		const { productId, quantity } = request.body;
 
 		try {
 			const cartExists = await db.query.cart.findFirst({
-				where:
-					eq(cart.storeId, parseInt(storeId)) &&
-					eq(cart.customerId, authUser.id),
+				where: eq(cart.storeId, storeId) && eq(cart.customerId, authUser.id),
 			});
 
 			console.log('Cart Exists', cartExists);
@@ -40,7 +38,7 @@ export const addItemsToCart = asyncHandler(
 				const [createdCart] = await db
 					.insert(cart)
 					.values({
-						storeId: parseInt(storeId),
+						storeId,
 						customerId: authUser.id,
 					})
 					.returning();
@@ -70,9 +68,9 @@ export const addItemsToCart = asyncHandler(
 export const getCartItems = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const authUser = request.user as InferSelectModel<typeof user>;
-			const storeId = parseInt(request.query.storeId as string);
-			const cartId = parseInt(request.query.cartId as string);
+			const authUser = request.user as InferSelectModel<typeof customer>;
+			const storeId = request.query.storeId as string;
+			const cartId = request.query.cartId as string;
 
 			if (!cartId) {
 				const storeDetails = await db.query.store.findFirst({
@@ -148,8 +146,8 @@ export const updateCartItem = asyncHandler(
 	async (request: Request, response: Response) => {
 		const { quantity } = request.body;
 
-		const cartItemId = parseInt(request.query.itemId as string);
-		const cartId = parseInt(request.query.cartId as string);
+		const cartItemId = request.query.itemId as string;
+		const cartId = request.query.cartId as string;
 		console.log('Cart Item Id', cartItemId);
 		console.log('Cart Id', cartId);
 
@@ -173,8 +171,8 @@ export const updateCartItem = asyncHandler(
 
 export const removeCartItem = asyncHandler(
 	async (request: Request, response: Response) => {
-		const cartItemId = parseInt(request.query.itemId as string);
-		const cartId = parseInt(request.query.cartId as string);
+		const cartItemId = request.query.itemId as string;
+		const cartId = request.query.cartId as string;
 		console.log('Cart Item Id', cartItemId);
 		console.log('Cart Id', cartId);
 

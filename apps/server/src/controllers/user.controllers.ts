@@ -7,12 +7,10 @@ import ApiResponse from '../utils/ApiResponse';
 import { passwordHashed } from '../helper/hasher';
 import { user } from '../db/schema';
 import {
-	generateEmailVerifyToken,
 	generateResetPasswordToken,
 	verifyResetPasswordJwtToken,
 } from '../helper/token';
 import { forgotPasswordEmail } from '../helper/sendEmail';
-import axios from 'axios';
 
 export const registerClient = asyncHandler(
 	async (request: Request, response: Response) => {
@@ -43,25 +41,25 @@ export const registerClient = asyncHandler(
 						phone,
 					})
 					.returning();
-				const token = generateEmailVerifyToken(email);
+				// const token = generateEmailVerifyToken(email);
 
-				const dataFile = await axios.post(
-					`${process.env.EMAIL_SERVICE_URI!}/auth/verify-email`,
-					{
-						to: email,
-						data: {
-							userName: firstName,
-							verificationLink: `${process.env.FRONTEND_ENDPOINT_URL!}/verify-email?token=${token}`,
-						},
-					},
-					{
-						headers: {
-							'Content-Type': 'application/json',
-						},
-					}
-				);
+				// const dataFile = await axios.post(
+				// 	`${process.env.EMAIL_SERVICE_URI!}/auth/verify-email`,
+				// 	{
+				// 		to: email,
+				// 		data: {
+				// 			userName: firstName,
+				// 			verificationLink: `${process.env.FRONTEND_ENDPOINT_URL!}/verify-email?token=${token}`,
+				// 		},
+				// 	},
+				// 	{
+				// 		headers: {
+				// 			'Content-Type': 'application/json',
+				// 		},
+				// 	}
+				// );
 
-				console.log('Email dataFile', dataFile);
+				// console.log('Email dataFile', dataFile);
 
 				response
 					.status(200)
@@ -308,7 +306,7 @@ export const resetLink = asyncHandler(
 					.set({
 						password: await passwordHashed(newPassword),
 					})
-					.where(eq(user.id, parseInt(id)))
+					.where(eq(user.id, id))
 					.returning();
 
 				response
