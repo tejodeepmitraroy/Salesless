@@ -3,7 +3,7 @@ import { db } from '../db';
 
 import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
-import { customerStore, store, user, userStore } from '../db/schema';
+import { customerStore, order, store, user, userStore } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
@@ -268,28 +268,35 @@ export const getStoreCustomers = asyncHandler(
 export const getStoreOrders = asyncHandler(
 	async (request: Request, response: Response) => {
 		const storeId = request.params.storeId;
-		// const orderId = parseInt(request.params.orderId);
+		const orderId = request.params.orderId;
 		try {
-			const storeSettings = await db.query.store.findFirst({
-				where: eq(store.id, storeId),
-			});
-
-			if (!storeSettings) {
-				response.status(404).json(new ApiError(404, 'Store not found'));
+			if (orderId) {
+				const storeOrder = await db.query.order.findFirst({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, storeOrder, 'Store order fetched successfully')
+					);
+			} else {
+				const storeOrders = await db.query.order.findMany({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							storeOrders,
+							'Store orders fetched successfully'
+						)
+					);
 			}
-			response
-				.status(200)
-				.json(
-					new ApiResponse(
-						200,
-						storeSettings,
-						'Store settings fetched successfully'
-					)
-				);
 		} catch (error) {
 			response
 				.status(500)
-				.json(new ApiError(500, 'Error updating store settings', error));
+				.json(new ApiError(500, 'Error fetching store orders', error));
 		}
 	}
 );

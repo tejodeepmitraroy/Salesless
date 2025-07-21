@@ -1,18 +1,17 @@
 import { ShoppingCart } from 'lucide-react';
-
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { OrderDataTable } from '@/features/Orders/tables/OrderDataTable';
 import OrderFilters from '@/features/Orders/components/OrderFilters';
-import { useOrderStore } from '@/stores/useOrderStore';
 import { orderColumns } from '@/features/Orders/tables/OrderColumns';
+import { useQuery } from '@tanstack/react-query';
+import { getAllOrdersService } from '@/features/Orders/services';
+import { useParams } from 'react-router';
 // import OrderModal from '@/features/Orders/components/OrderModal';
 
 const OrderManagement = () => {
 	// const [searchQuery, setSearchQuery] = useState('');
-	// const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-	// const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
+	const { storeId } = useParams<{ storeId: string }>();
 
-	const filteredOrders = useOrderStore((state) => state.filteredOrders);
 	// const getFilteredOrders = useOrderStore((state) => state.getFilteredOrders);
 
 	// Mock order data
@@ -232,6 +231,12 @@ const OrderManagement = () => {
 	// 	);
 	// };
 
+	const { data: orders } = useQuery({
+		queryKey: ['orders'],
+		queryFn: () => getAllOrdersService({ storeId: storeId! }),
+	});
+	console.log('orders', orders, storeId);
+
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-6">
 			<HeaderSection
@@ -241,7 +246,7 @@ const OrderManagement = () => {
 			/>
 			<section className="space-y-6">
 				<OrderFilters />
-				<OrderDataTable columns={orderColumns} data={filteredOrders} />
+				<OrderDataTable columns={orderColumns} data={orders ?? []} />
 				{/* <Tabs defaultValue="all">
 					<section className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 						<TabsList className="grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">

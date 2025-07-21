@@ -2,34 +2,32 @@ import { relations } from 'drizzle-orm';
 import {
 	integer,
 	numeric,
-	pgEnum,
+
 	pgTable,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
-
-// import { cart } from './cart';
 import { transaction } from './transaction';
-import { product, productVariant } from './product';
+import { product} from './product';
 import { customer } from './customer';
 import { ulid } from 'ulid';
 import { store } from './store';
 
 // Define enums with default values
-export const paymentMethodEnum = pgEnum('payment_method', [
-	'cod',
-	'upi',
-	'card',
-	'netbanking',
-]);
+// export const paymentMethodEnum = pgEnum('payment_method', [
+// 	'cod',
+// 	'upi',
+// 	'card',
+// 	'netbanking',
+// ]);
 
-const statusEnum = pgEnum('status', [
-	'pending',
-	'paid',
-	'shipped',
-	'cancelled',
-	'delivered',
-]);
+// const statusEnum = pgEnum('status', [
+// 	'pending',
+// 	'paid',
+// 	'shipped',
+// 	'cancelled',
+// 	'delivered',
+// ]);
 
 export const order = pgTable('order', {
 	id: varchar('id')
@@ -63,11 +61,11 @@ export const order = pgTable('order', {
 	billingAddressZip: varchar('billing_address_zip'),
 	tags: varchar('tags'),
 	note: varchar('note'),
-	status: statusEnum('status').notNull().default('pending'),
+	status: varchar('status').default('pending'),
 	currency: varchar('currency'),
 	totalPrice: numeric('total_price'),
 	subtotalPrice: numeric('subtotal_price'),
-	paymentMethod: paymentMethodEnum('payment_method').notNull().default('cod'),
+	paymentMethod: varchar('payment_method').default('cod'),
 	additionalPrice: numeric('additional_price'),
 	totalDiscounts: numeric('total_discounts'),
 	totalLineItemsPrice: numeric('total_line_items_price'),
@@ -96,10 +94,6 @@ export const orderRelations = relations(order, ({ one, many }) => ({
 		fields: [order.storeId],
 		references: [store.id],
 	}),
-	// cart: one(cart, {
-	// 	fields: [order.cartId],
-	// 	references: [cart.id],
-	// }),
 	items: many(orderItems),
 	transactions: many(transaction),
 }));
@@ -109,11 +103,15 @@ export const orderItems = pgTable('order_items', {
 		.primaryKey()
 		.notNull()
 		.$defaultFn(() => ulid()),
-	orderId: varchar('order_id').references(() => order.id),
-	productId: varchar('product_id').references(() => product.id),
-	quantity: integer('quantity'),
-	priceAtPurchase: numeric('price_at_purchase'),
-	created_at: timestamp('created_at'),
+	orderId: varchar('order_id')
+		.references(() => order.id)
+		.notNull(),
+	productId: varchar('product_id')
+		.references(() => product.id)
+		.notNull(),
+	quantity: integer('quantity').notNull(),
+	priceAtPurchase: integer('price_at_purchase').notNull(),
+	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 });
 
 export const orderItemsRelations = relations(orderItems, ({ one }) => ({
@@ -121,8 +119,8 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
 		fields: [orderItems.orderId],
 		references: [order.id],
 	}),
-	productVariant: one(productVariant, {
+	product: one(product, {
 		fields: [orderItems.productId],
-		references: [productVariant.id],
+		references: [product.id],
 	}),
 }));

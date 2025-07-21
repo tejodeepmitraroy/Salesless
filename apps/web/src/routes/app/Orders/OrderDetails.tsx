@@ -26,6 +26,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { useParams } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { getOrderByIdService } from '@/features/Orders/services';
 
 const OrderDetails = () => {
 	// const { orderId } = useParams<{ orderId: string; storeId: string }>();
@@ -35,22 +38,30 @@ const OrderDetails = () => {
 	// 	queryFn: () => getOrderByIdService({ orderId: orderId! }),
 	// });
 
-	const orderData = {
-		id: 'ORD-7452',
-		customer: 'John Doe',
-		date: '2023-06-18',
-		total: 124.95,
-		items: 3,
-		status: 'Delivered',
-		payment: 'Paid',
-		address: '123 Main St, Anytown, CA 94582',
-		email: 'john.doe@example.com',
-		phone: '(555) 123-4567',
-		products: [
-			{ name: 'Artisan Coffee Mug', price: 24.99, quantity: 2 },
-			{ name: 'Leather Wallet', price: 74.97, quantity: 1 },
-		],
-	};
+	const { storeId, orderId } = useParams<{ storeId: string; orderId: string }>();
+
+	// const orderData = {
+	// 	id: 'ORD-7452',
+	// 	customer: 'John Doe',
+	// 	date: '2023-06-18',
+	// 	total: 124.95,
+	// 	items: 3,
+	// 	status: 'Delivered',
+	// 	payment: 'Paid',
+	// 	address: '123 Main St, Anytown, CA 94582',
+	// 	email: 'john.doe@example.com',
+	// 	phone: '(555) 123-4567',
+	// 	products: [
+	// 		{ name: 'Artisan Coffee Mug', price: 24.99, quantity: 2 },
+	// 		{ name: 'Leather Wallet', price: 74.97, quantity: 1 },
+	// 	],
+	// };
+
+	const { data: orderData } = useQuery({
+		queryKey: ['orders', orderId],
+		queryFn: () => getOrderByIdService({ orderId: orderId!, storeId: storeId! }),
+	});
+		console.log("orders", orderData,storeId)
 
 	return (
 		<motion.div

@@ -31,21 +31,27 @@ router
 	.get(jwtAuthMiddleware, getStoreById)
 	.delete(jwtAuthMiddleware, deleteStore);
 
-router.route('/:storeId/settings').get(jwtAuthMiddleware, getStoreSettings);
-// .put(jwtAuthMiddleware, updateStoreSettings);
-
+//customers Routes
 router.route('/:storeId/customers').get(jwtAuthMiddleware, getStoreCustomers);
 router
 	.route('/:storeId/customers/:customerId')
 	.get(jwtAuthMiddleware, getStoreCustomers);
+
+//orders Routes
 router.route('/:storeId/orders').get(jwtAuthMiddleware, getStoreOrders);
 router
 	.route('/:storeId/orders/:orderId')
 	.get(jwtAuthMiddleware, getStoreOrders);
 // .put(jwtAuthMiddleware, updateStoreSettings);
+
+//Settings Routes
 router
 	.route('/:storeId/address-settings')
 	.put(jwtAuthMiddleware, updateStoreAddressSettings);
+router
+	.route('/:storeId/settings')
+	.get(jwtAuthMiddleware, getStoreSettings)
+	// .put(jwtAuthMiddleware, updateStoreSettings);
 router
 	.route('/:storeId/general-settings')
 	.put(jwtAuthMiddleware, updateStoreGeneralSettings);
