@@ -97,9 +97,8 @@ CREATE TABLE "media" (
 --> statement-breakpoint
 CREATE TABLE "order" (
 	"id" varchar PRIMARY KEY NOT NULL,
-	"customer_id" integer,
-	"cart_id" integer,
-	"contact_id" integer,
+	"store_id" varchar NOT NULL,
+	"customer_id" varchar NOT NULL,
 	"name" varchar,
 	"shipping_address_phone" varchar,
 	"shipping_address_company" varchar,
@@ -121,13 +120,11 @@ CREATE TABLE "order" (
 	"billing_address_zip" varchar,
 	"tags" varchar,
 	"note" varchar,
+	"status" "status" DEFAULT 'pending' NOT NULL,
 	"currency" varchar,
 	"total_price" numeric,
 	"subtotal_price" numeric,
-	"cancelled_at" timestamp,
-	"token" varchar,
-	"order_number" integer,
-	"processed_method" varchar,
+	"payment_method" "payment_method" DEFAULT 'cod' NOT NULL,
 	"additional_price" numeric,
 	"total_discounts" numeric,
 	"total_line_items_price" numeric,
@@ -138,14 +135,17 @@ CREATE TABLE "order" (
 	"current_total_price" numeric,
 	"current_subtotal_price" numeric,
 	"current_total_tax" numeric,
+	"cancelled_at" timestamp,
 	"processed_at" timestamp,
-	"shipped_at" timestamp
+	"shipped_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "order_items" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"order_id" integer,
-	"product_variant_id" integer,
+	"id" varchar PRIMARY KEY NOT NULL,
+	"order_id" varchar,
+	"product_id" varchar,
 	"quantity" integer,
 	"price_at_purchase" numeric,
 	"created_at" timestamp
@@ -338,10 +338,10 @@ ALTER TABLE "customer_address" ADD CONSTRAINT "customer_address_customer_id_cust
 ALTER TABLE "customer_store" ADD CONSTRAINT "customer_store_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "customer_store" ADD CONSTRAINT "customer_store_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "media" ADD CONSTRAINT "media_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "order" ADD CONSTRAINT "order_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "order" ADD CONSTRAINT "order_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order" ADD CONSTRAINT "order_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "order_items" ADD CONSTRAINT "order_items_order_id_order_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."order"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "order_items" ADD CONSTRAINT "order_items_product_variant_id_product_variant_id_fk" FOREIGN KEY ("product_variant_id") REFERENCES "public"."product_variant"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "order_items" ADD CONSTRAINT "order_items_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_media" ADD CONSTRAINT "product_media_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

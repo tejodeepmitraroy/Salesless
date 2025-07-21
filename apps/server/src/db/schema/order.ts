@@ -2,25 +2,46 @@ import { relations } from 'drizzle-orm';
 import {
 	integer,
 	numeric,
+	pgEnum,
 	pgTable,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
 
-import { cart } from './cart';
+// import { cart } from './cart';
 import { transaction } from './transaction';
-import { productVariant } from './product';
+import { product, productVariant } from './product';
 import { customer } from './customer';
 import { ulid } from 'ulid';
+import { store } from './store';
+
+// Define enums with default values
+export const paymentMethodEnum = pgEnum('payment_method', [
+	'cod',
+	'upi',
+	'card',
+	'netbanking',
+]);
+
+const statusEnum = pgEnum('status', [
+	'pending',
+	'paid',
+	'shipped',
+	'cancelled',
+	'delivered',
+]);
 
 export const order = pgTable('order', {
 	id: varchar('id')
 		.primaryKey()
 		.notNull()
 		.$defaultFn(() => ulid()),
-	customerId: varchar('customer_id').references(() => customer.id),
-	cartId: varchar('cart_id').references(() => cart.id),
-	contactId: varchar('contact_id'),
+	storeId: varchar('store_id')
+		.references(() => store.id, { onDelete: 'cascade' })
+		.notNull(),
+	customerId: varchar('customer_id')
+		.references(() => customer.id, { onDelete: 'cascade' })
+		.notNull(),
 	name: varchar('name'),
 	shippingAddressPhone: varchar('shipping_address_phone'),
 	shippingAddressCompany: varchar('shipping_address_company'),
@@ -42,13 +63,11 @@ export const order = pgTable('order', {
 	billingAddressZip: varchar('billing_address_zip'),
 	tags: varchar('tags'),
 	note: varchar('note'),
+	status: statusEnum('status').notNull().default('pending'),
 	currency: varchar('currency'),
 	totalPrice: numeric('total_price'),
 	subtotalPrice: numeric('subtotal_price'),
-	cancelledAt: timestamp('cancelled_at'),
-	token: varchar('token'),
-	orderNumber: integer('order_number'),
-	processedMethod: varchar('processed_method'),
+	paymentMethod: paymentMethodEnum('payment_method').notNull().default('cod'),
 	additionalPrice: numeric('additional_price'),
 	totalDiscounts: numeric('total_discounts'),
 	totalLineItemsPrice: numeric('total_line_items_price'),
@@ -59,8 +78,13 @@ export const order = pgTable('order', {
 	currentTotalPrice: numeric('current_total_price'),
 	currentSubtotalPrice: numeric('current_subtotal_price'),
 	currentTotalTax: numeric('current_total_tax'),
-	processedAt: timestamp('processed_at'),
-	shippedAt: timestamp('shipped_at'),
+	cancelledAt: timestamp('cancelled_at', { mode: 'string' }),
+	processedAt: timestamp('processed_at', { mode: 'string' }),
+	shippedAt: timestamp('shipped_at', { mode: 'string' }),
+	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'string' })
+		.notNull()
+		.$onUpdate(() => new Date().toISOString()),
 });
 
 export const orderRelations = relations(order, ({ one, many }) => ({
@@ -68,10 +92,14 @@ export const orderRelations = relations(order, ({ one, many }) => ({
 		fields: [order.customerId],
 		references: [customer.id],
 	}),
-	cart: one(cart, {
-		fields: [order.cartId],
-		references: [cart.id],
+	store: one(store, {
+		fields: [order.storeId],
+		references: [store.id],
 	}),
+	// cart: one(cart, {
+	// 	fields: [order.cartId],
+	// 	references: [cart.id],
+	// }),
 	items: many(orderItems),
 	transactions: many(transaction),
 }));
@@ -82,9 +110,7 @@ export const orderItems = pgTable('order_items', {
 		.notNull()
 		.$defaultFn(() => ulid()),
 	orderId: varchar('order_id').references(() => order.id),
-	productVariantId: varchar('product_variant_id').references(
-		() => productVariant.id
-	),
+	productId: varchar('product_id').references(() => product.id),
 	quantity: integer('quantity'),
 	priceAtPurchase: numeric('price_at_purchase'),
 	created_at: timestamp('created_at'),
@@ -96,7 +122,7 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
 		references: [order.id],
 	}),
 	productVariant: one(productVariant, {
-		fields: [orderItems.productVariantId],
+		fields: [orderItems.productId],
 		references: [productVariant.id],
 	}),
 }));

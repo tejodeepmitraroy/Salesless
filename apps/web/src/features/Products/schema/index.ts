@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const productMediaSchema = z.object({
-	mediaId: z.number(),
+	mediaId: z.string(),
 	index: z.number(),
 	url: z.string(),
 	key: z.string(),

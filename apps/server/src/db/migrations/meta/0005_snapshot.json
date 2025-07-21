@@ -1,6 +1,6 @@
 {
-	"id": "c50273b3-0580-4653-8771-d2194298ac76",
-	"prevId": "6dcb6586-fdcc-4041-b812-5c4f278129ca",
+	"id": "d065e265-cbcc-40a3-97d5-839dfb1e200b",
+	"prevId": "a3ea49dc-62b0-4e46-b051-164021960aea",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -796,10 +796,9 @@
 				},
 				"status": {
 					"name": "status",
-					"type": "status",
-					"typeSchema": "public",
+					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false,
+					"notNull": true,
 					"default": "'pending'"
 				},
 				"currency": {
@@ -822,10 +821,10 @@
 				},
 				"payment_method": {
 					"name": "payment_method",
-					"type": "payment_method",
-					"typeSchema": "public",
+					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true,
+					"default": "'cod'"
 				},
 				"additional_price": {
 					"name": "additional_price",

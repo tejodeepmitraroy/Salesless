@@ -47,6 +47,7 @@ export const getAllProducts = asyncHandler(
 				media: product.media.map((m) => ({
 					index: m.index,
 					mediaId: m.media.id,
+
 					...m.media,
 				})), // Extract only media objects
 			}));

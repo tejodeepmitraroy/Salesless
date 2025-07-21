@@ -35,6 +35,8 @@ export const uploadFileToS3 = asyncHandler(
 				rootFolder: 'products',
 			});
 
+			const mediaUrl = await getObjectUrl({ key });
+
 			const storeMedia = await db
 				.insert(media)
 				.values({
@@ -50,7 +52,7 @@ export const uploadFileToS3 = asyncHandler(
 				new ApiResponse(200, {
 					uploadUrl,
 					fileName: storedObject.fileName,
-					publicS3Url: storedObject.url,
+					publicS3Url: mediaUrl,
 					key: storedObject.key,
 					mediaId: storedObject.id,
 				})
@@ -108,15 +110,27 @@ export const getMediaFiles = asyncHandler(
 				const mediaFile = await db.query.media.findFirst({
 					where: eq(media.id, mediaId),
 				});
+				const mediaUrl = await getObjectUrl({ key: mediaFile!.key! });
 
-				response.status(200).json(new ApiResponse(200, mediaFile));
+				response
+					.status(200)
+					.json(new ApiResponse(200, { ...mediaFile, url: mediaUrl }));
 				return;
 			} else {
 				const allMediaFiles = await db.query.media.findMany({
 					where: eq(media.storeId, storeId),
 				});
 
-				response.status(200).json(new ApiResponse(200, allMediaFiles));
+				const mediaFiles = await Promise.all(
+					allMediaFiles.map(async (media) => ({
+						id: media.id,
+						fileName: media.fileName,
+						url: await getObjectUrl({ key: media.key! }),
+						key: media.key,
+					}))
+				);
+
+				response.status(200).json(new ApiResponse(200, mediaFiles));
 			}
 		} catch (error) {
 			console.log(error);

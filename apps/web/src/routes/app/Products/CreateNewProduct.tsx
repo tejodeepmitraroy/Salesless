@@ -115,7 +115,7 @@ const CreateNewProduct = () => {
 					};
 
 			const modifiedData = {
-				storeId: Number(storeId!),
+				storeId: storeId!,
 				title: data.title,
 				description: data.description,
 				media: data.media,

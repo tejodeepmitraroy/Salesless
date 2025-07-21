@@ -1,5 +1,5 @@
 {
-	"id": "9f488646-29ff-417a-9d80-4b09c519f6c0",
+	"id": "6dcb6586-fdcc-4041-b812-5c4f278129ca",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
@@ -656,23 +656,17 @@
 					"primaryKey": true,
 					"notNull": true
 				},
+				"store_id": {
+					"name": "store_id",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
 				"customer_id": {
 					"name": "customer_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false
-				},
-				"cart_id": {
-					"name": "cart_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"contact_id": {
-					"name": "contact_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"name": {
 					"name": "name",
@@ -800,6 +794,14 @@
 					"primaryKey": false,
 					"notNull": false
 				},
+				"status": {
+					"name": "status",
+					"type": "status",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "'pending'"
+				},
 				"currency": {
 					"name": "currency",
 					"type": "varchar",
@@ -818,29 +820,13 @@
 					"primaryKey": false,
 					"notNull": false
 				},
-				"cancelled_at": {
-					"name": "cancelled_at",
-					"type": "timestamp",
+				"payment_method": {
+					"name": "payment_method",
+					"type": "payment_method",
+					"typeSchema": "public",
 					"primaryKey": false,
-					"notNull": false
-				},
-				"token": {
-					"name": "token",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"order_number": {
-					"name": "order_number",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"processed_method": {
-					"name": "processed_method",
-					"type": "varchar",
-					"primaryKey": false,
-					"notNull": false
+					"notNull": true,
+					"default": "'cod'"
 				},
 				"additional_price": {
 					"name": "additional_price",
@@ -902,6 +888,12 @@
 					"primaryKey": false,
 					"notNull": false
 				},
+				"cancelled_at": {
+					"name": "cancelled_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
 				"processed_at": {
 					"name": "processed_at",
 					"type": "timestamp",
@@ -913,26 +905,39 @@
 					"type": "timestamp",
 					"primaryKey": false,
 					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true
 				}
 			},
 			"indexes": {},
 			"foreignKeys": {
+				"order_store_id_store_id_fk": {
+					"name": "order_store_id_store_id_fk",
+					"tableFrom": "order",
+					"tableTo": "store",
+					"columnsFrom": ["store_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				},
 				"order_customer_id_customer_id_fk": {
 					"name": "order_customer_id_customer_id_fk",
 					"tableFrom": "order",
 					"tableTo": "customer",
 					"columnsFrom": ["customer_id"],
 					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"order_cart_id_cart_id_fk": {
-					"name": "order_cart_id_cart_id_fk",
-					"tableFrom": "order",
-					"tableTo": "cart",
-					"columnsFrom": ["cart_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
+					"onDelete": "cascade",
 					"onUpdate": "no action"
 				}
 			},
@@ -948,19 +953,19 @@
 			"columns": {
 				"id": {
 					"name": "id",
-					"type": "serial",
+					"type": "varchar",
 					"primaryKey": true,
 					"notNull": true
 				},
 				"order_id": {
 					"name": "order_id",
-					"type": "integer",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
-				"product_variant_id": {
-					"name": "product_variant_id",
-					"type": "integer",
+				"product_id": {
+					"name": "product_id",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
 				},
@@ -994,11 +999,11 @@
 					"onDelete": "no action",
 					"onUpdate": "no action"
 				},
-				"order_items_product_variant_id_product_variant_id_fk": {
-					"name": "order_items_product_variant_id_product_variant_id_fk",
+				"order_items_product_id_product_id_fk": {
+					"name": "order_items_product_id_product_id_fk",
 					"tableFrom": "order_items",
-					"tableTo": "product_variant",
-					"columnsFrom": ["product_variant_id"],
+					"tableTo": "product",
+					"columnsFrom": ["product_id"],
 					"columnsTo": ["id"],
 					"onDelete": "no action",
 					"onUpdate": "no action"

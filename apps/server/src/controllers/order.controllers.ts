@@ -1,67 +1,150 @@
 import { Request, Response } from 'express';
 import { db } from '../db';
-import { product } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { order, orderItems, paymentMethodEnum } from '../db/schema/order';
+import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 import {
+	product,
 	productMedia,
 	productOptions,
 	productOptionsValues,
 	productVariant,
 } from '../db/schema/product';
+import { customer } from '../db/schema';
 
 // Create Order Request
 export const createOrder = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = request.query.storeId as string;
+		const authUser = request.user as InferSelectModel<typeof customer>;
+		const {
+			storeId,
+			// customerId,
+			// cartId,
+			// totalAmount,
+			// contactId,
+			// name,
+			products,
+			shippingAddress,
+			billingAddress,
+			// tags,
+			// note,
+			// currency,
+			// totalPrice,
+			// subtotalPrice,
+			// paymentMethod,
+			// additionalPrice,
+			// totalDiscounts,
+			// totalLineItemsPrice,
+			// totalTax,
+			// totalTaxRecovered,
+			// totalWeight,
+			// currentTotalDiscounts,
+			// currentTotalPrice,
+			// currentSubtotalPrice,
+			// currentTotalTax,
+		}: {
+			storeId: string;
+			customerId: string;
+			cartId: string;
+			totalAmount: number;
+			contactId: string;
+			name: string;
+			products: Array<{
+				productId: string;
+				quantity: number;
+			}>;
+			shippingAddress: {
+				phone: string;
+				company: string;
+				name: string;
+				address1: string;
+				address2: string;
+				city: string;
+				province: string;
+				country: string;
+				zip: string;
+			};
+			billingAddress: {
+				phone: string;
+				company: string;
+				name: string;
+				address1: string;
+				address2: string;
+				city: string;
+				province: string;
+				country: string;
+				zip: string;
+			};
+			tags: string[];
+			note: string;
+			currency: string;
+			totalPrice: number;
+			subtotalPrice: number;
+			paymentMethod: (typeof paymentMethodEnum.enumValues)[number];
+			additionalPrice: number;
+			totalDiscounts: number;
+			totalLineItemsPrice: number;
+			totalTax: number;
+			totalTaxRecovered: number;
+			totalWeight: number;
+			currentTotalDiscounts: number;
+			currentTotalPrice: number;
+			currentSubtotalPrice: number;
+			currentTotalTax: number;
+			shippedAt: string;
+		} = request.body;
 
 		if (!storeId) {
 			response.status(400).json(new ApiError(400, 'storeId is required'));
 		}
 		try {
-			const products = await db.query.product.findMany({
-				where: eq(product.storeId, storeId),
-				with: {
-					media: {
-						with: {
-							media: true,
-						},
-						columns: {
-							productId: false,
-							mediaId: false,
-						},
-					},
-					category: true,
-				},
-			});
-			if (!products) {
-				response.status(404).json(new ApiError(404, 'Products not found'));
-			}
+			db.transaction(async (trx) => {
+				const [createOrder] = await trx
+					.insert(order)
+					.values({
+						storeId: storeId, // Make sure this is defined
+						customerId: authUser.id, // Assuming authUser contains the customer ID
+						// Generate a unique order name
+						// Uncomment and provide other required fields
+						shippingAddressPhone: shippingAddress?.phone || '',
+						shippingAddressName: shippingAddress?.name || '',
+						shippingAddressAddress1: shippingAddress?.address1 || '',
+						shippingAddressCity: shippingAddress?.city || '',
+						shippingAddressProvince: shippingAddress?.province || '',
+						shippingAddressCountry: shippingAddress?.country || '',
+						shippingAddressZip: shippingAddress?.zip || '',
+						// Include billing address if different
+						billingAddressPhone:
+							billingAddress?.phone || shippingAddress?.phone || '',
+						billingAddressName:
+							billingAddress?.name || shippingAddress?.name || '',
+						// ... other billing address fields
+					})
+					.returning();
 
-			const simplifiedProducts = products.map((product) => ({
-				...product,
-				category: product.category?.name ?? '',
+				const createOrderItems = await trx
+					.insert(orderItems)
+					.values(
+						products.map((p) => ({
+							orderId: createOrder.id,
+							productId: p.productId,
 
-				media: product.media.map((m) => ({
-					index: m.index,
-					mediaId: m.media.id,
-					...m.media,
-				})), // Extract only media objects
-			}));
-
-			console.log(simplifiedProducts);
-
-			response
-				.status(201)
-				.json(
-					new ApiResponse(
-						200,
-						simplifiedProducts,
-						'Products fetched successfully'
+							quantity: p.quantity,
+						}))
 					)
-				);
+					.returning();
+				response
+					.status(201)
+					.json(
+						new ApiResponse(
+							200,
+							createOrderItems,
+							'Products fetched successfully'
+						)
+					);
+			});
 		} catch (error) {
 			response.status(500).json(new ApiError(500, 'Error Happens', error));
 		}

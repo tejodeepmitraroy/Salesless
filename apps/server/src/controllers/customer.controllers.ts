@@ -10,7 +10,6 @@ import {
 	generateResetPasswordToken,
 	verifyResetPasswordJwtToken,
 } from '../helper/token';
-import { forgotPasswordEmail } from '../helper/sendEmail';
 import { customerAddress } from '../db/schema/customer';
 
 //Account Routes
@@ -442,15 +441,15 @@ export const forgetPassword = asyncHandler(
 				const token = generateResetPasswordToken(userProfile.id);
 				console.log('Token', token);
 
-				const emailInfo = await forgotPasswordEmail({
-					receiverEmail: email,
-					userFirstName: userProfile.firstName,
-					token,
-				});
+				// const emailInfo = await forgotPasswordEmail({
+				// 	receiverEmail: email,
+				// 	userFirstName: userProfile.firstName,
+				// 	token,
+				// });
 
 				response
 					.status(200)
-					.json(new ApiResponse(200, emailInfo, 'New Password Updated'));
+					.json(new ApiResponse(200, {}, 'New Password Updated'));
 			}
 		} catch (error) {
 			response.status(400).json(new ApiError(400, 'error Happens', error));

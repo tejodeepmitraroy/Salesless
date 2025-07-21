@@ -114,7 +114,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 		disabled: isUploading || media.length >= maxImages,
 	});
 
-	const removeImage = (id: number) => {
+	const removeImage = (id: string) => {
 		const Id = media.find((image) => image.mediaId === id)!.key;
 		deleteObject(Id);
 		onChange(media.filter((image) => image.mediaId !== id));

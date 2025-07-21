@@ -15,6 +15,7 @@ import { media } from './media';
 import { collection } from './collection';
 import { customer } from './customer';
 import { ulid } from 'ulid';
+import { order } from './order';
 
 export const store = pgTable('store', {
 	id: varchar('id')
@@ -50,6 +51,7 @@ export const storeRelations = relations(store, ({ many }) => ({
 	media: many(media, {
 		relationName: 'storeMedia',
 	}),
+	orders: many(order),
 	apiKeys: many(apiKey),
 	// paymentGateways: many(paymentGatewayConfig),
 }));

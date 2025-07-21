@@ -1,6 +1,6 @@
 {
-	"id": "c50273b3-0580-4653-8771-d2194298ac76",
-	"prevId": "6dcb6586-fdcc-4041-b812-5c4f278129ca",
+	"id": "75486db8-56e7-4c01-8b8c-336bcbc18dd7",
+	"prevId": "9fcf5607-ae3e-49bf-961f-feaee3659241",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -817,13 +817,6 @@
 				"subtotal_price": {
 					"name": "subtotal_price",
 					"type": "numeric",
-					"primaryKey": false,
-					"notNull": false
-				},
-				"payment_method": {
-					"name": "payment_method",
-					"type": "payment_method",
-					"typeSchema": "public",
 					"primaryKey": false,
 					"notNull": false
 				},

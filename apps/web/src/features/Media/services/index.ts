@@ -11,7 +11,7 @@ export const generatePresignedUrl = async ({
 	fileName: string;
 	publicS3Url: string;
 	key: string;
-	mediaId: number;
+	mediaId: string;
 }> => {
 	try {
 		const response = await customAxios.post(
