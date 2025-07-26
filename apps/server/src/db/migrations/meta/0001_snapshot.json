@@ -1,9 +1,91 @@
 {
-	"id": "c50273b3-0580-4653-8771-d2194298ac76",
-	"prevId": "6dcb6586-fdcc-4041-b812-5c4f278129ca",
+	"id": "633bf297-9516-4273-b659-f81f1251d2d4",
+	"prevId": "b38f9a33-eda1-4d1d-af8c-9454605c4e21",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
+		"public.gateway_configs": {
+			"name": "gateway_configs",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"store_id": {
+					"name": "store_id",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"gateway": {
+					"name": "gateway",
+					"type": "payment_gateway",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"api_key": {
+					"name": "api_key",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"api_secret": {
+					"name": "api_secret",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"mode": {
+					"name": "mode",
+					"type": "mode",
+					"typeSchema": "public",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"active": {
+					"name": "active",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": true
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true,
+					"default": "now()"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"gateway_configs_store_id_store_id_fk": {
+					"name": "gateway_configs_store_id_store_id_fk",
+					"tableFrom": "gateway_configs",
+					"tableTo": "store",
+					"columnsFrom": ["store_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
 		"public.cart": {
 			"name": "cart",
 			"schema": "",
@@ -796,8 +878,7 @@
 				},
 				"status": {
 					"name": "status",
-					"type": "status",
-					"typeSchema": "public",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false,
 					"default": "'pending'"
@@ -822,10 +903,10 @@
 				},
 				"payment_method": {
 					"name": "payment_method",
-					"type": "payment_method",
-					"typeSchema": "public",
+					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": false,
+					"default": "'cod'"
 				},
 				"additional_price": {
 					"name": "additional_price",
@@ -960,31 +1041,32 @@
 					"name": "order_id",
 					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"product_id": {
 					"name": "product_id",
 					"type": "varchar",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"quantity": {
 					"name": "quantity",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"price_at_purchase": {
 					"name": "price_at_purchase",
-					"type": "numeric",
+					"type": "integer",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"created_at": {
 					"name": "created_at",
 					"type": "timestamp",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true,
+					"default": "now()"
 				}
 			},
 			"indexes": {},
@@ -2197,6 +2279,16 @@
 		}
 	},
 	"enums": {
+		"public.mode": {
+			"name": "mode",
+			"schema": "public",
+			"values": ["test", "live"]
+		},
+		"public.payment_gateway": {
+			"name": "payment_gateway",
+			"schema": "public",
+			"values": ["stripe", "razorpay"]
+		},
 		"public.status": {
 			"name": "status",
 			"schema": "public",

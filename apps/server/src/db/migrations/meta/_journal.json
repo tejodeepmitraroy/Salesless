@@ -1,69 +1,20 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1753047331840,
-      "tag": "0000_sturdy_nightshade",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1753077285519,
-      "tag": "0001_lumpy_morlocks",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1753077405054,
-      "tag": "0002_stormy_mad_thinker",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1753077783291,
-      "tag": "0003_small_wallop",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1753078238061,
-      "tag": "0004_nifty_mordo",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1753078277083,
-      "tag": "0005_flippant_frank_castle",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1753095464553,
-      "tag": "0006_slimy_exodus",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1753095502303,
-      "tag": "0007_amused_tomorrow_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1753096322219,
-      "tag": "0008_acoustic_mariko_yashida",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1753517035382,
+			"tag": "0000_charming_zaran",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "7",
+			"when": 1753517408239,
+			"tag": "0001_right_shinko_yamashiro",
+			"breakpoints": true
+		}
+	]
 }

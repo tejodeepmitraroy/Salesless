@@ -12,7 +12,7 @@ export interface Store {
 	zip: string | null;
 	city: string | null;
 	phone: string;
-	countryCode: string;
+	countryCode: string | null;
 	timezone: string | null;
 	moneyFormat: string | null;
 	domain: string | null;
@@ -59,7 +59,7 @@ export const useStoreStore = create<StoreStore>()(
 			try {
 				const data = await getAllStoreService();
 				console.log('fetch strore from StoreStore', data);
-				set({ stores: data });
+				set({ stores: data! });
 			} catch (error) {
 				console.error(error);
 			}

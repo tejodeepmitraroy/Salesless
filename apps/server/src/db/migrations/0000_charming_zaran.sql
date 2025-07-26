@@ -1,4 +1,16 @@
 CREATE TYPE "public"."status" AS ENUM('active', 'draft', 'archive');--> statement-breakpoint
+CREATE TABLE "gateway_configs" (
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar NOT NULL,
+	"gateway" "payment_gateway",
+	"api_key" text NOT NULL,
+	"api_secret" text NOT NULL,
+	"mode" "mode",
+	"active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "cart" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"store_id" varchar,
@@ -120,11 +132,11 @@ CREATE TABLE "order" (
 	"billing_address_zip" varchar,
 	"tags" varchar,
 	"note" varchar,
-	"status" "status" DEFAULT 'pending' NOT NULL,
+	"status" varchar DEFAULT 'pending',
 	"currency" varchar,
 	"total_price" numeric,
 	"subtotal_price" numeric,
-	"payment_method" "payment_method" DEFAULT 'cod' NOT NULL,
+	"payment_method" varchar DEFAULT 'cod',
 	"additional_price" numeric,
 	"total_discounts" numeric,
 	"total_line_items_price" numeric,
@@ -144,11 +156,11 @@ CREATE TABLE "order" (
 --> statement-breakpoint
 CREATE TABLE "order_items" (
 	"id" varchar PRIMARY KEY NOT NULL,
-	"order_id" varchar,
-	"product_id" varchar,
-	"quantity" integer,
-	"price_at_purchase" numeric,
-	"created_at" timestamp
+	"order_id" varchar NOT NULL,
+	"product_id" varchar NOT NULL,
+	"quantity" integer NOT NULL,
+	"price_at_purchase" integer NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "permissions" (
@@ -329,6 +341,7 @@ CREATE TABLE "user_store" (
 	CONSTRAINT "user_store_store_id_user_id_pk" PRIMARY KEY("store_id","user_id")
 );
 --> statement-breakpoint
+ALTER TABLE "gateway_configs" ADD CONSTRAINT "gateway_configs_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

@@ -15,7 +15,8 @@ import {
 // Get all products
 export const getAllProducts = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = request.query.storeId as string;
+		// const storeId = request.query.storeId as string;
+		const storeId = request.storeId!;
 
 		if (!storeId) {
 			response.status(400).json(new ApiError(400, 'storeId is required'));

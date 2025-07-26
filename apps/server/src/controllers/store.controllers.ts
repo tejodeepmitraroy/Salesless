@@ -3,7 +3,7 @@ import { db } from '../db';
 
 import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
-import { customerStore, order, store, user, userStore } from '../db/schema';
+import { customerStore, store, user, userStore } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
@@ -186,7 +186,7 @@ export const getStoreSettings = asyncHandler(
 );
 export const getStoreCustomers = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = request.params.storeId;
+		const storeId = request.storeId!;
 		const customerId = request.params.customerId;
 
 		try {
@@ -196,7 +196,12 @@ export const getStoreCustomers = asyncHandler(
 						eq(customerStore.storeId, storeId) &&
 						eq(customerStore.customerId, customerId),
 					with: {
-						customer: true,
+						customer: {
+							columns: {
+								password: false,
+								refreshToken: false,
+							},
+						},
 					},
 					columns: {
 						customerId: false,
@@ -220,7 +225,12 @@ export const getStoreCustomers = asyncHandler(
 				const customers = await db.query.customerStore.findMany({
 					where: eq(customerStore.storeId, storeId),
 					with: {
-						customer: true,
+						customer: {
+							columns: {
+								password: false,
+								refreshToken: false,
+							},
+						},
 					},
 					columns: {
 						customerId: false,
@@ -265,41 +275,6 @@ export const getStoreCustomers = asyncHandler(
 	}
 );
 
-export const getStoreOrders = asyncHandler(
-	async (request: Request, response: Response) => {
-		const storeId = request.params.storeId;
-		const orderId = request.params.orderId;
-		try {
-			if (orderId) {
-				const storeOrder = await db.query.order.findFirst({
-					where: eq(order.storeId, storeId),
-				});
-				response
-					.status(200)
-					.json(
-						new ApiResponse(200, storeOrder, 'Store order fetched successfully')
-					);
-			} else {
-				const storeOrders = await db.query.order.findMany({
-					where: eq(order.storeId, storeId),
-				});
-				response
-					.status(200)
-					.json(
-						new ApiResponse(
-							200,
-							storeOrders,
-							'Store orders fetched successfully'
-						)
-					);
-			}
-		} catch (error) {
-			response
-				.status(500)
-				.json(new ApiError(500, 'Error fetching store orders', error));
-		}
-	}
-);
 export const updateStoreGeneralSettings = asyncHandler(
 	async (req: Request, res: Response): Promise<void> => {
 		const storeId = req.params.storeId;

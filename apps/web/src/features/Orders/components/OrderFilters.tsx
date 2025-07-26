@@ -11,7 +11,13 @@ import {
 import { Filter, Search } from 'lucide-react';
 import { useOrderStore } from '@/stores/useOrderStore';
 
-const OrderFilters = () => {
+const OrderFilters = ({
+	searchTerm,
+	setSearchTerm,
+}: {
+	searchTerm: string;
+	setSearchTerm: (searchTerm: string) => void;
+}) => {
 	const status = useOrderStore((state) => state.status);
 	const statusFilter = useOrderStore((state) => state.statusFilter);
 	const setStatusFilter = useOrderStore((state) => state.setStatusFilter);
@@ -26,8 +32,8 @@ const OrderFilters = () => {
 				<Input
 					placeholder="Search products, SKUs, vendors..."
 					className="pl-10"
-					// value={searchTerm}
-					// onChange={(e) => setSearchTerm(e.target.value)}
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
 				/>
 			</div>
 

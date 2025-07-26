@@ -28,9 +28,10 @@ import {
 } from 'lucide-react';
 import { NavUser } from './nav-user';
 import { NavMain } from './nav-main';
-import { TeamSwitcher } from './team-switcher';
+
 import { NavSecondary } from './nav-secondary';
 import { useParams } from 'react-router';
+import { StoreSwitcher } from './store-switcher';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { storeId } = useParams<{ storeId: string }>();
@@ -143,16 +144,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				url: '#',
 				icon: Database,
 			},
-			// {
-			// 	name: 'Reports',
-			// 	url: '#',
-			// 	icon: IconReport,
-			// },
-			// {
-			// 	name: 'Word Assistant',
-			// 	url: '#',
-			// 	icon: IconFileWord,
-			// },
 		],
 		teams: [
 			{
@@ -188,7 +179,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 
-				<TeamSwitcher teams={data.teams} />
+				<StoreSwitcher store={data.teams} />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />

@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { ChevronsUpDown, Plus } from 'lucide-react';
 
@@ -18,20 +16,26 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
+import { getAllStoreService } from '@/features/Store/services';
+import { useQuery } from '@tanstack/react-query';
 
-export function TeamSwitcher({
-	teams,
+export function StoreSwitcher({
+	store,
 }: {
-	teams: {
+	store: {
 		name: string;
-		logo: React.ElementType;
-		plan: string;
+		// logo: React.ElementType;
+		// plan: string;
 	}[];
 }) {
 	const { isMobile } = useSidebar();
-	const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+	const [activeStore, setActiveStore] = React.useState(store[0]);
 
-	if (!activeTeam) {
+	const { data: stores } = useQuery({
+		queryKey: ['stores'],
+		queryFn: getAllStoreService,
+	});
+	if (!stores) {
 		return null;
 	}
 
@@ -45,11 +49,11 @@ export function TeamSwitcher({
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-								<activeTeam.logo className="size-4" />
+								{/* <activeStore.logo className="size-4" /> */}
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{activeTeam.name}</span>
-								<span className="truncate text-xs">{activeTeam.plan}</span>
+								<span className="truncate font-medium">{activeStore.name}</span>
+								{/* <span className="truncate text-xs">{activeStore.plan}</span> */}
 							</div>
 							<ChevronsUpDown className="ml-auto" />
 						</SidebarMenuButton>
@@ -61,18 +65,24 @@ export function TeamSwitcher({
 						sideOffset={4}
 					>
 						<DropdownMenuLabel className="text-muted-foreground text-xs">
-							Teams
+							Stores
 						</DropdownMenuLabel>
-						{teams.map((team, index) => (
+						{stores.map((store, index) => (
 							<DropdownMenuItem
-								key={team.name}
-								onClick={() => setActiveTeam(team)}
+								key={store.name}
+								onClick={() =>
+									setActiveStore({
+										name: store.name,
+										// logo: store.logo,
+										// plan: store.plan,
+									})
+								}
 								className="gap-2 p-2"
 							>
 								<div className="flex size-6 items-center justify-center rounded-md border">
-									<team.logo className="size-3.5 shrink-0" />
+									{/* <store.logo className="size-3.5 shrink-0" /> */}
 								</div>
-								{team.name}
+								{store.name}
 								<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
 							</DropdownMenuItem>
 						))}

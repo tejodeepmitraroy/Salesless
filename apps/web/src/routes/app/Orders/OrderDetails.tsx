@@ -38,7 +38,10 @@ const OrderDetails = () => {
 	// 	queryFn: () => getOrderByIdService({ orderId: orderId! }),
 	// });
 
-	const { storeId, orderId } = useParams<{ storeId: string; orderId: string }>();
+	const { storeId, orderId } = useParams<{
+		storeId: string;
+		orderId: string;
+	}>();
 
 	// const orderData = {
 	// 	id: 'ORD-7452',
@@ -59,9 +62,10 @@ const OrderDetails = () => {
 
 	const { data: orderData } = useQuery({
 		queryKey: ['orders', orderId],
-		queryFn: () => getOrderByIdService({ orderId: orderId!, storeId: storeId! }),
+		queryFn: () =>
+			getOrderByIdService({ orderId: orderId!, storeId: storeId! }),
 	});
-		console.log("orders", orderData,storeId)
+	console.log('orders', orderData, storeId);
 
 	return (
 		<motion.div

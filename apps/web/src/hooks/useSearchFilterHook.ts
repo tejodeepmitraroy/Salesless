@@ -2,9 +2,6 @@ import { useState } from 'react';
 
 interface useSearchFilterHookProps {
 	data: any[];
-	searchTerm: string;
-	categoryFilter: string;
-	statusFilter: string;
 }
 
 const useSearchFilterHook = ({ data }: useSearchFilterHookProps) => {
@@ -21,14 +18,6 @@ const useSearchFilterHook = ({ data }: useSearchFilterHookProps) => {
 				// && item.status.toLowerCase().includes(statusFilter.toLowerCase())
 			);
 		});
-
-	// const filteredData = items.filter((item) => {
-	// 	return (
-	// 		item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-	// 		item.category.toLowerCase().includes(categoryFilter.toLowerCase()) &&
-	// 		item.status.toLowerCase().includes(statusFilter.toLowerCase())
-	// 	);
-	// });
 
 	return {
 		filteredData,

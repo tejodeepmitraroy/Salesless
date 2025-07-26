@@ -472,12 +472,9 @@ export const getOrders = asyncHandler(
 // 		const authUser = request.user as InferSelectModel<typeof customer>;
 // 		const orderId = request.params.orderId;
 // 		const {
-			
-			
 
 // 			products,
 // 		}: {
-			
 
 // 			products: Array<{
 // 				productId: string;
@@ -492,13 +489,10 @@ export const getOrders = asyncHandler(
 // 					where: eq(orderItems.orderId, orderId),
 // 				});
 
-
 // 				// const orderItemsData = products.map((p) => ({
 // 				// 	productId: p.productId,
 // 				// 	quantity: p.quantity,
 // 				// }));
-
-				
 
 // 				const updatedData = orderItemsData
 // 					products.map((p) => ({
@@ -507,7 +501,6 @@ export const getOrders = asyncHandler(
 // 						quantity: p.quantity,
 // 						priceAtPurchase: 232323,
 // 					}))
-				
 
 // 				const createOrderItems = await trx
 // 					.update(orderItems)
@@ -516,15 +509,6 @@ export const getOrders = asyncHandler(
 // 					})
 // 					.where(eq(orderItems.id, orderItemsData.productId))
 // 					.returning();
-
-
-
-
-
-
-
-				
-			
 
 // 				response
 // 					.status(201)
@@ -555,6 +539,44 @@ export const deleteOrder = asyncHandler(
 			response
 				.status(500)
 				.json(new ApiError(500, 'Error deleting order', error));
+		}
+	}
+);
+
+////Store Orders
+
+export const getStoreOrders = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = request.storeId!;
+		const orderId = request.params.orderId;
+		try {
+			if (orderId) {
+				const storeOrder = await db.query.order.findFirst({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, storeOrder, 'Store order fetched successfully')
+					);
+			} else {
+				const storeOrders = await db.query.order.findMany({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							storeOrders,
+							'Store orders fetched successfully'
+						)
+					);
+			}
+		} catch (error) {
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error fetching store orders', error));
 		}
 	}
 );

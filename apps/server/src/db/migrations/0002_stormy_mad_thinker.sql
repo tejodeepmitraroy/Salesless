@@ -1,1 +1,0 @@
-ALTER TABLE "order" RENAME COLUMN "payment_method" TO "paymentMethod";

@@ -1,6 +1,24 @@
 import { customAxios } from '@/api/axios-custom';
 
-export const getAllStoreService = async () => {
+export const getAllStoreService = async (): Promise<
+	Array<{
+		id: string;
+		name: string;
+		description: string;
+		country: string;
+		address1: string;
+		address2: string;
+		zip: string | null;
+		city: string | null;
+		phone: string;
+		countryCode: string | null;
+		timezone: string | null;
+		moneyFormat: string | null;
+		domain: string | null;
+		createdAt: string;
+		updatedAt: string;
+	}>
+> => {
 	const response = await customAxios(`/store`);
 	return response.data.data;
 };

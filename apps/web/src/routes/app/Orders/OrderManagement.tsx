@@ -6,6 +6,7 @@ import { orderColumns } from '@/features/Orders/tables/OrderColumns';
 import { useQuery } from '@tanstack/react-query';
 import { getAllOrdersService } from '@/features/Orders/services';
 import { useParams } from 'react-router';
+import useSearchFilterHook from '@/hooks/useSearchFilterHook';
 // import OrderModal from '@/features/Orders/components/OrderModal';
 
 const OrderManagement = () => {
@@ -232,8 +233,11 @@ const OrderManagement = () => {
 	// };
 
 	const { data: orders } = useQuery({
-		queryKey: ['orders'],
+		queryKey: ['orders', storeId],
 		queryFn: () => getAllOrdersService({ storeId: storeId! }),
+	});
+	const { filteredData, searchTerm, setSearchTerm } = useSearchFilterHook({
+		data: orders,
 	});
 	console.log('orders', orders, storeId);
 
@@ -245,8 +249,8 @@ const OrderManagement = () => {
 				description="Manage your orders"
 			/>
 			<section className="space-y-6">
-				<OrderFilters />
-				<OrderDataTable columns={orderColumns} data={orders ?? []} />
+				<OrderFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+				<OrderDataTable columns={orderColumns} data={filteredData()} />
 				{/* <Tabs defaultValue="all">
 					<section className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 						<TabsList className="grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">

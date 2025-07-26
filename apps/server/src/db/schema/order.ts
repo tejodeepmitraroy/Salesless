@@ -2,13 +2,12 @@ import { relations } from 'drizzle-orm';
 import {
 	integer,
 	numeric,
-
 	pgTable,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { transaction } from './transaction';
-import { product} from './product';
+import { product } from './product';
 import { customer } from './customer';
 import { ulid } from 'ulid';
 import { store } from './store';

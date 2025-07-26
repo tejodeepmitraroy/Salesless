@@ -31,6 +31,8 @@ export const deleteOrderByIdService = async ({
 	orderId: string;
 	storeId: string;
 }): Promise<Order> => {
-	const response = await customAxios.delete(`/store/${storeId}/orders/${orderId}`);
+	const response = await customAxios.delete(
+		`/store/${storeId}/orders/${orderId}`
+	);
 	return response.data.data;
 };
