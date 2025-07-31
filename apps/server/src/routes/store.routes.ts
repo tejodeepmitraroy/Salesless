@@ -5,15 +5,11 @@ import {
 	getStoreById,
 	updateStore,
 	deleteStore,
-	getStoreSettings,
-	updateStoreAddressSettings,
-	updateStoreGeneralSettings,
-
-	// updateStore,
-	// deleteStore,
-	// updateStoreSettings,
+	getStoreOrders,
+	getStoreCustomers,
 } from '../controllers/store.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
+import { storeMiddleware } from '../middleware/store.middleware';
 
 const router = Router();
 
@@ -22,34 +18,25 @@ router
 	.route('/')
 	.get(jwtAuthMiddleware, getStores)
 	.post(jwtAuthMiddleware, createStore)
-	.put(jwtAuthMiddleware, updateStore);
+	.put(jwtAuthMiddleware, storeMiddleware, updateStore);
 
 router
 	.route('/:storeId')
-	.get(jwtAuthMiddleware, getStoreById)
-	.delete(jwtAuthMiddleware, deleteStore);
+	.get(jwtAuthMiddleware, storeMiddleware, getStoreById)
+	.delete(jwtAuthMiddleware, storeMiddleware, deleteStore);
 
-// //customers Routes
-// router.route('/:storeId/customers').get(jwtAuthMiddleware, getStoreCustomers);
-// router
-// 	.route('/:storeId/customers/:customerId')
-// 	.get(jwtAuthMiddleware, getStoreCustomers);
+//customers Routes
+router
+	.route('/customers')
+	.get(jwtAuthMiddleware, storeMiddleware, getStoreCustomers);
+router
+	.route('/customers/:customerId')
+	.get(jwtAuthMiddleware, storeMiddleware, getStoreCustomers);
 
 //orders Routes
-// router.route('/:storeId/orders').get(jwtAuthMiddleware, getStoreOrders);
-// router
-// 	.route('/:storeId/orders/:orderId')
-// 	.get(jwtAuthMiddleware, getStoreOrders);
-// .put(jwtAuthMiddleware, updateStoreSettings);
-
-//Settings Routes
+router.route('/orders').get(jwtAuthMiddleware, storeMiddleware, getStoreOrders);
 router
-	.route('/:storeId/address-settings')
-	.put(jwtAuthMiddleware, updateStoreAddressSettings);
-router.route('/:storeId/settings').get(jwtAuthMiddleware, getStoreSettings);
-// .put(jwtAuthMiddleware, updateStoreSettings);
-router
-	.route('/:storeId/general-settings')
-	.put(jwtAuthMiddleware, updateStoreGeneralSettings);
+	.route('/orders/:orderId')
+	.get(jwtAuthMiddleware, storeMiddleware, getStoreOrders);
 
 export default router;

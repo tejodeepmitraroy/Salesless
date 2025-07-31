@@ -14,7 +14,8 @@ import roleRouter from './routes/role.routes';
 import inventoryRouter from './routes/inventory.routes';
 import cartRouter from './routes/cart.routes';
 import paymentRouter from './routes/payment.routes';
-import paymentGatewayRouter from './routes/paymentGateway.routes';
+
+import settingsRouter from './routes/settings.routes';
 // import eventsRouter from "./routes/events.routes";
 // import bookingRouter from "./routes/booking.routes";
 import cors from 'cors';
@@ -31,7 +32,8 @@ const corsOptions = {
 	optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 	methods: 'GET,POST,PUT,DELETE,OPTIONS',
 	credentials: true,
-	allowedHeaders: ['Content-Type', 'Authorization'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'x-store-id', 'X-Store-ID'],
+	exposedHeaders: ['x-store-id', 'X-Store-ID'],
 	// If cookies or credentials are used
 };
 app.use(cors(corsOptions));
@@ -71,12 +73,7 @@ app.use('/api/v1/category', categoryRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/media', mediaRouter);
 app.use('/api/v1/payment', paymentRouter);
-app.use('/api/v1/paymentGateway', paymentGatewayRouter);
-
-// app.use('/api/v1/donation', donationRouter);
-// app.use('/api/v1/projects', projectRouter);
-// app.use('/api/v1/enquiry', enquiryRouter);
-// app.use('/api/v1/projectVisit', projectVisitRouter);
+app.use('/api/v1/settings', settingsRouter);
 
 app.get('/', async (req, res) => {
 	res.json({ message: 'Server is 100% up running' });

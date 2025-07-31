@@ -3,7 +3,7 @@ import { db } from '../db';
 
 import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
-import { customerStore, store, user, userStore } from '../db/schema';
+import { customerStore, order, store, user, userStore } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
@@ -158,32 +158,69 @@ export const deleteStore = asyncHandler(
 	}
 );
 
-export const getStoreSettings = asyncHandler(
-	async (request: Request, response: Response) => {
-		try {
-			const storeSettings = await db.query.store.findFirst({
-				where: eq(store.id, request.params.storeId),
-			});
+// export const updateStoreSettings = async (
+// 	req: Request,
+// 	res: Response
+// ): Promise<void> => {
+// 	try {
+// 		const storeData = await db
+// 			.update(store)
+// 			.set({ settings: req.body })
+// 			.where(eq(stores.id, parseInt(req.params.id)))
+// 			.returning();
 
-			if (!storeSettings) {
-				response.status(404).json(new ApiError(404, 'Store not found'));
+// 		if (!store.length) {
+// 			return res.status(404).json({ message: 'Store not found' });
+// 		}
+
+// 		res.json({
+// 			message: 'Store settings updated successfully',
+// 			store: store[0],
+// 		});
+// 	} catch (error) {
+// 		res.status(500).json({ message: 'Error updating store settings', error });
+// 	}
+// };
+
+////Store Orders
+
+export const getStoreOrders = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = request.storeId!;
+		const orderId = request.params.orderId;
+		try {
+			if (orderId) {
+				const storeOrder = await db.query.order.findFirst({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(200, storeOrder, 'Store order fetched successfully')
+					);
+			} else {
+				const storeOrders = await db.query.order.findMany({
+					where: eq(order.storeId, storeId),
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							storeOrders,
+							'Store orders fetched successfully'
+						)
+					);
 			}
-			response
-				.status(200)
-				.json(
-					new ApiResponse(
-						200,
-						storeSettings,
-						'Store settings fetched successfully'
-					)
-				);
 		} catch (error) {
 			response
 				.status(500)
-				.json(new ApiError(500, 'Error updating store settings', error));
+				.json(new ApiError(500, 'Error fetching store orders', error));
 		}
 	}
 );
+
+//Store Customers
 export const getStoreCustomers = asyncHandler(
 	async (request: Request, response: Response) => {
 		const storeId = request.storeId!;
@@ -274,97 +311,3 @@ export const getStoreCustomers = asyncHandler(
 		}
 	}
 );
-
-export const updateStoreGeneralSettings = asyncHandler(
-	async (req: Request, res: Response): Promise<void> => {
-		const storeId = req.params.storeId;
-		const { name, description, domain } = req.body;
-
-		try {
-			const updatedStore = await db
-				.update(store)
-				.set({
-					name,
-					description,
-					domain,
-				})
-				.where(eq(store.id, storeId))
-				.returning();
-
-			if (!updatedStore.length) {
-				res.status(404).json(new ApiError(404, 'Store not found'));
-				return;
-			}
-
-			res
-				.status(200)
-				.json(
-					new ApiResponse(200, updatedStore[0], 'General settings updated')
-				);
-		} catch (error) {
-			res
-				.status(500)
-				.json(new ApiError(500, 'Failed to update settings', error));
-		}
-	}
-);
-export const updateStoreAddressSettings = asyncHandler(
-	async (req: Request, res: Response): Promise<void> => {
-		const storeId = req.params.storeId;
-		const { addressLine1, addressLine2, city, country, zip, phone } = req.body;
-
-		try {
-			const updatedStore = await db
-				.update(store)
-				.set({
-					address1: addressLine1,
-					address2: addressLine2,
-					city,
-					country,
-					zip,
-					phone,
-				})
-				.where(eq(store.id, storeId))
-				.returning();
-
-			if (!updatedStore.length) {
-				res.status(404).json(new ApiError(404, 'Store not found'));
-				return;
-			}
-
-			res
-				.status(200)
-				.json(
-					new ApiResponse(200, updatedStore[0], 'Address settings updated')
-				);
-		} catch (error) {
-			res
-				.status(500)
-				.json(new ApiError(500, 'Failed to update address settings', error));
-		}
-	}
-);
-
-// export const updateStoreSettings = async (
-// 	req: Request,
-// 	res: Response
-// ): Promise<void> => {
-// 	try {
-// 		const storeData = await db
-// 			.update(store)
-// 			.set({ settings: req.body })
-// 			.where(eq(stores.id, parseInt(req.params.id)))
-// 			.returning();
-
-// 		if (!store.length) {
-// 			return res.status(404).json({ message: 'Store not found' });
-// 		}
-
-// 		res.json({
-// 			message: 'Store settings updated successfully',
-// 			store: store[0],
-// 		});
-// 	} catch (error) {
-// 		res.status(500).json({ message: 'Error updating store settings', error });
-// 	}
-// };

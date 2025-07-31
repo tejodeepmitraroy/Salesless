@@ -15,10 +15,12 @@ export {
 export {
 	store,
 	userStore,
+	apiKey,
 	customerStore,
 	customerStoreRelations,
 	storeRelations,
 	userStoreRelations,
+	apiKeyRelations,
 } from './store';
 export {
 	product,

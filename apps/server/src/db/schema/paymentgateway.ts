@@ -13,6 +13,8 @@ import { store } from './store';
 export const paymentGatewayEnum = pgEnum('payment_gateway', [
 	'stripe',
 	'razorpay',
+	'phonepe',
+	'paytm',
 ]);
 
 export const modeEnum = pgEnum('mode', ['test', 'live']);
@@ -26,8 +28,9 @@ export const GatewayConfigs = pgTable('gateway_configs', {
 		.references(() => store.id)
 		.notNull(),
 	gateway: paymentGatewayEnum(), // 'stripe' | 'razorpay' | etc
-	apiKey: text('api_key').notNull(),
-	apiSecret: text('api_secret').notNull(),
+	apiKey: text('api_key').notNull().unique(),
+	apiSecret: text('api_secret').notNull().unique(),
+	apiUrl: varchar('api_url'),
 	mode: modeEnum(),
 	active: boolean('active').notNull().default(true),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),

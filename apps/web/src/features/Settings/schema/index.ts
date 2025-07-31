@@ -14,9 +14,7 @@ export const storeAddressSchema = z.object({
 	state: z.string().optional(),
 	zip: z.string().optional(),
 	phone: z.string().optional(),
-	country_code: z.string().optional(),
-	timezone: z.string().optional(),
-	money_format: z.string().optional(),
+	countryCode: z.string().optional(),
 });
 
 export const regionalSettingsSchema = z.object({
@@ -36,7 +34,19 @@ export const webhooksSettingsSchema = z.object({
 	secretKey: z.string(),
 });
 
+export const gatewaySettingsSchema = z.object({
+	apiUrl: z.string(),
+	apiKey: z.string().min(10, {
+		message: 'API Key must be at least 10 characters.',
+	}),
+	apiSecret: z.string().min(10, {
+		message: 'API Secret must be at least 10 characters.',
+	}),
+	isTestMode: z.boolean(),
+});
+
 export type GeneralSettingsSchema = z.infer<typeof generalSettingsSchema>;
 export type StoreAddressSchema = z.infer<typeof storeAddressSchema>;
 export type RegionalSettingsSchema = z.infer<typeof regionalSettingsSchema>;
 export type ApiKeysSettingsSchema = z.infer<typeof apiKeysSettingsSchema>;
+export type GatewaySettingsSchema = z.infer<typeof gatewaySettingsSchema>;

@@ -33,14 +33,12 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { useStoreStore } from '@/stores/useStore-Store';
+import { getStoreAddressService, updateStoreAddressService } from '../services';
 
 const AddressSettings = () => {
-	const selectedStore = useStoreStore((state) => state.selectedStore);
 	// Country options
 	const countryOptions = [
 		{ value: 'US', label: 'United States', code: '+1' },
-		{ value: 'CA', label: 'Canada', code: '+1' },
 		{ value: 'GB', label: 'United Kingdom', code: '+44' },
 		{ value: 'AU', label: 'Australia', code: '+61' },
 		{ value: 'DE', label: 'Germany', code: '+49' },
@@ -48,24 +46,47 @@ const AddressSettings = () => {
 		{ value: 'JP', label: 'Japan', code: '+81' },
 		{ value: 'IN', label: 'India', code: '+91' },
 	];
+
 	const form = useForm<StoreAddressSchema>({
-		// mode: 'onChange',
+		mode: 'onChange',
 		resolver: zodResolver(storeAddressSchema),
-		defaultValues: {
-			country: selectedStore?.country || '',
-			address1: selectedStore?.address1 || '',
-			address2: selectedStore?.address2 || '',
-			city: selectedStore?.city || '',
-			zip: selectedStore?.zip || '',
-			phone: '',
-			country_code: '',
-			timezone: '',
-			money_format: '',
+		defaultValues: async () => {
+			const response = await getStoreAddressService();
+
+			console.log('Response=====>', response);
+			return {
+				country: response.country,
+				address1: response.address1,
+				address2: response.address2,
+				city: response.city,
+				zip: response.zip,
+				phone: response.phone,
+				countryCode: response.countryCode,
+			};
 		},
 	});
 
+	const {
+		formState: { isDirty },
+		reset,
+	} = form;
+
 	const onSubmit = (data: StoreAddressSchema) => {
 		console.log(data);
+		try {
+			updateStoreAddressService({
+				address1: data.address1,
+				address2: data.address2,
+				city: data.city,
+				zip: data.zip,
+				phone: data.phone,
+				country: data.country,
+				countryCode: data.countryCode,
+				state: data.state,
+			});
+		} catch (error) {
+			console.log(error);
+		}
 	};
 	return (
 		<Card>
@@ -182,7 +203,7 @@ const AddressSettings = () => {
 							<section className="flex w-full">
 								<FormField
 									control={form.control}
-									name="country_code"
+									name="countryCode"
 									render={({ field }) => (
 										<FormItem>
 											<FormControl>
@@ -237,10 +258,17 @@ const AddressSettings = () => {
 
 			<Separator />
 			<CardFooter className="flex justify-end gap-4">
-				<Button size="sm" variant="outline">
+				<Button
+					size="sm"
+					variant="outline"
+					disabled={!isDirty}
+					onClick={() => reset()}
+				>
 					Cancel
 				</Button>
-				<Button size="sm">Save Changes</Button>
+				<Button size="sm" disabled={!isDirty}>
+					Save Changes
+				</Button>
 			</CardFooter>
 		</Card>
 	);

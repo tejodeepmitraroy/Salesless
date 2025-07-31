@@ -8,7 +8,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { user } from './user';
-
 import { product } from './product';
 import { cart } from './cart';
 import { media } from './media';
@@ -124,11 +123,11 @@ export const apiKey = pgTable('api_keys', {
 		.primaryKey()
 		.notNull()
 		.$defaultFn(() => ulid()),
-	store_id: varchar('store_id')
+	storeId: varchar('store_id')
 		.references(() => store.id)
 		.notNull(),
 	key: text('key').unique().notNull(),
-	secret_hash: text('secret_hash').notNull(),
+	secretHash: text('secret_hash').notNull(),
 	label: varchar('label', { length: 255 }),
 	scopes: text('scopes').default('read:store,read:orders'),
 	platform: varchar('platform', { length: 50 }),
@@ -139,7 +138,7 @@ export const apiKey = pgTable('api_keys', {
 
 export const apiKeyRelations = relations(apiKey, ({ one }) => ({
 	store: one(store, {
-		fields: [apiKey.store_id],
+		fields: [apiKey.storeId],
 		references: [store.id],
 	}),
 }));

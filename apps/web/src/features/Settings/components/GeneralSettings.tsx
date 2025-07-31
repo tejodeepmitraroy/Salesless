@@ -26,23 +26,48 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useStoreStore } from '@/stores/useStore-Store';
+// import { useStoreStore } from '@/stores/useStore-Store';
+import {
+	getGeneralSettingsService,
+	updateGeneralSettingsService,
+} from '../services';
+import { toast } from 'sonner';
 
 const General = () => {
-	const selectedStore = useStoreStore((state) => state.selectedStore);
 	const form = useForm<GeneralSettingsSchema>({
 		// mode: 'onChange',
 		resolver: zodResolver(generalSettingsSchema),
-		defaultValues: {
-			storeName: selectedStore?.name || '',
-			storeDescription: selectedStore?.description || '',
-			storeDomain: selectedStore?.domain || '',
+		defaultValues: async () => {
+			const response = await getGeneralSettingsService();
+			return {
+				storeName: response.name,
+				storeDomain: response.domain,
+				storeDescription: response.description,
+			};
 		},
 	});
 
-	const onSubmit = (data: GeneralSettingsSchema) => {
+	const {
+		formState: { isDirty },
+		reset,
+	} = form;
+
+	const onSubmit = async (data: GeneralSettingsSchema) => {
+		try {
+			const response = await updateGeneralSettingsService({
+				name: data.storeName,
+				domain: data.storeDomain,
+				description: data.storeDescription,
+			});
+			toast.success('General Settings Updated Successfully');
+			console.log(response);
+		} catch (error) {
+			console.log(error);
+		}
+
 		console.log(data);
 	};
+
 	return (
 		<Card>
 			<section className="flex w-full">
@@ -106,10 +131,17 @@ const General = () => {
 			</section>
 			<Separator />
 			<CardFooter className="flex justify-end gap-4">
-				<Button size="sm" variant="outline">
+				<Button
+					size="sm"
+					variant="outline"
+					disabled={!isDirty}
+					onClick={() => reset()}
+				>
 					Cancel
 				</Button>
-				<Button size="sm">Save Changes</Button>
+				<Button size="sm" disabled={!isDirty}>
+					Save Changes
+				</Button>
 			</CardFooter>
 		</Card>
 	);

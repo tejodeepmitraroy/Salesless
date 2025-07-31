@@ -1,0 +1,2 @@
+ALTER TABLE "gateway_configs" ADD CONSTRAINT "gateway_configs_api_key_unique" UNIQUE("api_key");--> statement-breakpoint
+ALTER TABLE "gateway_configs" ADD CONSTRAINT "gateway_configs_api_secret_unique" UNIQUE("api_secret");

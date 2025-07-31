@@ -3,9 +3,16 @@ import { Bell } from 'lucide-react';
 import { SidebarProvider, SidebarTrigger } from '../ui/sidebar';
 import { AppSidebar } from '../Sidebar/app-sidebar';
 import { Button } from '../ui/button';
+import { setStoreId } from '../../api/axios-custom';
+import { useEffect } from 'react';
 
 const AdminLayout = () => {
 	const { storeId } = useParams<{ storeId: string }>();
+
+	// Update store ID in axios headers when it changes
+	useEffect(() => {
+		setStoreId(storeId!);
+	}, [storeId]);
 
 	return (
 		<section className="bg-background text-foreground flex min-h-screen w-full">

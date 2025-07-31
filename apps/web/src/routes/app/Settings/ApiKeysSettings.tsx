@@ -10,11 +10,19 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Copy } from 'lucide-react';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import { useState } from 'react';
+
 import { Separator } from '@/components/ui/separator';
+import { fetchApiKeysService } from '@/features/Settings/services';
+import { useQuery } from '@tanstack/react-query';
+// import { useQuery } from '@tanstack/react-query';
 
 const ApiKeysSettings = () => {
-	const [apiKey] = useState('');
+	const { data: apiKeys } = useQuery({
+		queryKey: ['apiKeys'],
+		queryFn: () => fetchApiKeysService(),
+	});
+
+	const apiKey = '';
 
 	return (
 		<Card className="w-full">
@@ -27,12 +35,17 @@ const ApiKeysSettings = () => {
 				<CardContent className="col-span-2 w-full space-y-4 text-left">
 					<section className="space-y-2">
 						<div className="flex">
-							<Input id="store-id" value={apiKey} readOnly className="flex-1" />
+							<Input
+								id="store-id"
+								value={apiKeys?.storeId}
+								readOnly
+								className="flex-1"
+							/>
 							<Button
 								variant="outline"
 								size="sm"
 								className="ml-2"
-								onClick={() => copyToClipboard(apiKey, 'Store ID')}
+								onClick={() => copyToClipboard(apiKeys?.storeId, 'Store ID')}
 							>
 								<Copy className="h-4 w-4" />
 							</Button>

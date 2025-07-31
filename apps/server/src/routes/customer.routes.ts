@@ -14,8 +14,6 @@ import {
 	updateCustomerDefaultAddress,
 } from '../controllers/customer.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
-import { getStoreCustomers } from '../controllers/store.controllers';
-import { storeMiddleware } from '../middleware/store.middleware';
 
 const router = Router();
 
@@ -43,11 +41,5 @@ router
 router.route('/forget-password').post(forgetPassword);
 router.route('/reset-link').post(resetLink);
 router.route('/logout').post(logoutCustomer);
-
-//Store Customer routes
-router.route('/').get(jwtAuthMiddleware, storeMiddleware, getStoreCustomers);
-router
-	.route('/:customerId')
-	.get(jwtAuthMiddleware, storeMiddleware, getStoreCustomers);
 
 export default router;
