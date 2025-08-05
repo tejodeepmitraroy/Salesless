@@ -35,13 +35,23 @@ export const webhooksSettingsSchema = z.object({
 });
 
 export const gatewaySettingsSchema = z.object({
-	apiUrl: z.string(),
+	id: z.string().optional(),
+	gateway: z
+		.string()
+		.refine(
+			(value) => ['stripe', 'razorpay', 'phonepe', 'paytm'].includes(value),
+			{
+				message: 'Invalid gateway',
+			}
+		),
+	apiUrl: z.string().optional(),
 	apiKey: z.string().min(10, {
 		message: 'API Key must be at least 10 characters.',
 	}),
 	apiSecret: z.string().min(10, {
 		message: 'API Secret must be at least 10 characters.',
 	}),
+	mode: z.string().optional(),
 	isTestMode: z.boolean(),
 });
 

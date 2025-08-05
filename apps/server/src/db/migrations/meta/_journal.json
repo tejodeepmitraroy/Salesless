@@ -5,36 +5,8 @@
 		{
 			"idx": 0,
 			"version": "7",
-			"when": 1753517035382,
-			"tag": "0000_charming_zaran",
-			"breakpoints": true
-		},
-		{
-			"idx": 1,
-			"version": "7",
-			"when": 1753517408239,
-			"tag": "0001_right_shinko_yamashiro",
-			"breakpoints": true
-		},
-		{
-			"idx": 2,
-			"version": "7",
-			"when": 1753564920754,
-			"tag": "0002_slimy_timeslip",
-			"breakpoints": true
-		},
-		{
-			"idx": 3,
-			"version": "7",
-			"when": 1753652519417,
-			"tag": "0003_petite_lady_ursula",
-			"breakpoints": true
-		},
-		{
-			"idx": 4,
-			"version": "7",
-			"when": 1753998524117,
-			"tag": "0004_fat_sentinels",
+			"when": 1754302511658,
+			"tag": "0000_great_multiple_man",
 			"breakpoints": true
 		}
 	]

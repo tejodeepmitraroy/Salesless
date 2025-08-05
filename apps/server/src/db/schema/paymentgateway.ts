@@ -17,8 +17,6 @@ export const paymentGatewayEnum = pgEnum('payment_gateway', [
 	'paytm',
 ]);
 
-export const modeEnum = pgEnum('mode', ['test', 'live']);
-
 export const GatewayConfigs = pgTable('gateway_configs', {
 	id: varchar('id')
 		.primaryKey()
@@ -31,7 +29,8 @@ export const GatewayConfigs = pgTable('gateway_configs', {
 	apiKey: text('api_key').notNull().unique(),
 	apiSecret: text('api_secret').notNull().unique(),
 	apiUrl: varchar('api_url'),
-	mode: modeEnum(),
+	isDefault: boolean('is_default').notNull().default(false),
+	isTestMode: boolean('is_test_mode').notNull().default(false),
 	active: boolean('active').notNull().default(true),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),

@@ -1,3 +1,6 @@
+CREATE TYPE "public"."order_status_enum" AS ENUM('pending', 'paid', 'shipped', 'cancelled', 'delivered');--> statement-breakpoint
+CREATE TYPE "public"."payment_gateway" AS ENUM('stripe', 'razorpay', 'phonepe', 'paytm');--> statement-breakpoint
+CREATE TYPE "public"."payment_method" AS ENUM('cod', 'upi', 'card', 'netbanking');--> statement-breakpoint
 CREATE TYPE "public"."status" AS ENUM('active', 'draft', 'archive');--> statement-breakpoint
 CREATE TABLE "gateway_configs" (
 	"id" varchar PRIMARY KEY NOT NULL,
@@ -5,10 +8,28 @@ CREATE TABLE "gateway_configs" (
 	"gateway" "payment_gateway",
 	"api_key" text NOT NULL,
 	"api_secret" text NOT NULL,
-	"mode" "mode",
+	"api_url" varchar,
+	"is_default" boolean DEFAULT false NOT NULL,
+	"is_test_mode" boolean DEFAULT false NOT NULL,
 	"active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "gateway_configs_api_key_unique" UNIQUE("api_key"),
+	CONSTRAINT "gateway_configs_api_secret_unique" UNIQUE("api_secret")
+);
+--> statement-breakpoint
+CREATE TABLE "api_keys" (
+	"id" varchar PRIMARY KEY NOT NULL,
+	"store_id" varchar NOT NULL,
+	"key" text NOT NULL,
+	"secret_hash" text NOT NULL,
+	"label" varchar(255),
+	"scopes" text DEFAULT 'read:store,read:orders',
+	"platform" varchar(50),
+	"created_at" timestamp DEFAULT now(),
+	"expires_at" timestamp,
+	"revoked_at" timestamp,
+	CONSTRAINT "api_keys_key_unique" UNIQUE("key")
 );
 --> statement-breakpoint
 CREATE TABLE "cart" (
@@ -132,11 +153,11 @@ CREATE TABLE "order" (
 	"billing_address_zip" varchar,
 	"tags" varchar,
 	"note" varchar,
-	"status" varchar DEFAULT 'pending',
+	"status" "order_status_enum" DEFAULT 'pending',
 	"currency" varchar,
 	"total_price" numeric,
 	"subtotal_price" numeric,
-	"payment_method" varchar DEFAULT 'cod',
+	"paymentMethod" "payment_method" DEFAULT 'cod',
 	"additional_price" numeric,
 	"total_discounts" numeric,
 	"total_line_items_price" numeric,
@@ -342,6 +363,7 @@ CREATE TABLE "user_store" (
 );
 --> statement-breakpoint
 ALTER TABLE "gateway_configs" ADD CONSTRAINT "gateway_configs_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "api_keys" ADD CONSTRAINT "api_keys_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_store_id_store_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."store"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart" ADD CONSTRAINT "cart_customer_id_customer_id_fk" FOREIGN KEY ("customer_id") REFERENCES "public"."customer"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "cart_items" ADD CONSTRAINT "cart_items_cart_id_cart_id_fk" FOREIGN KEY ("cart_id") REFERENCES "public"."cart"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

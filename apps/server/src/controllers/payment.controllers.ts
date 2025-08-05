@@ -6,7 +6,7 @@ import ApiError from '../utils/ApiError';
 import { razorpayCard, RazorPayGateway } from '../gateways/RazorpayGateway';
 import { db } from '../db';
 import { GatewayConfigs } from '../db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 export const initiatePayment = asyncHandler(
 	async (request: Request, response: Response) => {
@@ -88,14 +88,14 @@ export const setupPaymentGateway = asyncHandler(
 				apiKey,
 				apiSecret,
 				apiUrl,
-				mode,
+				isTestMode,
 				active,
 			}: {
 				gateway: string;
 				apiKey: string;
 				apiSecret: string;
 				apiUrl: string;
-				mode: string;
+				isTestMode: boolean;
 				active: boolean;
 			} = request.body;
 			const storeId = request.storeId!;
@@ -104,13 +104,13 @@ export const setupPaymentGateway = asyncHandler(
 				const [configs] = await db
 					.insert(GatewayConfigs)
 					.values({
-						storeId: storeId,
+						storeId,
 						gateway: 'razorpay',
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						apiUrl: apiUrl,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
+						apiKey,
+						apiSecret,
+						apiUrl,
+						isTestMode,
+						active,
 					})
 					.returning();
 
@@ -127,12 +127,12 @@ export const setupPaymentGateway = asyncHandler(
 				const [configs] = await db
 					.insert(GatewayConfigs)
 					.values({
-						storeId: storeId,
+						storeId,
 						gateway: 'stripe',
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
+						apiKey,
+						apiSecret,
+						isTestMode,
+						active,
 					})
 					.returning();
 
@@ -149,12 +149,12 @@ export const setupPaymentGateway = asyncHandler(
 				const [configs] = await db
 					.insert(GatewayConfigs)
 					.values({
-						storeId: storeId,
+						storeId,
 						gateway: 'phonepe',
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
+						apiKey,
+						apiSecret,
+						isTestMode,
+						active,
 					})
 					.returning();
 
@@ -171,12 +171,12 @@ export const setupPaymentGateway = asyncHandler(
 				const [configs] = await db
 					.insert(GatewayConfigs)
 					.values({
-						storeId: storeId,
+						storeId,
 						gateway: 'paytm',
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
+						apiKey,
+						apiSecret,
+						isTestMode,
+						active,
 					})
 					.returning();
 
@@ -207,25 +207,31 @@ export const getAllInstalledGateways = asyncHandler(
 			const gatewayType = request.params.gateway as string;
 
 			if (gatewayType) {
-				const gateway = await db.query.GatewayConfigs.findFirst({
-					where: eq(
-						GatewayConfigs.gateway,
-						gatewayType as 'stripe' | 'razorpay' | 'phonepe' | 'paytm'
-					),
-				});
+				const gateway = gatewayType.toLowerCase();
 
-				if (!gateway) {
-					response.status(404).json(new ApiError(404, 'Gateway not found'));
+				const gatewayDetails = await db.query.GatewayConfigs.findFirst({
+					where:
+						eq(GatewayConfigs.storeId, storeId) &&
+						eq(
+							GatewayConfigs.gateway,
+							gateway as 'stripe' | 'razorpay' | 'phonepe' | 'paytm'
+						),
+				});
+				if (!gatewayDetails) {
+					response
+						.status(204)
+						.json(new ApiError(204, 'Gateway Details not found'));
+				} else {
+					response
+						.status(201)
+						.json(
+							new ApiResponse(
+								200,
+								gatewayDetails,
+								'Fetched installed gateway Details successfully'
+							)
+						);
 				}
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							gateway,
-							'Fetched installed gateway Details successfully'
-						)
-					);
 			} else {
 				const allGateways = await db.query.GatewayConfigs.findMany({
 					where: eq(GatewayConfigs.storeId, storeId),
@@ -233,148 +239,248 @@ export const getAllInstalledGateways = asyncHandler(
 
 				if (!allGateways) {
 					response.status(404).json(new ApiError(404, 'Gateways not found'));
+				} else {
+					response
+						.status(201)
+						.json(
+							new ApiResponse(
+								200,
+								allGateways,
+								'Fetched all installed gateways successfully'
+							)
+						);
 				}
-
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							allGateways,
-							'Fetched all installed gateways successfully'
-						)
-					);
 			}
 		} catch (error) {
 			console.log(error);
 			response
 				.status(500)
-				.json(new ApiError(500, 'Error fetching product', error));
+				.json(new ApiError(500, 'Error fetching Gateway Details', error));
 		}
 	}
 );
 
 export const updatePaymentGateway = asyncHandler(
 	async (request: Request, response: Response) => {
+		const {
+			id,
+			gateway,
+			apiKey,
+			apiSecret,
+			apiUrl,
+			isTestMode,
+			active,
+		}: {
+			id: string;
+			gateway: string;
+			apiKey: string;
+			apiSecret: string;
+			apiUrl: string;
+			isTestMode: boolean;
+			active: boolean;
+		} = request.body;
+		const storeId = request.storeId!;
 		try {
-			const {
-				id,
-				gateway,
-				apiKey,
-				apiSecret,
-				apiUrl,
-				mode,
-				active,
-			}: {
-				id: string;
-				gateway: string;
-				apiKey: string;
-				apiSecret: string;
-				apiUrl: string;
-				mode: string;
-				active: boolean;
-			} = request.body;
-			const storeId = request.storeId!;
-
-			if (gateway.toLowerCase() === 'razorpay') {
-				const [configs] = await db
-					.update(GatewayConfigs)
-					.set({
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						apiUrl: apiUrl,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
-					})
-					.where(
-						eq(GatewayConfigs.storeId, storeId && eq(GatewayConfigs.id, id))
-					)
-					.returning();
-
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							configs,
-							'Razorpay Payment Gateway Configured successfully'
+			switch (gateway.toLowerCase()) {
+				case 'razorpay': {
+					const [configs] = await db
+						.update(GatewayConfigs)
+						.set({
+							apiKey: apiKey,
+							apiSecret: apiSecret,
+							apiUrl: apiUrl,
+							isTestMode,
+							active: active,
+						})
+						.where(
+							and(
+								eq(GatewayConfigs.storeId, storeId),
+								eq(GatewayConfigs.id, id)
+							)
 						)
-					);
-			} else if (gateway.toLowerCase() === 'stripe') {
-				const [configs] = await db
-					.update(GatewayConfigs)
-					.set({
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
-					})
-					.where(
-						eq(GatewayConfigs.storeId, storeId && eq(GatewayConfigs.id, id))
-					)
-					.returning();
+						.returning();
 
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							configs,
-							'Stripe Payment Gateway Configured successfully'
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								configs,
+								'Razorpay Payment Gateway Configured successfully'
+							)
+						);
+					break;
+				}
+				case 'stripe': {
+					const [configs] = await db
+						.update(GatewayConfigs)
+						.set({
+							apiKey: apiKey,
+							apiSecret: apiSecret,
+							isTestMode,
+							active: active,
+						})
+						.where(
+							and(
+								eq(GatewayConfigs.storeId, storeId),
+								eq(GatewayConfigs.id, id)
+							)
 						)
-					);
-			} else if (gateway.toLowerCase() === 'phonepe') {
-				const [configs] = await db
-					.update(GatewayConfigs)
-					.set({
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
-					})
-					.where(
-						eq(GatewayConfigs.storeId, storeId && eq(GatewayConfigs.id, id))
-					)
-					.returning();
+						.returning();
 
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							configs,
-							'PhonePe Payment Gateway Configured successfully'
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								configs,
+								'Stripe Payment Gateway Configured successfully'
+							)
+						);
+					break;
+				}
+				case 'phonepe': {
+					const [configs] = await db
+						.update(GatewayConfigs)
+						.set({
+							apiKey: apiKey,
+							apiSecret: apiSecret,
+							isTestMode,
+							active: active,
+						})
+						.where(
+							and(
+								eq(GatewayConfigs.storeId, storeId),
+								eq(GatewayConfigs.id, id)
+							)
 						)
-					);
-			} else if (gateway.toLowerCase() === 'paytm') {
-				const [configs] = await db
-					.update(GatewayConfigs)
-					.set({
-						apiKey: apiKey,
-						apiSecret: apiSecret,
-						mode: mode === 'test' ? 'test' : 'live',
-						active: active,
-					})
-					.where(
-						eq(GatewayConfigs.storeId, storeId && eq(GatewayConfigs.id, id))
-					)
-					.returning();
+						.returning();
 
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							configs,
-							'Paytm Payment Gateway Configured successfully'
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								configs,
+								'PhonePe Payment Gateway Configured successfully'
+							)
+						);
+					break;
+				}
+				case 'paytm': {
+					const [configs] = await db
+						.update(GatewayConfigs)
+						.set({
+							apiKey: apiKey,
+							apiSecret: apiSecret,
+							isTestMode,
+							active: active,
+						})
+						.where(
+							and(
+								eq(GatewayConfigs.storeId, storeId),
+								eq(GatewayConfigs.id, id)
+							)
 						)
-					);
+						.returning();
+
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								configs,
+								'Paytm Payment Gateway Configured successfully'
+							)
+						);
+					break;
+				}
 			}
 		} catch (error) {
 			console.log(error);
 			response
 				.status(500)
-				.json(new ApiError(500, 'Error fetching product', error));
+				.json(new ApiError(500, 'Error updating payment gateway', error));
+		}
+	}
+);
+
+export const updateIsDefaultGateway = asyncHandler(
+	async (request: Request, response: Response) => {
+		try {
+			const { id } = request.body;
+			const storeId = request.storeId!;
+
+			const isDefaultGateway = await db.query.GatewayConfigs.findFirst({
+				where: and(
+					eq(GatewayConfigs.storeId, storeId),
+					eq(GatewayConfigs.isDefault, true)
+				),
+			});
+
+			if (isDefaultGateway && isDefaultGateway.id === id) {
+				db.transaction(async (tx) => {
+					await tx
+						.update(GatewayConfigs)
+						.set({
+							isDefault: false,
+						})
+						.where(
+							eq(GatewayConfigs.storeId, storeId) &&
+								eq(GatewayConfigs.id, isDefaultGateway.id)
+						);
+				});
+			} else if (isDefaultGateway && isDefaultGateway.id !== id) {
+				db.transaction(async (tx) => {
+					await tx
+						.update(GatewayConfigs)
+						.set({
+							isDefault: false,
+						})
+						.where(
+							eq(GatewayConfigs.storeId, storeId) &&
+								eq(GatewayConfigs.id, isDefaultGateway.id)
+						);
+
+					await tx
+						.update(GatewayConfigs)
+						.set({
+							isDefault: true,
+						})
+						.where(
+							eq(GatewayConfigs.storeId, storeId) && eq(GatewayConfigs.id, id)
+						);
+				});
+			} else {
+				db.transaction(async (tx) => {
+					await tx
+						.update(GatewayConfigs)
+						.set({
+							isDefault: true,
+						})
+						.where(
+							and(
+								eq(GatewayConfigs.storeId, storeId),
+								eq(GatewayConfigs.id, id)
+							)
+						)
+						.returning();
+				});
+			}
+			response
+				.status(200)
+				.json(
+					new ApiResponse(
+						200,
+						{},
+						'Default Payment Gateway updated successfully'
+					)
+				);
+		} catch (error) {
+			console.log(error);
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error updating payment gateway', error));
 		}
 	}
 );

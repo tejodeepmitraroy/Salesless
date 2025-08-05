@@ -16,7 +16,6 @@ import MediaDetails from './routes/app/Media/MediaDetails';
 import GeneralSettings from './routes/app/Settings/GeneralSettings';
 import ApiKeysSettings from './routes/app/Settings/ApiKeysSettings';
 import PaymentsGateway from './features/Settings/components/PaymentsGateway';
-import AnalyticsSettings from './routes/app/Settings/AnalyticsSettings';
 import OrderDetails from './routes/app/Orders/OrderDetails';
 import AdminLayout from './components/layouts/AdminLayout';
 import IntegrationManagement from './routes/app/Integrations/IntegrationManagement';
@@ -25,7 +24,6 @@ import AccountLayout from './components/layouts/AccountLayout';
 import AccountGeneral from './routes/accounts/AccountGeneral';
 import AccountSecurity from './routes/accounts/AccountSecurity';
 import GatewaySlug from './routes/app/Settings/Payements/GatewaySlug';
-import OverviewTab from './routes/app/Settings/Payements/GatewaySettings/OverviewTab';
 import ThirdPartyProviders from './routes/app/Settings/Payements/ThirdPartyProviders';
 
 const queryClient = new QueryClient();
@@ -136,14 +134,10 @@ function App() {
 											<Route path="general" element={<GeneralSettings />} />
 											<Route path="api-keys" element={<ApiKeysSettings />} />
 											<Route path="payments" element={<PaymentsGateway />} />
-											<Route path="analytics" element={<AnalyticsSettings />} />
+											{/* <Route path="analytics" element={<AnalyticsSettings />} /> */}
 										</Route>
 										<Route path="settings/payments">
-											<Route path=":gatewaySlug">
-												<Route index element={<GatewaySlug />} />
-												<Route path="overview" element={<OverviewTab />} />
-												{/* <Route path="api-keys" element={<ApiKeysSettings />} /> */}
-											</Route>
+											<Route path=":gatewaySlug" element={<GatewaySlug />} />
 											<Route
 												path="third-party-providers"
 												element={<ThirdPartyProviders />}

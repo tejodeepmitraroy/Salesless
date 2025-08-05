@@ -47,9 +47,7 @@ export const storeRelations = relations(store, ({ many }) => ({
 	// roles: many(userStore, {
 	// 	relationName: 'storeRoles',
 	// }),
-	media: many(media, {
-		relationName: 'storeMedia',
-	}),
+	media: many(media),
 	orders: many(order),
 	apiKeys: many(apiKey),
 	// paymentGateways: many(paymentGatewayConfig),

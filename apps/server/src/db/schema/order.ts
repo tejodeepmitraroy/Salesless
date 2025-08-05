@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
 	integer,
 	numeric,
+	pgEnum,
 	pgTable,
 	timestamp,
 	varchar,
@@ -13,20 +14,20 @@ import { ulid } from 'ulid';
 import { store } from './store';
 
 // Define enums with default values
-// export const paymentMethodEnum = pgEnum('payment_method', [
-// 	'cod',
-// 	'upi',
-// 	'card',
-// 	'netbanking',
-// ]);
+export const paymentMethodEnum = pgEnum('payment_method', [
+	'cod',
+	'upi',
+	'card',
+	'netbanking',
+]);
 
-// const statusEnum = pgEnum('status', [
-// 	'pending',
-// 	'paid',
-// 	'shipped',
-// 	'cancelled',
-// 	'delivered',
-// ]);
+export const orderStatusEnum = pgEnum('order_status_enum', [
+	'pending',
+	'paid',
+	'shipped',
+	'cancelled',
+	'delivered',
+]);
 
 export const order = pgTable('order', {
 	id: varchar('id')
@@ -60,11 +61,11 @@ export const order = pgTable('order', {
 	billingAddressZip: varchar('billing_address_zip'),
 	tags: varchar('tags'),
 	note: varchar('note'),
-	status: varchar('status').default('pending'),
+	status: orderStatusEnum().default('pending'),
 	currency: varchar('currency'),
 	totalPrice: numeric('total_price'),
 	subtotalPrice: numeric('subtotal_price'),
-	paymentMethod: varchar('payment_method').default('cod'),
+	paymentMethod: paymentMethodEnum().default('cod'),
 	additionalPrice: numeric('additional_price'),
 	totalDiscounts: numeric('total_discounts'),
 	totalLineItemsPrice: numeric('total_line_items_price'),

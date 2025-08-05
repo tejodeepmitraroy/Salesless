@@ -3,17 +3,15 @@ import RegionalSettings from '@/features/Settings/components/RegionalSettings';
 // import DeactivateStore from '@/routes/settings/settings/Screens/DeactivateStore';
 import DangerZone from '@/features/Settings/components/DangerZone';
 import General from '@/features/Settings/components/GeneralSettings';
-import DeactivateStore from '@/features/Settings/components/DeactivateStore';
 
 const GeneralSettings = () => {
 	return (
-		<>
+		<section className="flex w-full flex-col gap-4 pb-14">
 			<General />
 			<AddressSettings />
 			<RegionalSettings />
-			<DeactivateStore />
 			<DangerZone />
-		</>
+		</section>
 	);
 };
 

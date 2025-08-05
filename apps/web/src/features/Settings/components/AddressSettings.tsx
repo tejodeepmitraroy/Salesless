@@ -89,7 +89,7 @@ const AddressSettings = () => {
 		}
 	};
 	return (
-		<Card>
+		<Card className="mt-4">
 			<CardHeader className="flex w-full flex-col text-left">
 				<CardTitle>Store Address</CardTitle>
 				<CardDescription>Configure your store address.</CardDescription>
@@ -99,7 +99,7 @@ const AddressSettings = () => {
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
-						className="grid w-full grid-cols-2 gap-4 gap-y-6"
+						className="grid w-full grid-cols-1 gap-4 gap-y-6 md:grid-cols-2"
 					>
 						<FormField
 							control={form.control}

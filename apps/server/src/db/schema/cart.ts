@@ -2,7 +2,7 @@ import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { store } from './store';
 import { product } from './product';
 import { relations } from 'drizzle-orm';
-import { order } from './order';
+
 import { customer } from './customer';
 import { ulid } from 'ulid';
 
@@ -27,7 +27,6 @@ export const cartRelations = relations(cart, ({ one, many }) => ({
 		references: [customer.id],
 	}),
 	items: many(cartItems),
-	orders: many(order),
 }));
 
 export const cartItems = pgTable('cart_items', {

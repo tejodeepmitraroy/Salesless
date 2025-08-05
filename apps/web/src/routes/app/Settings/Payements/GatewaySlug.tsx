@@ -3,14 +3,13 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, CheckCircle2, AlertCircle, Package } from 'lucide-react';
+import { ChevronLeft, Package } from 'lucide-react';
 import { Link, Navigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -25,25 +24,29 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-
 import {
 	gatewaySettingsSchema,
 	GatewaySettingsSchema,
 } from '@/features/Settings/schema';
 
-import { Switch } from '@/components/ui/switch';
-import { fetchPaymentGatewayDetailsService } from '@/features/Settings/services';
+import {
+	addPaymentGatewayService,
+	fetchPaymentGatewayDetailsService,
+	setIsDefaultGatewayService,
+	updatePaymentGatewayService,
+} from '@/features/Settings/services';
 import { useQuery } from '@tanstack/react-query';
 import { supportedPaymentsGateways } from '@/features/Settings/config/paymentGateway-config';
+import { toast } from 'sonner';
+import { Switch } from '@/components/ui/switch';
 
 const GatewaySlug = () => {
 	const { storeId, gatewaySlug } = useParams<{
 		storeId: string;
 		gatewaySlug: string;
 	}>();
-	// const [isSubmitting, setIsSubmitting] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+
+	const [isDefault, setIsDefault] = useState(false);
 
 	const gatewayData = supportedPaymentsGateways.find(
 		(p) => p.slug === gatewaySlug
@@ -51,48 +54,102 @@ const GatewaySlug = () => {
 
 	const { data: paymentGatewayDetails } = useQuery({
 		queryKey: ['paymentGatewayDetails', gatewayData?.gateway],
-		queryFn: () => fetchPaymentGatewayDetailsService(gatewayData?.gateway),
+		queryFn: async () => {
+			return await fetchPaymentGatewayDetailsService(gatewayData?.gateway);
+		},
+		// Options to prevent automatic refetching
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		staleTime: Infinity, // Keep data fresh indefinitely
 	});
 
-	console.log('paymentGatewayDetails', paymentGatewayDetails);
+	// console.log('paymentGatewayDetails', paymentGatewayDetails);
 	const form = useForm<GatewaySettingsSchema>({
 		resolver: zodResolver(gatewaySettingsSchema),
 		defaultValues: {},
 	});
 
+	const {
+		formState: { isDirty, isLoading },
+	} = form;
+
 	useEffect(() => {
 		form.reset({
-			apiKey: paymentGatewayDetails?.apiKey,
-			apiSecret: paymentGatewayDetails?.apiSecret,
-			apiUrl: paymentGatewayDetails?.apiUrl,
-			isTestMode: paymentGatewayDetails?.mode === 'test',
+			id: paymentGatewayDetails?.id,
+			gateway: gatewayData?.gateway,
+			apiKey: paymentGatewayDetails?.apiKey || '',
+			apiSecret: paymentGatewayDetails?.apiSecret || '',
+			apiUrl: paymentGatewayDetails?.apiUrl || '',
+			isTestMode: paymentGatewayDetails?.isTestMode,
 		});
-	}, [form, paymentGatewayDetails]);
+		setIsDefault(paymentGatewayDetails?.isDefault || false);
+	}, [form, gatewayData?.gateway, paymentGatewayDetails]);
+
+	const redirectGateway = useCallback(() => {
+		if (!gatewayData) {
+			<Navigate replace to={`/store/${storeId}/settings/payments`} />;
+		}
+	}, [gatewayData, storeId]);
+
+	useEffect(() => {
+		redirectGateway();
+	}, [redirectGateway]);
 
 	const onSubmit = async (data: GatewaySettingsSchema) => {
 		try {
-			// setIsSubmitting(true);
-			setError(null);
-
 			// Here you would typically make an API call to save the credentials
 			console.log('Submitting gateway credentials:', data);
 
-			// Simulate API call
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			if (!data.id) {
+				await addPaymentGatewayService({
+					gateway: data.gateway as 'stripe' | 'razorpay' | 'phonepe' | 'paytm',
+					apiKey: data.apiKey,
+					apiSecret: data.apiSecret,
+					apiUrl: data.apiUrl,
+					isTestMode: data.isTestMode,
+					active: true,
+				});
+			} else {
+				await updatePaymentGatewayService({
+					id: data.id,
+					gateway: data.gateway as 'stripe' | 'razorpay' | 'phonepe' | 'paytm',
+					apiKey: data.apiKey,
+					apiSecret: data.apiSecret,
+					apiUrl: data.apiUrl,
+					isTestMode: data.isTestMode,
+					active: true,
+				});
+			}
 
-			setIsSuccess(true);
-			setTimeout(() => setIsSuccess(false), 3000);
+			toast.success('Gateway credentials saved successfully');
 		} catch (err) {
-			setError('Failed to save credentials. Please try again.');
 			console.error('Error saving gateway credentials:', err);
-		} finally {
-			// setIsSubmitting(false);
+			toast.error('Failed to save gateway credentials');
 		}
 	};
 
-	if (!gatewayData) {
-		return <Navigate replace to={`/store/${storeId}/settings/payments`} />;
-	}
+	const setIsDefaultGateway = async () => {
+		try {
+			if (!paymentGatewayDetails?.id) {
+				toast.error('Failed to update default gateway');
+				return;
+			}
+			await setIsDefaultGatewayService({
+				id: paymentGatewayDetails.id,
+			});
+			setIsDefault((prev) => !prev);
+
+			if (isDefault) {
+				toast.success(`${gatewayData?.name} is Now Default gateway`);
+			} else {
+				toast.success(`${gatewayData?.name} is Not Default gateway`);
+			}
+		} catch (err) {
+			console.error('Error updating default gateway:', err);
+			toast.error('Failed to update default gateway');
+		}
+	};
 
 	return (
 		<div className="container mx-auto max-w-7xl p-6">
@@ -132,11 +189,17 @@ const GatewaySlug = () => {
 
 			<Tabs defaultValue="overview" className="w-full">
 				<section className="bg-background flex w-full items-start justify-start">
-					<TabsList>
-						<TabsTrigger value="overview" className="text-base">
+					<TabsList className="">
+						<TabsTrigger
+							value="overview"
+							className="data-[state=active]:border-primary data-[state=active]:text-primary text-base"
+						>
 							Overview
 						</TabsTrigger>
-						<TabsTrigger value="api" className="text-base">
+						<TabsTrigger
+							value="api"
+							className="data-[state=active]:border-primary data-[state=active]:text-primary text-base"
+						>
 							API Credentials
 						</TabsTrigger>
 					</TabsList>
@@ -147,32 +210,98 @@ const GatewaySlug = () => {
 					<section className="flex w-full items-start justify-start">
 						<h2 className="text-2xl font-bold">Overview</h2>
 					</section>
-					<section className="mt-5 flex w-full items-start justify-start gap-10">
-						<div className="flex flex-col items-start justify-start text-xs">
+					<section className="mt-5 grid w-fit grid-cols-3 items-start justify-start gap-x-6 gap-y-2">
+						<div className="flex flex-col items-start justify-center text-xs">
 							<span className="text-muted-foreground">BUILT BY</span>
+						</div>
+						<div className="flex flex-col items-start justify-center text-xs">
+							<span className="text-muted-foreground">DOCS</span>
+						</div>
+						<div className="flex flex-col items-start justify-center text-xs">
+							<span className="text-muted-foreground">STATUS</span>
+						</div>
+						<div className="flex flex-col items-start justify-center text-xs">
 							<span className="text-lg font-medium">Salesless</span>
 						</div>
 						<div className="flex flex-col items-start justify-start text-xs">
-							<span className="text-muted-foreground">DOCS</span>
 							<span className="flex items-center text-lg font-medium">
 								<Package className="mr-2 h-4 w-4" />
 								Salesless
 							</span>
 						</div>
-						<div className="flex flex-col items-start justify-start text-xs">
-							<span className="text-muted-foreground">STATUS</span>
-							{paymentGatewayDetails?.active ? (
-								<Badge className="bg-green-500 text-base font-medium">
+						<div className="flex flex-col items-start justify-between text-xs">
+							{isDefault ? (
+								<Badge className="rounded-full border-emerald-600/60 bg-emerald-600/10 text-emerald-500 shadow-none hover:bg-emerald-600/10 dark:bg-emerald-600/20">
+									<div className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500" />{' '}
 									Active
 								</Badge>
 							) : (
-								<Badge className="bg-red-500 text-base font-medium">
+								<Badge className="rounded-full border-red-600/60 bg-red-600/10 text-red-500 shadow-none hover:bg-red-600/10 dark:bg-red-600/20">
+									<div className="mr-2 h-1.5 w-1.5 rounded-full bg-red-500" />{' '}
 									Inactive
 								</Badge>
 							)}
 						</div>
 					</section>
-					<section className="mt-5 w-full border"></section>
+					<Separator className="my-4" />
+					<section className="mt-5 flex w-full items-start justify-start">
+						<Card className="bg-background flex w-full max-w-xl flex-row items-center justify-between">
+							<CardHeader className="flex w-full flex-col items-start justify-start">
+								<CardTitle className="text-base font-medium">
+									Default Payment Gateway
+								</CardTitle>
+								<CardDescription>
+									Set this payment gateway as default
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<Switch
+									checked={isDefault}
+									onCheckedChange={() => setIsDefaultGateway()}
+									className=""
+								/>
+							</CardContent>
+						</Card>
+					</section>
+
+					{/* Help section */}
+					<section className="bg-muted/50 mt-5 w-full rounded-lg border p-6">
+						<h3 className="mb-4 text-lg font-medium">
+							Need help finding your API keys?
+						</h3>
+						<p className="text-muted-foreground mb-4 text-sm">
+							You can find your {gatewayData?.name} API keys in the{' '}
+							<a
+								href={`https://dashboard.${gatewayData?.slug}.com/account/apikeys`}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-primary underline"
+							>
+								{gatewayData?.name} Dashboard
+							</a>
+							. Make sure to use test keys for development and live keys for
+							production.
+						</p>
+
+						<div className="mt-4 grid gap-4 md:grid-cols-2">
+							<div className="rounded-md border bg-white p-4">
+								<h4 className="mb-2 font-medium">Test Mode</h4>
+								<p className="text-muted-foreground text-sm">
+									Use test keys (starts with <code>pk_test_</code> and{' '}
+									<code>sk_test_</code>) to process test payments without
+									charging real cards.
+								</p>
+							</div>
+							<div className="rounded-md border bg-white p-4">
+								<h4 className="mb-2 font-medium">Live Mode</h4>
+								<p className="text-muted-foreground text-sm">
+									Use live keys (starts with <code>pk_live_</code> and{' '}
+									<code>sk_live_</code>) to process real payments from your
+									customers.
+								</p>
+							</div>
+						</div>
+					</section>
 				</TabsContent>
 				<TabsContent value="api">
 					<section className="mt-5 w-full">
@@ -257,34 +386,34 @@ const GatewaySlug = () => {
 													</FormItem>
 												)}
 											/>
+											<div className="flex justify-end gap-4 pt-4">
+												<Button
+													size="sm"
+													variant="outline"
+													type="button"
+													onClick={() => form.reset()}
+													disabled={!isDirty || isLoading}
+												>
+													Cancel
+												</Button>
+												<Button
+													size="sm"
+													disabled={!isDirty || isLoading}
+													type="submit"
+												>
+													{isLoading ? 'Saving...' : 'Save'}
+												</Button>
+											</div>
 										</form>
 									</CardContent>
 								</section>
-								<Separator />
-								<CardFooter className="flex justify-end gap-4">
-									<Button
-										size="sm"
-										variant="outline"
-										// disabled={!isDirty}
-										onClick={() => form.reset()}
-									>
-										Cancel
-									</Button>
-									<Button
-										size="sm"
-										// disabled={!isDirty}
-										type="submit"
-									>
-										Save
-									</Button>
-								</CardFooter>
 							</Form>
 						</Card>
 					</section>
 				</TabsContent>
 			</Tabs>
 
-			{/* Status indicator */}
+			{/* Status indicator
 			{isSuccess && (
 				<div className="mb-6 flex items-center gap-2 rounded-md bg-green-50 p-4 text-green-700">
 					<CheckCircle2 className="h-5 w-5" />
@@ -297,46 +426,7 @@ const GatewaySlug = () => {
 					<AlertCircle className="h-5 w-5" />
 					<span>{error}</span>
 				</div>
-			)}
-
-			{/* Help section */}
-			<div className="bg-muted/50 mt-8 rounded-lg border p-6">
-				<h3 className="mb-4 text-lg font-medium">
-					Need help finding your API keys?
-				</h3>
-				<p className="text-muted-foreground mb-4 text-sm">
-					You can find your {gatewayData?.name} API keys in the{' '}
-					<a
-						href={`https://dashboard.${gatewayData?.slug}.com/account/apikeys`}
-						target="_blank"
-						rel="noopener noreferrer"
-						className="text-primary underline"
-					>
-						{gatewayData?.name} Dashboard
-					</a>
-					. Make sure to use test keys for development and live keys for
-					production.
-				</p>
-
-				<div className="mt-4 grid gap-4 md:grid-cols-2">
-					<div className="rounded-md border bg-white p-4">
-						<h4 className="mb-2 font-medium">Test Mode</h4>
-						<p className="text-muted-foreground text-sm">
-							Use test keys (starts with <code>pk_test_</code> and{' '}
-							<code>sk_test_</code>) to process test payments without charging
-							real cards.
-						</p>
-					</div>
-					<div className="rounded-md border bg-white p-4">
-						<h4 className="mb-2 font-medium">Live Mode</h4>
-						<p className="text-muted-foreground text-sm">
-							Use live keys (starts with <code>pk_live_</code> and{' '}
-							<code>sk_live_</code>) to process real payments from your
-							customers.
-						</p>
-					</div>
-				</div>
-			</div>
+			)} */}
 		</div>
 	);
 };

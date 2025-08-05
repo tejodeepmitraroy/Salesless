@@ -50,6 +50,8 @@ export {
 	orderItems,
 	orderRelations,
 	orderItemsRelations,
+	orderStatusEnum,
+	paymentMethodEnum,
 } from './order';
 export { transaction, transactionRelations } from './transaction';
 export { media, mediaRelations } from './media';
@@ -57,5 +59,4 @@ export {
 	GatewayConfigs,
 	GatewayConfigsRelations,
 	paymentGatewayEnum,
-	modeEnum,
 } from './paymentGateway';

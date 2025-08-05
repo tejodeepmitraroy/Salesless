@@ -1,5 +1,19 @@
 import { customAxios } from '@/api/axios-custom';
 
+interface PaymentGatewayDetails {
+	id: string;
+	storeId: string;
+	gateway: 'stripe' | 'razorpay' | 'phonepe' | 'paytm';
+	apiKey: string;
+	apiSecret: string;
+	apiUrl: string;
+	isDefault: boolean;
+	isTestMode: boolean;
+	active: boolean;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export const getGeneralSettingsService = async () => {
 	const response = await customAxios.get(`/settings/general`);
 	return response.data.data;
@@ -81,17 +95,7 @@ export const updateApiKeyService = async () => {
 // Payment Gateway Section
 
 export const getPaymentGatewayService = async (): Promise<
-	{
-		id: string;
-		storeId: string;
-		gateway: string;
-		apiKey: string;
-		apiSecret: string;
-		mode: string;
-		active: true;
-		createdAt: string;
-		updatedAt: string;
-	}[]
+	PaymentGatewayDetails[]
 > => {
 	const response = await customAxios.get(`/payment/gateways`);
 	return response.data.data;
@@ -99,40 +103,70 @@ export const getPaymentGatewayService = async (): Promise<
 
 export const fetchPaymentGatewayDetailsService = async (
 	gateway?: 'stripe' | 'razorpay' | 'phonepe' | 'paytm'
-): Promise<{
-	id: string;
-	storeId: string;
-	gateway: string;
-	apiKey: string;
-	apiSecret: string;
-	mode: string;
-	active: boolean;
-	createdAt: string;
-	updatedAt: string;
-	apiUrl: string;
-}> => {
+): Promise<PaymentGatewayDetails> => {
 	const response = await customAxios.get(`/payment/gateways/${gateway}`);
 	return response.data.data;
 };
 
-export const createPaymentGatewayService = async (formData: {
-	gateway: 'razorpay' | 'stripe';
+export const addPaymentGatewayService = async ({
+	gateway,
+	apiKey,
+	apiSecret,
+	apiUrl,
+	isTestMode,
+	active,
+}: {
+	gateway: 'stripe' | 'razorpay' | 'phonepe' | 'paytm';
 	apiKey: string;
 	apiSecret: string;
+	apiUrl?: string;
+	isTestMode: boolean;
 	active: boolean;
-}) => {
-	const response = await customAxios.post(`/payment/gateways/setup`, formData);
+}): Promise<PaymentGatewayDetails> => {
+	const response = await customAxios.post(`/payment/gateways/setup`, {
+		gateway,
+		apiKey,
+		apiSecret,
+		apiUrl,
+		isTestMode,
+		active,
+	});
 	return response.data.data;
 };
 
-export const updatePaymentGatewayService = async (
-	gatewayId: string,
-	formData: any
-) => {
-	const response = await customAxios.patch(
-		`/payment/gateways/${gatewayId}`,
-		formData
-	);
+export const updatePaymentGatewayService = async ({
+	id,
+	gateway,
+	apiKey,
+	apiSecret,
+	apiUrl,
+	isTestMode,
+	active,
+}: {
+	id?: string;
+	gateway: 'stripe' | 'razorpay' | 'phonepe' | 'paytm';
+	apiKey: string;
+	apiSecret: string;
+	apiUrl?: string;
+	isTestMode: boolean;
+	active: boolean;
+}): Promise<PaymentGatewayDetails> => {
+	const response = await customAxios.put(`/payment/gateways`, {
+		id,
+		gateway,
+		apiKey,
+		apiSecret,
+		apiUrl,
+		isTestMode,
+		active,
+	});
+	return response.data.data;
+};
+
+export const setIsDefaultGatewayService = async ({ id }: { id: string }) => {
+	const response = await customAxios.patch(`/payment/gateways`, {
+		id,
+	});
 	return response.data.data;
 };
 
@@ -147,50 +181,6 @@ export const getProductByIdService = async ({
 	productId: string;
 }) => {
 	const response = await customAxios.get(`/products/${productId}`);
-	return response.data.data;
-};
-
-export const updateProductService = async ({
-	productId,
-	formData,
-}: {
-	productId: number;
-	formData: any;
-}) => {
-	const response = await customAxios.put(`/products/${productId}`, formData);
-	return response.data.data;
-};
-
-export const deleteProductService = async ({
-	productId,
-}: {
-	productId: number;
-}) => {
-	const response = await customAxios.delete(`/products/${productId}`);
-	return response.data.data;
-};
-
-///Categories
-export const createCategoryService = async (formData: any) => {
-	const response = await customAxios.post(
-		`${import.meta.env.VITE_API_ENDPOINT_URL}/categories`,
-		formData
-	);
-	return response.data.data;
-};
-
-export const getAllCategoriesService = async (): Promise<
-	{
-		id: number;
-		name: string;
-		slug: string;
-		description: string;
-		parentId: number | null;
-		createdAt: string;
-		updatedAt: string;
-	}[]
-> => {
-	const response = await customAxios.get(`/category`);
 	return response.data.data;
 };
 

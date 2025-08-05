@@ -19,7 +19,6 @@ import AddressSettings from '../../../features/Settings/components/AddressSettin
 import DangerZone from '../../../features/Settings/components/DangerZone';
 import { Separator } from '@/components/ui/separator';
 import RegionalSettings from '../../../features/Settings/components/RegionalSettings';
-import DeactivateStore from '../../../features/Settings/components/DeactivateStore';
 import ApiKeysSettings from '../../app/Settings/ApiKeysSettings';
 import WebHookSettings from './Screens/WebHookSettings';
 // import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
@@ -166,7 +165,6 @@ const Settings2 = () => {
 					<GeneralSettings />
 					<AddressSettings />
 					<RegionalSettings />
-					<DeactivateStore />
 					<DangerZone />
 				</TabsContent>
 

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardDescription,
@@ -8,7 +7,7 @@ import {
 import { getPaymentGatewayService } from '@/features/Settings/services';
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import PaymentGatewayCard from '../../../routes/app/Settings/Payements/GatewaySettings/PaymentGatewayCard';
 import { supportedPaymentsGateways } from '../config/paymentGateway-config';
 
@@ -22,38 +21,44 @@ const PaymentsGateway = () => {
 
 	console.log('data PaymentsGateway', payments);
 	return (
-		<section className="w-full space-y-6">
-			<section className="w-full space-y-6">
-				<section className="flex w-full items-center justify-between">
+		<section className="mt-6 w-full space-y-8 pb-14">
+			<section className="w-full space-y-5">
+				<section className="flex w-full items-center justify-between text-left">
 					<h2 className="text-2xl font-medium">Payments Gateway</h2>
-					<Link
+					{/* <Link
 						to={`/store/${storeId}/settings/payments/third-party-providers`}
 					>
 						<Button className="bg-primary text-white">
 							Add Payment Gateway
 						</Button>
-					</Link>
+					</Link> */}
 				</section>
 
-				<section className="grid w-full grid-cols-4 gap-4 space-y-6 p-2">
+				<section className="grid w-full grid-cols-1 space-y-5 lg:grid-cols-2 lg:gap-4 lg:p-2 xl:grid-cols-3">
 					{isLoading ? (
 						<Loader className="h-5 w-5 animate-spin" />
 					) : (
 						<>
 							{supportedPaymentsGateways
-								.filter((payment) =>
-									payments?.some((p) => p.gateway === payment.gateway)
-								)
-								.map((payment) => (
-									<PaymentGatewayCard
-										key={payment.gateway}
-										storeId={storeId}
-										gateway={payment.gateway}
-										name={payment.name}
-										description={payment.description}
-										slug={payment.slug}
-									/>
-								))}
+								.filter((payment) => {
+									return payments?.some((p) => p.gateway === payment.gateway);
+								})
+								.map((payment) => {
+									const paymentData = payments?.find(
+										(p) => p.gateway === payment.gateway
+									);
+									return (
+										<PaymentGatewayCard
+											key={payment.gateway}
+											storeId={storeId}
+											icon={payment.icon}
+											name={payment.name}
+											description={payment.description}
+											slug={payment.slug}
+											isDefault={paymentData?.isDefault || false}
+										/>
+									);
+								})}
 							{payments?.length === 0 && (
 								<Card>
 									<CardHeader>
@@ -69,11 +74,11 @@ const PaymentsGateway = () => {
 				</section>
 			</section>
 
-			<section className="flex w-full flex-col items-center justify-between space-y-6">
+			<section className="flex w-full flex-col items-center justify-between space-y-6 text-left">
 				<section className="flex w-full items-center justify-between">
 					<h2 className="text-2xl font-medium">Third Party Payment Gateway</h2>
 				</section>
-				<section className="grid w-full grid-cols-4 gap-4 space-y-6 p-2">
+				<section className="grid w-full grid-cols-1 space-y-6 lg:grid-cols-2 lg:gap-4 lg:p-2 xl:grid-cols-3">
 					{supportedPaymentsGateways
 						.filter(
 							(payment) => !payments?.some((p) => p.gateway === payment.gateway)
@@ -82,7 +87,7 @@ const PaymentsGateway = () => {
 							<PaymentGatewayCard
 								key={payment.gateway}
 								storeId={storeId}
-								gateway={payment.gateway}
+								icon={payment.icon}
 								name={payment.name}
 								description={payment.description}
 								slug={payment.slug}

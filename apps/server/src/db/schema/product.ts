@@ -11,12 +11,14 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { store } from './store';
-import { orderItems } from './order';
-import { cartItems } from './cart';
+// import { orderItems } from './order';
+// import { cartItems } from './cart';
 import { media } from './media';
 import { productToCollection } from './collection';
 import { category } from './category';
 import { ulid } from 'ulid';
+import { cartItems } from './cart';
+import { orderItems } from './order';
 
 export const statusEnum = pgEnum('status', ['active', 'draft', 'archive']);
 export const product = pgTable('product', {
@@ -57,6 +59,8 @@ export const productRelations = relations(product, ({ one, many }) => ({
 		references: [productMetadata.productId],
 	}),
 	media: many(productMedia),
+	cartItems: many(cartItems),
+	orderItems: many(orderItems),
 }));
 
 export const productMedia = pgTable(
@@ -167,17 +171,14 @@ export const productVariant = pgTable('product_variant', {
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });
 
-export const productVariantRelations = relations(
-	productVariant,
-	({ one, many }) => ({
-		product: one(product, {
-			fields: [productVariant.productId],
-			references: [product.id],
-		}),
-		orderItems: many(orderItems),
-		cartItems: many(cartItems),
-	})
-);
+export const productVariantRelations = relations(productVariant, ({ one }) => ({
+	product: one(product, {
+		fields: [productVariant.productId],
+		references: [product.id],
+	}),
+	// orderItems: many(orderItems),
+	// cartItems: many(cartItems),
+}));
 
 export const productMetadata = pgTable('product_metadata', {
 	id: varchar('id')

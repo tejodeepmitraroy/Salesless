@@ -1,6 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, primaryKey, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { userStore } from './store';
+
 import { ulid } from 'ulid';
 
 export const role = pgTable('roles', {
@@ -14,7 +14,7 @@ export const role = pgTable('roles', {
 });
 
 export const roleRelations = relations(role, ({ many }) => ({
-	userStore: many(userStore),
+	// userStore: many(userStore),
 	rolePermissions: many(rolePermissions),
 }));
 

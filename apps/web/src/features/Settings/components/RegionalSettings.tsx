@@ -68,15 +68,15 @@ const RegionalSettings = () => {
 	};
 
 	return (
-		<Card>
-			<section className="flex w-full">
+		<Card className="mt-6">
+			<section className="flex w-full flex-col md:flex-row">
 				<CardHeader className="flex w-full flex-col text-left">
 					<CardTitle>Regional Settings</CardTitle>
 					<CardDescription>
 						Configure your store information and preferences.
 					</CardDescription>
 				</CardHeader>
-				<CardContent className="w-full text-left">
+				<CardContent className="mt-6 w-full text-left">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 							<FormField

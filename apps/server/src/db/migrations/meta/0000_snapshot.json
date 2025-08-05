@@ -1,5 +1,5 @@
 {
-	"id": "b38f9a33-eda1-4d1d-af8c-9454605c4e21",
+	"id": "ae710ee3-fdb8-4dc8-9097-adb1fa528fdd",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"version": "7",
 	"dialect": "postgresql",
@@ -39,12 +39,25 @@
 					"primaryKey": false,
 					"notNull": true
 				},
-				"mode": {
-					"name": "mode",
-					"type": "mode",
-					"typeSchema": "public",
+				"api_url": {
+					"name": "api_url",
+					"type": "varchar",
 					"primaryKey": false,
 					"notNull": false
+				},
+				"is_default": {
+					"name": "is_default",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				},
+				"is_test_mode": {
+					"name": "is_test_mode",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
 				},
 				"active": {
 					"name": "active",
@@ -81,7 +94,109 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
+			"uniqueConstraints": {
+				"gateway_configs_api_key_unique": {
+					"name": "gateway_configs_api_key_unique",
+					"nullsNotDistinct": false,
+					"columns": ["api_key"]
+				},
+				"gateway_configs_api_secret_unique": {
+					"name": "gateway_configs_api_secret_unique",
+					"nullsNotDistinct": false,
+					"columns": ["api_secret"]
+				}
+			},
+			"policies": {},
+			"checkConstraints": {},
+			"isRLSEnabled": false
+		},
+		"public.api_keys": {
+			"name": "api_keys",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"store_id": {
+					"name": "store_id",
+					"type": "varchar",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"key": {
+					"name": "key",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"secret_hash": {
+					"name": "secret_hash",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"label": {
+					"name": "label",
+					"type": "varchar(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"scopes": {
+					"name": "scopes",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "'read:store,read:orders'"
+				},
+				"platform": {
+					"name": "platform",
+					"type": "varchar(50)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false,
+					"default": "now()"
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"revoked_at": {
+					"name": "revoked_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"api_keys_store_id_store_id_fk": {
+					"name": "api_keys_store_id_store_id_fk",
+					"tableFrom": "api_keys",
+					"tableTo": "store",
+					"columnsFrom": ["store_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"api_keys_key_unique": {
+					"name": "api_keys_key_unique",
+					"nullsNotDistinct": false,
+					"columns": ["key"]
+				}
+			},
 			"policies": {},
 			"checkConstraints": {},
 			"isRLSEnabled": false
@@ -878,7 +993,8 @@
 				},
 				"status": {
 					"name": "status",
-					"type": "varchar",
+					"type": "order_status_enum",
+					"typeSchema": "public",
 					"primaryKey": false,
 					"notNull": false,
 					"default": "'pending'"
@@ -901,9 +1017,10 @@
 					"primaryKey": false,
 					"notNull": false
 				},
-				"payment_method": {
-					"name": "payment_method",
-					"type": "varchar",
+				"paymentMethod": {
+					"name": "paymentMethod",
+					"type": "payment_method",
+					"typeSchema": "public",
 					"primaryKey": false,
 					"notNull": false,
 					"default": "'cod'"
@@ -2279,6 +2396,21 @@
 		}
 	},
 	"enums": {
+		"public.order_status_enum": {
+			"name": "order_status_enum",
+			"schema": "public",
+			"values": ["pending", "paid", "shipped", "cancelled", "delivered"]
+		},
+		"public.payment_gateway": {
+			"name": "payment_gateway",
+			"schema": "public",
+			"values": ["stripe", "razorpay", "phonepe", "paytm"]
+		},
+		"public.payment_method": {
+			"name": "payment_method",
+			"schema": "public",
+			"values": ["cod", "upi", "card", "netbanking"]
+		},
 		"public.status": {
 			"name": "status",
 			"schema": "public",

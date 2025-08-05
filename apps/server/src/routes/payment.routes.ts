@@ -4,6 +4,7 @@ import {
 	getAllInstalledGateways,
 	initiatePayment,
 	setupPaymentGateway,
+	updateIsDefaultGateway,
 	updatePaymentGateway,
 	verifyPayment,
 } from '../controllers/payment.controllers';
@@ -20,10 +21,13 @@ router.route('/verifyPayment').post(verifyPayment);
 
 //Gateways
 router.route('/gateways/setup').post(storeMiddleware, setupPaymentGateway);
-router.route('/gateways').get(storeMiddleware, getAllInstalledGateways);
+router
+	.route('/gateways')
+	.get(storeMiddleware, getAllInstalledGateways)
+	.put(storeMiddleware, updatePaymentGateway)
+	.patch(storeMiddleware, updateIsDefaultGateway);
 router
 	.route('/gateways/:gateway')
-	.get(storeMiddleware, getAllInstalledGateways)
-	.put(storeMiddleware, updatePaymentGateway);
+	.get(storeMiddleware, getAllInstalledGateways);
 
 export default router;
