@@ -2,8 +2,8 @@ import { ShoppingCart } from 'lucide-react';
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { Separator } from '@/components/ui/separator';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router';
-import { Label } from '@/components/ui/label';
 import { useLayoutEffect } from 'react';
+import { Label } from '@/components/ui/label';
 
 const Settings = () => {
 	const navigate = useNavigate();

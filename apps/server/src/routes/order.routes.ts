@@ -5,20 +5,21 @@ import {
 	deleteOrder,
 	getOrders,
 } from '../controllers/order.controllers';
+import { storeMiddleware } from '../middleware/store.middleware';
 
 // import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Product routes
+// Order routes
 router
 	.route('/')
-	.post(jwtAuthMiddleware, createOrder)
-	.get(jwtAuthMiddleware, getOrders);
+	.post(jwtAuthMiddleware, storeMiddleware, createOrder)
+	.get(jwtAuthMiddleware, storeMiddleware, getOrders);
 
 router
 	.route('/:orderId')
-	.get(jwtAuthMiddleware, getOrders)
-	.delete(jwtAuthMiddleware, deleteOrder);
+	.get(jwtAuthMiddleware, storeMiddleware, getOrders)
+	.delete(jwtAuthMiddleware, storeMiddleware, deleteOrder);
 
 export default router;

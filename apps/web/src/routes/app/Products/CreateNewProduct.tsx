@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	Form,
@@ -24,7 +23,10 @@ import {
 } from '@/components/ui/form';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { productFormSchema } from '@/features/Products/schema';
+import {
+	productFormSchema,
+	ProductFormValues,
+} from '@/features/Products/schema';
 import ImageUpload from '@/features/Products/components/ImageUpload';
 import {
 	createProductService,
@@ -40,8 +42,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import ProductVariantOptionManager from '@/features/Products/components/ProductVariantOptionsManager';
 import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
 import HeaderSection from '@/components/layouts/HeaderSection';
-
-export type ProductFormValues = z.infer<typeof productFormSchema>;
 
 const CreateNewProduct = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +60,7 @@ const CreateNewProduct = () => {
 			seoTitle: '',
 			seoDescription: '',
 			seoKeywords: '',
-			storeId: parseInt(storeId!),
+			storeId: storeId,
 			options: [
 				{
 					name: 'Size',

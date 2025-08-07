@@ -62,8 +62,7 @@ const OrderDetails = () => {
 
 	const { data: orderData } = useQuery({
 		queryKey: ['orders', orderId],
-		queryFn: () =>
-			getOrderByIdService({ orderId: orderId!, storeId: storeId! }),
+		queryFn: () => getOrderByIdService({ orderId: orderId! }),
 	});
 	console.log('orders', orderData, storeId);
 

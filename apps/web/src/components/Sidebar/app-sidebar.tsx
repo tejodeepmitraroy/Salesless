@@ -163,8 +163,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			},
 		],
 	};
+	const isTestMode = import.meta.env.VITE_TEST_MODE === 'true';
 	return (
-		<Sidebar collapsible="icon" {...props}>
+		<Sidebar
+			className={isTestMode ? 'pt-8' : undefined}
+			collapsible="icon"
+			{...props}
+		>
 			<SidebarHeader>
 				<SidebarMenuItem className="flex items-center justify-start gap-2">
 					<SidebarMenuButton tooltip="Sidebar">

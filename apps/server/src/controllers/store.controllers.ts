@@ -3,7 +3,14 @@ import { db } from '../db';
 
 import { eq, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
-import { customerStore, order, store, user, userStore } from '../db/schema';
+import {
+	customer,
+	customerStore,
+	order,
+	store,
+	user,
+	userStore,
+} from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
 
@@ -84,7 +91,7 @@ export const getStoreById = asyncHandler(
 				where: eq(store.id, request.params.storeId),
 			});
 			if (!getStore) {
-				response.status(200).json(new ApiError(400, 'Store not found'));
+				response.status(200).json(new ApiError(400, `Store not found`));
 			}
 			response
 				.status(200)
@@ -92,7 +99,7 @@ export const getStoreById = asyncHandler(
 		} catch (error) {
 			response
 				.status(400)
-				.json(new ApiError(400, 'Error fetching store', error));
+				.json(new ApiError(400, `Error fetching store`, error));
 		}
 	}
 );
@@ -188,6 +195,8 @@ export const getStoreOrders = asyncHandler(
 	async (request: Request, response: Response) => {
 		const storeId = request.storeId!;
 		const orderId = request.params.orderId;
+
+		console.log(storeId, orderId);
 		try {
 			if (orderId) {
 				const storeOrder = await db.query.order.findFirst({
@@ -213,6 +222,7 @@ export const getStoreOrders = asyncHandler(
 					);
 			}
 		} catch (error) {
+			console.log(error);
 			response
 				.status(500)
 				.json(new ApiError(500, 'Error fetching store orders', error));
@@ -292,8 +302,9 @@ export const getStoreCustomers = asyncHandler(
 					taxExempt: customer.customer.taxExempt,
 					createdAt: customer.customer.createdAt,
 					updatedAt: customer.customer.updatedAt,
+					emailVerified: customer.customer.emailVerified,
+					phoneVerified: customer.customer.phoneVerified,
 				}));
-
 				response
 					.status(200)
 					.json(
@@ -308,6 +319,66 @@ export const getStoreCustomers = asyncHandler(
 			response
 				.status(500)
 				.json(new ApiError(500, 'Error updating store settings', error));
+		}
+	}
+);
+
+export const createCustomer = asyncHandler(
+	async (request: Request, response: Response) => {
+		const storeId = request.storeId!;
+		const { firstName, lastName, email } = request.body;
+		try {
+			const existedUser = await db.query.customer.findFirst({
+				where: eq(customer.email, email),
+			});
+
+			if (existedUser) {
+				response.status(200).json(new ApiError(407, 'User already exists'));
+			} else {
+				// const hashedPassword = await passwordHashed(password);
+				const createdCustomer = await db
+					.insert(customer)
+					.values({
+						firstName,
+						lastName,
+						email,
+						// password: hashedPassword,
+					})
+					.returning();
+
+				await db.insert(customerStore).values({
+					customerId: createdCustomer[0].id,
+					storeId: storeId,
+				});
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							createdCustomer[0],
+							'Customer created successfully'
+						)
+					);
+			}
+		} catch (error) {
+			console.log(error);
+			response.status(500).json(new ApiError(500, 'Error Happens', error));
+		}
+		try {
+			// const customer = await db
+			// 	.insert(customerStore)
+			// 	.values({
+			// 		storeId,
+			// 		customerId: request.params.customerId,
+			// 	})
+			// 	.returning();
+			// response
+			// 	.status(200)
+			// 	.json(new ApiResponse(200, customer, 'Customer created successfully'));
+		} catch (error) {
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error creating customer', error));
 		}
 	}
 );

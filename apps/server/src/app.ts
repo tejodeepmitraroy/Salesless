@@ -71,7 +71,7 @@ app.enable('trust proxy');
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/role', roleRouter);
 app.use('/api/v1/user', userRouter);
-app.use('/api/v1/customers', customerRouter);
+app.use('/api/v1/customer', customerRouter);
 app.use('/api/v1/cart', cartRouter);
 app.use('/api/v1/store', storeRouter);
 app.use('/api/v1/products', storeMiddleware, productRouter);

@@ -7,9 +7,9 @@ import { CustomerDataTable } from '@/features/Customer/tables/CustomerDataTable'
 import { customerColumns } from '@/features/Customer/tables/columns';
 import { useQuery } from '@tanstack/react-query';
 import { getCustomersService } from '@/features/Customer/services';
-import { useParams } from 'react-router';
 import { useCustomerStore } from '@/stores/useCustomerStore';
 import HeaderSection from '@/components/layouts/HeaderSection';
+import CreateCustomerDialog from '@/features/Customer/components/CreateCustomerDialog';
 
 interface PurchaseHistory {
 	id: number;
@@ -147,7 +147,6 @@ const USERS_DATA: UserData[] = [
 const CustomerManagement = () => {
 	const [users, setUsers] = useState<UserData[]>(USERS_DATA);
 	const [searchTerm, setSearchTerm] = useState('');
-	const { storeId } = useParams<{ storeId: string }>();
 
 	const setCustomers = useCustomerStore((state) => state.setCustomers);
 	const customers = useCustomerStore((state) => state.customers);
@@ -207,7 +206,7 @@ const CustomerManagement = () => {
 
 	const { data: customersData } = useQuery({
 		queryKey: ['customers'],
-		queryFn: () => getCustomersService({ storeId: storeId! }),
+		queryFn: () => getCustomersService(),
 	});
 
 	useEffect(() => {
@@ -225,7 +224,7 @@ const CustomerManagement = () => {
 				description="Manage your customers"
 			/>
 
-			<section className="flex w-full items-center justify-between">
+			<section className="flex w-full flex-col items-end gap-2 md:flex-row md:items-center md:justify-between">
 				<section className="relative w-full max-w-sm">
 					<Search className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
 					<Input
@@ -236,10 +235,14 @@ const CustomerManagement = () => {
 						onChange={handleSearch}
 					/>
 				</section>
-				<Button onClick={exportUsers} className="gap-2">
-					<Download className="h-4 w-4" />
-					Export to CSV
-				</Button>
+				<section className="flex gap-2">
+					<CreateCustomerDialog />
+
+					<Button onClick={exportUsers} className="gap-2">
+						<Download className="h-4 w-4" />
+						<span className="hidden">Export to CSV</span>
+					</Button>
+				</section>
 			</section>
 
 			<CustomerDataTable columns={customerColumns} data={customers} />

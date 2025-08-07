@@ -234,12 +234,12 @@ const OrderManagement = () => {
 
 	const { data: orders } = useQuery({
 		queryKey: ['orders', storeId],
-		queryFn: () => getAllOrdersService({ storeId: storeId! }),
+		queryFn: () => getAllOrdersService(),
 	});
+
 	const { filteredData, searchTerm, setSearchTerm } = useSearchFilterHook({
-		data: orders,
+		data: orders ?? [],
 	});
-	console.log('orders', orders, storeId);
 
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-6">

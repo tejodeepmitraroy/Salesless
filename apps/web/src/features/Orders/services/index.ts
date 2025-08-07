@@ -8,31 +8,26 @@ import { Order } from '@/stores/useOrderStore';
 // 	return response;
 // };
 
-export const getAllOrdersService = async ({ storeId }: { storeId: string }) => {
-	const response = await customAxios.get(`/store/${storeId}/orders`);
+export const getAllOrdersService = async () => {
+	const response = await customAxios.get(`/store/orders`);
+	console.log('response', response);
 	return response.data.data;
 };
 
 export const getOrderByIdService = async ({
 	orderId,
-	storeId,
 }: {
 	orderId: string;
-	storeId: string;
 }): Promise<Order> => {
-	const response = await customAxios.get(`/store/${storeId}/orders/${orderId}`);
+	const response = await customAxios.get(`/store/orders/${orderId}`);
 	return response.data.data;
 };
 
 export const deleteOrderByIdService = async ({
 	orderId,
-	storeId,
 }: {
 	orderId: string;
-	storeId: string;
 }): Promise<Order> => {
-	const response = await customAxios.delete(
-		`/store/${storeId}/orders/${orderId}`
-	);
+	const response = await customAxios.delete(`/store/orders/${orderId}`);
 	return response.data.data;
 };

@@ -8,7 +8,7 @@ import { getPaymentGatewayService } from '@/features/Settings/services';
 import { useQuery } from '@tanstack/react-query';
 import { Loader } from 'lucide-react';
 import { useParams } from 'react-router';
-import PaymentGatewayCard from '../../../routes/app/Settings/Payements/GatewaySettings/PaymentGatewayCard';
+import PaymentGatewayCard from '../../../routes/app/Settings/Payments/GatewaySettings/PaymentGatewayCard';
 import { supportedPaymentsGateways } from '../config/paymentGateway-config';
 
 const PaymentsGateway = () => {

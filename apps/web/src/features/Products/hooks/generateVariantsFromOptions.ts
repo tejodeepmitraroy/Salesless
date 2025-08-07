@@ -28,7 +28,7 @@ export const generateVariantsFromOptions = (
 			)
 		),
 		variants: combinations.map((combo, index) => ({
-			variantId: index,
+			variantId: index.toString(),
 			sku: '',
 			barcode: '',
 			price: 0,

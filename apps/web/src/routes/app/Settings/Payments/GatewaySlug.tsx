@@ -152,7 +152,7 @@ const GatewaySlug = () => {
 	};
 
 	return (
-		<div className="container mx-auto max-w-7xl p-6">
+		<div className="container mx-auto max-w-7xl">
 			{/* Back button and header */}
 			<header className="mb-8 flex flex-col items-start">
 				<Link

@@ -23,8 +23,11 @@ import {
 import ProductVariantManager from '@/features/Products/components/ProductVariantManager';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ProductFormValues } from './CreateNewProduct';
-import { productFormSchema } from '@/features/Products/schema';
+
+import {
+	productFormSchema,
+	ProductFormValues,
+} from '@/features/Products/schema';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from '@/features/Products/components/ImageUpload';

@@ -1,19 +1,16 @@
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCustomerByIdService } from '@/features/Customer/services';
 import { Customer, useCustomerStore } from '@/stores/useCustomerStore';
 import { useQuery } from '@tanstack/react-query';
 import { User } from 'lucide-react';
-
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 const CustomerDetails = () => {
-	const { storeId, customerId } = useParams<{
-		storeId: string;
+	const { customerId } = useParams<{
 		customerId: string;
 	}>();
 	const [customer, setCustomer] = useState<Customer | null>(null);
@@ -22,8 +19,7 @@ const CustomerDetails = () => {
 
 	const { data: customerData } = useQuery({
 		queryKey: ['customers', `${customerId}`],
-		queryFn: () =>
-			getCustomerByIdService({ storeId: storeId!, customerId: customerId! }),
+		queryFn: () => getCustomerByIdService({ customerId: customerId! }),
 	});
 
 	useEffect(() => {
@@ -43,6 +39,8 @@ const CustomerDetails = () => {
 				icon={<User className="h-7 w-7" />}
 				title={`User Profile: ${customer?.firstName} ${customer?.lastName}`}
 				description={`Last active: ${customer?.lastActive} | Status: ${customer?.status}`}
+				BackMsg="Back to Customers"
+				BackLink="customers"
 			/>
 
 			<Tabs defaultValue="details">
