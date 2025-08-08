@@ -31,7 +31,7 @@ import { NavMain } from './nav-main';
 
 import { NavSecondary } from './nav-secondary';
 import { useParams } from 'react-router';
-import { StoreSwitcher } from './store-switcher';
+import StoreSwitcher from './store-switcher';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { storeId } = useParams<{ storeId: string }>();
@@ -163,13 +163,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			},
 		],
 	};
-	const isTestMode = import.meta.env.VITE_TEST_MODE === 'true';
+
 	return (
-		<Sidebar
-			className={isTestMode ? 'pt-8' : undefined}
-			collapsible="icon"
-			{...props}
-		>
+		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
 				<SidebarMenuItem className="flex items-center justify-start gap-2">
 					<SidebarMenuButton tooltip="Sidebar">
@@ -179,12 +175,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							className="aspect-square w-5 rounded-lg"
 						/>
 						<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
-							Salesless
+							SalesLess
 						</span>
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 
-				<StoreSwitcher store={data.teams} />
+				<StoreSwitcher />
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />

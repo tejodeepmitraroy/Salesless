@@ -6,16 +6,20 @@ import { Button } from '../ui/button';
 import { setStoreId } from '../../api/axios-custom';
 import TestModeBanner from '../TestModeBanner';
 import { useEffect } from 'react';
+import { useStoreConfig } from '@/stores/useStoreConfig';
 
 const AdminLayout = () => {
 	const { storeId } = useParams<{ storeId: string }>();
+	const setStoreIdData = useStoreConfig((state) => state.setStoreId);
 
 	// Update store ID in axios headers when it changes
 	useEffect(() => {
 		setStoreId(storeId!);
-	}, [storeId]);
+		setStoreIdData(storeId!);
+	}, [storeId, setStoreIdData]);
 
-	const isTestMode = import.meta.env.VITE_TEST_MODE === 'true';
+	const isTestMode = useStoreConfig((state) => state.isTestMode);
+	console.log('isTestMode', isTestMode);
 
 	return (
 		<>
@@ -27,7 +31,7 @@ const AdminLayout = () => {
 				className={`bg-background text-foreground relative flex min-h-screen w-full rounded-t-2xl ${isTestMode ? 'mt-8' : ''}`}
 			>
 				<SidebarProvider>
-					<AppSidebar />
+					<AppSidebar className={isTestMode ? 'pt-8' : undefined} />
 					<main
 						className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
 					>

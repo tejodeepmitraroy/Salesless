@@ -15,7 +15,9 @@ import { customerAddress } from '../db/schema/customer';
 //Account Routes
 export const registerCustomer = asyncHandler(
 	async (request: Request, response: Response) => {
-		const { storeId, firstName, lastName, email, password } = request.body;
+		const { firstName, lastName, email, password } = request.body;
+
+		const storeId = request.storeId!;
 
 		console.log(request.body);
 

@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 import { db } from '../db';
 import { order, orderItems } from '../db/schema/order';
-import { eq, InferSelectModel } from 'drizzle-orm';
+import { eq, and, InferSelectModel } from 'drizzle-orm';
 import asyncHandler from '../utils/asyncHandler';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
+
+import { razorpayCard, RazorPayGateway } from '../gateways/RazorpayGateway';
+import { PaymentResponse } from '../gateways/types';
+import { GatewayConfigs } from '../db/schema';
 
 import { customer } from '../db/schema';
 
@@ -13,7 +17,7 @@ export const createOrder = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof customer>;
 		const {
-			storeId,
+			// storeId,
 			// customerId,
 			// cartId,
 			// totalAmount,
@@ -24,8 +28,8 @@ export const createOrder = asyncHandler(
 			billingAddress,
 			// tags,
 			// note,
-			// currency,
-			// totalPrice,
+			currency,
+			totalAmount,
 			// subtotalPrice,
 			// paymentMethod,
 			// additionalPrice,
@@ -42,7 +46,7 @@ export const createOrder = asyncHandler(
 			storeId: string;
 			customerId: string;
 			cartId: string;
-			totalAmount: number;
+
 			contactId: string;
 			name: string;
 			products: Array<{
@@ -74,7 +78,7 @@ export const createOrder = asyncHandler(
 			tags: string[];
 			note: string;
 			currency: string;
-			totalPrice: number;
+			totalAmount: number;
 			subtotalPrice: number;
 			paymentMethod: string;
 			additionalPrice: number;
@@ -89,6 +93,8 @@ export const createOrder = asyncHandler(
 			currentTotalTax: number;
 			shippedAt: string;
 		} = request.body;
+
+		const storeId = request.storeId!;
 
 		if (!storeId) {
 			response.status(400).json(new ApiError(400, 'storeId is required'));
@@ -125,19 +131,64 @@ export const createOrder = asyncHandler(
 					priceAtPurchase: 232323,
 				}));
 
-				const createOrderItems = await trx
-					.insert(orderItems)
-					.values(orderItemsData)
-					.returning();
-				response
-					.status(201)
-					.json(
-						new ApiResponse(
-							200,
-							createOrderItems,
-							'Products fetched successfully'
-						)
+				await trx.insert(orderItems).values(orderItemsData).returning();
+
+				// 🔔 Initiate payment using store's default payment gateway
+				const defaultGateway = await trx.query.GatewayConfigs.findFirst({
+					where: and(
+						eq(GatewayConfigs.storeId, storeId),
+						eq(GatewayConfigs.isDefault, true)
+					),
+				});
+
+				if (!defaultGateway) {
+					response
+						.status(404)
+						.json(new ApiError(404, 'Default payment gateway not configured'));
+				} else {
+					let paymentResponse: PaymentResponse | null = null;
+
+					switch (defaultGateway.gateway) {
+						case 'razorpay': {
+							const razorpay = new RazorPayGateway(
+								defaultGateway.apiKey,
+								defaultGateway.apiSecret
+							);
+							paymentResponse = await razorpay.createPayment({
+								storeId,
+								amount: totalAmount,
+								currency: currency || 'INR',
+								orderId: createOrder.id,
+								customerId: authUser.id,
+							});
+							break;
+						}
+						// TODO: Add additional gateways (stripe, phonepe, etc.)
+						default: {
+							throw new ApiError(400, 'Unsupported payment gateway');
+						}
+					}
+
+					// Optionally: store the transaction details in DB here
+
+					// response
+					// 	.status(201)
+					// 	.json(
+					// 		new ApiResponse(
+					// 			200,
+					// 			{ orderItems: createOrderItems, payment: paymentResponse },
+					// 			'new order created successfully'
+					// 		)
+					// 	);
+
+					response.status(200).send(
+						razorpayCard({
+							apiKey: defaultGateway.apiKey!,
+							amount: totalAmount * 100,
+							orderId: paymentResponse.transactionId!,
+						})
 					);
+				}
 			});
 		} catch (error) {
 			response.status(500).json(new ApiError(500, 'Error Happens', error));

@@ -14,11 +14,12 @@ import {
 	updateCustomerDefaultAddress,
 } from '../controllers/customer.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
+import { storeMiddleware } from '../middleware/store.middleware';
 
 const router = Router();
 
 //Register routes
-router.route('/register').post(registerCustomer);
+router.route('/register').post(storeMiddleware, registerCustomer);
 
 router
 	.route('/account')
