@@ -11,6 +11,7 @@ import {
 	productOptionsValues,
 	productVariant,
 } from '../db/schema/product';
+import redis from '../lib/redis';
 
 // Get all products
 export const getAllProducts = asyncHandler(
@@ -22,48 +23,67 @@ export const getAllProducts = asyncHandler(
 			response.status(400).json(new ApiError(400, 'storeId is required'));
 		}
 		try {
-			const products = await db.query.product.findMany({
-				where: eq(product.storeId, storeId),
-				with: {
-					media: {
-						with: {
-							media: true,
+			const cachedProducts = await redis.get(`products:${storeId}`);
+			console.log('cachedProducts', cachedProducts);
+
+			if (cachedProducts) {
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							JSON.parse(cachedProducts),
+							'Products fetched successfully'
+						)
+					);
+			} else {
+				const products = await db.query.product.findMany({
+					where: eq(product.storeId, storeId),
+					with: {
+						media: {
+							with: {
+								media: true,
+							},
+							columns: {
+								productId: false,
+								mediaId: false,
+							},
 						},
-						columns: {
-							productId: false,
-							mediaId: false,
-						},
+						category: true,
 					},
-					category: true,
-				},
-			});
-			if (!products) {
-				response.status(404).json(new ApiError(404, 'Products not found'));
-			}
+				});
+				if (!products) {
+					response.status(404).json(new ApiError(404, 'Products not found'));
+				}
 
-			const simplifiedProducts = products.map((product) => ({
-				...product,
-				category: product.category?.name ?? '',
+				const simplifiedProducts = products.map((product) => ({
+					...product,
+					category: product.category?.name ?? '',
 
-				media: product.media.map((m) => ({
-					index: m.index,
-					mediaId: m.media.id,
+					media: product.media.map((m) => ({
+						index: m.index,
+						mediaId: m.media.id,
 
-					...m.media,
-				})), // Extract only media objects
-			}));
+						...m.media,
+					})), // Extract only media objects
+				}));
 
-			console.log(simplifiedProducts);
+				console.log(simplifiedProducts);
 
-			response
-				.status(200)
-				.json(
-					new ApiResponse(
-						200,
-						simplifiedProducts,
-						'Products fetched successfully'
-					)
+				await redis.set(
+					`products:${storeId}`,
+					JSON.stringify(simplifiedProducts)
 				);
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							simplifiedProducts,
+							'Products fetched successfully'
+						)
+					);
+			}
 		} catch (error) {
 			response.status(500).json(new ApiError(500, 'Error Happens', error));
 		}
