@@ -5,20 +5,24 @@ interface useSearchFilterHookProps {
 }
 
 const useSearchFilterHook = ({ data }: useSearchFilterHookProps) => {
-	const [items] = useState<any[]>(data);
 	const [searchTerm, setSearchTerm] = useState('');
 	const [categoryFilter, setCategoryFilter] = useState('all');
 
 	// Filter products based on search query and tab
-	const filteredData = () =>
-		items.filter((item) => {
+	const filteredData = () => {
+		return data.filter((item) => {
 			return (
-				item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-				item.category.toLowerCase().includes(categoryFilter.toLowerCase())
+				item.billingAddressName
+					.toLowerCase()
+					.includes(searchTerm.toLowerCase()) ||
+				item.shippingAddressName
+					.toLowerCase()
+					.includes(categoryFilter.toLowerCase())
 				// && item.status.toLowerCase().includes(statusFilter.toLowerCase())
 			);
 		});
-
+		// return data;
+	};
 	return {
 		filteredData,
 		searchTerm,

@@ -7,6 +7,7 @@ import {
 	customer,
 	customerStore,
 	order,
+	orderItems,
 	store,
 	user,
 	userStore,
@@ -202,10 +203,72 @@ export const getStoreOrders = asyncHandler(
 				const storeOrder = await db.query.order.findFirst({
 					where: eq(order.storeId, storeId),
 				});
+
+				const orderItemsData = await db.query.orderItems.findMany({
+					where: eq(orderItems.orderId, orderId),
+				});
+
+				const orderDetails = {
+					id: orderId,
+					name: storeOrder?.name,
+					items: orderItemsData.map((item) => ({
+						id: item.id,
+						// name: item.name,
+						// thumbnail: item.product?.images?.[0]?.url ?? null,
+						productId: item.productId,
+						quantity: item.quantity,
+						price: item.priceAtPurchase,
+						currency: storeOrder?.currency,
+					})),
+					status: storeOrder?.status,
+
+					shippingDetails: {
+						deliveredTo: storeOrder?.shippingAddressName,
+						deliveredAt: storeOrder?.shippedAt,
+					},
+					customerDetails: {
+						name: storeOrder?.name,
+						contactEmail: storeOrder?.contactEmail,
+						contactPhone: storeOrder?.contactPhone,
+					},
+
+					shippingAddress: {
+						name: storeOrder?.shippingAddressName,
+						address1: storeOrder?.shippingAddressAddress1,
+						address2: storeOrder?.shippingAddressAddress2,
+						city: storeOrder?.shippingAddressCity,
+						zip: storeOrder?.shippingAddressZip,
+						province: storeOrder?.shippingAddressProvince,
+						country: storeOrder?.shippingAddressCountry,
+						phone: storeOrder?.shippingAddressPhone,
+						company: storeOrder?.shippingAddressCompany,
+					},
+					billingAddress: {
+						name: storeOrder?.billingAddressName,
+						address1: storeOrder?.billingAddressAddress1,
+						address2: storeOrder?.billingAddressAddress2,
+						city: storeOrder?.billingAddressCity,
+						zip: storeOrder?.billingAddressZip,
+						province: storeOrder?.billingAddressProvince,
+						country: storeOrder?.billingAddressCountry,
+						phone: storeOrder?.billingAddressPhone,
+						company: storeOrder?.billingAddressCompany,
+					},
+					paymentDetails: {},
+					subtotal: storeOrder?.subtotalPrice,
+					discount: storeOrder?.totalDiscounts,
+					shipping: storeOrder?.additionalPrice,
+					total: storeOrder?.totalPrice,
+				};
+
 				response
 					.status(200)
 					.json(
-						new ApiResponse(200, storeOrder, 'Store order fetched successfully')
+						new ApiResponse(
+							200,
+							orderDetails,
+							'Store order fetched successfully'
+						)
 					);
 			} else {
 				const storeOrders = await db.query.order.findMany({

@@ -41,6 +41,9 @@ export const order = pgTable('order', {
 		.references(() => customer.id, { onDelete: 'cascade' })
 		.notNull(),
 	name: varchar('name'),
+	contactEmail: varchar('contact_email'),
+	contactPhone: varchar('contact_phone'),
+
 	shippingAddressPhone: varchar('shipping_address_phone'),
 	shippingAddressCompany: varchar('shipping_address_company'),
 	shippingAddressName: varchar('shipping_address_name'),
@@ -50,9 +53,9 @@ export const order = pgTable('order', {
 	shippingAddressProvince: varchar('shipping_address_province'),
 	shippingAddressCountry: varchar('shipping_address_country'),
 	shippingAddressZip: varchar('shipping_address_zip'),
+	billingAddressName: varchar('billing_address_name'),
 	billingAddressPhone: varchar('billing_address_phone'),
 	billingAddressCompany: varchar('billing_address_company'),
-	billingAddressName: varchar('billing_address_name'),
 	billingAddressAddress1: varchar('billing_address_address1'),
 	billingAddressAddress2: varchar('billing_address_address2'),
 	billingAddressCity: varchar('billing_address_city'),

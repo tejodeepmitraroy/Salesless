@@ -56,7 +56,7 @@ export const getAllProducts = asyncHandler(
 			console.log(simplifiedProducts);
 
 			response
-				.status(201)
+				.status(200)
 				.json(
 					new ApiResponse(
 						200,

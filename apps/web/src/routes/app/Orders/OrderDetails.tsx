@@ -127,48 +127,16 @@ const OrderDetails = () => {
 								<CardContent>
 									<ScrollArea className="h-[320px] rounded-lg border p-4">
 										<section className="flex w-full flex-col gap-3">
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
-											<OrderItems
-												image="https://github.com/shadcn.png"
-												name="Product Name"
-												variant="Brown / B5 / Grid"
-												price={200}
-												quantity={1}
-											/>
+											{orderData?.items.map((item) => (
+												<OrderItems
+													key={item.id}
+													image="https://github.com/shadcn.png"
+													name={'Product Name'}
+													variant="Brown / B5 / Grid"
+													price={item.price}
+													quantity={item.quantity}
+												/>
+											))}
 											<OrderItems
 												image="https://github.com/shadcn.png"
 												name="Product Name"
@@ -183,10 +151,21 @@ const OrderDetails = () => {
 							<Card className="text-left">
 								<CardContent className="mx-4 grid grid-cols-1 gap-6 rounded-2xl border py-6">
 									<OrderBilling
-										subTotal={{ items: 2, amount: 20 }}
+										subTotal={{
+											items: orderData!.items.length,
+											amount: orderData!.items.reduce(
+												(acc, item) => acc + item.price * item.quantity,
+												0
+											),
+										}}
 										discount={{ amount: 20 }}
 										shipping={{ amount: 0 }}
-										total={{ amount: 20 }}
+										total={{
+											amount: orderData!.items.reduce(
+												(acc, item) => acc + item.price * item.quantity,
+												0
+											),
+										}}
 									/>
 									<Separator />
 									<section className="flex flex-col items-center">
@@ -224,7 +203,7 @@ const OrderDetails = () => {
 									</div>
 								</CardContent>
 							</Card>
-							<Card className="gap-2 text-left">
+							{/* <Card className="gap-2 text-left">
 								<CardHeader>
 									<CardTitle className="text-lg">Customer Details</CardTitle>
 								</CardHeader>
@@ -251,6 +230,81 @@ const OrderDetails = () => {
 											<p>1226 University Drive Menlo Park CA 94025</p>
 											<p className="text-xs">United States</p>
 											<p> +16282679041</p>
+										</section>
+									</div>
+								</CardContent>
+							</Card> */}
+
+							<Card className="gap-2 text-left">
+								<CardHeader>
+									<CardTitle className="text-lg">Shipping Details</CardTitle>
+								</CardHeader>
+								<CardContent className="grid grid-cols-1 gap-3">
+									<div className="flex w-full">
+										<Label className="text-base font-normal">
+											{orderData?.shippingAddress.name}
+										</Label>
+									</div>
+									<div className="flex w-full flex-col">
+										<Label className="text-base font-medium">
+											Contact information
+										</Label>
+										<span className="text-xs">
+											{orderData?.shippingAddress.phone}
+										</span>
+										<span className="text-xs">
+											{orderData?.shippingAddress.phone}
+										</span>
+									</div>
+									<div className="flex w-full flex-col gap-2">
+										<Label className="text-base font-medium">
+											Shipping Address
+										</Label>
+										<section className="flex flex-col gap-1 text-sm">
+											<p>
+												{orderData?.shippingAddress.address1}
+												{orderData?.shippingAddress.country}
+												{orderData?.shippingAddress.city}
+											</p>
+											<p className="text-xs">
+												{orderData?.shippingAddress.zip}
+											</p>
+										</section>
+									</div>
+								</CardContent>
+							</Card>
+							<Card className="gap-2 text-left">
+								<CardHeader>
+									<CardTitle className="text-lg">Billing Details</CardTitle>
+								</CardHeader>
+								<CardContent className="grid grid-cols-1 gap-3">
+									<div className="flex w-full">
+										<Label className="text-base font-normal">
+											{orderData?.billingAddress.name}
+										</Label>
+									</div>
+									<div className="flex w-full flex-col">
+										<Label className="text-base font-medium">
+											Contact information
+										</Label>
+										<span className="text-xs">
+											{orderData?.billingAddress.phone}
+										</span>
+										<span className="text-xs">
+											{orderData?.billingAddress.phone}
+										</span>
+									</div>
+									<div className="flex w-full flex-col gap-2">
+										<Label className="text-base font-medium">
+											Shipping Address
+										</Label>
+										<section className="flex flex-col gap-1 text-sm">
+											<p>
+												{orderData?.billingAddress.address1}
+												{orderData?.billingAddress.country}
+												{orderData?.billingAddress.city}
+											</p>
+											<p className="text-xs">{orderData?.billingAddress.zip}</p>
 										</section>
 									</div>
 								</CardContent>

@@ -17,12 +17,11 @@ export const createOrder = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof customer>;
 		const {
-			// storeId,
 			// customerId,
 			// cartId,
-			// totalAmount,
+
 			// contactId,
-			// name,
+			name,
 			products,
 			shippingAddress,
 			billingAddress,
@@ -46,7 +45,6 @@ export const createOrder = asyncHandler(
 			storeId: string;
 			customerId: string;
 			cartId: string;
-
 			contactId: string;
 			name: string;
 			products: Array<{
@@ -108,6 +106,8 @@ export const createOrder = asyncHandler(
 						customerId: authUser.id, // Assuming authUser contains the customer ID
 						// Generate a unique order name
 						// Uncomment and provide other required fields
+						name: name,
+						// contactId: contactId,
 						shippingAddressPhone: shippingAddress?.phone || '',
 						shippingAddressName: shippingAddress?.name || '',
 						shippingAddressAddress1: shippingAddress?.address1 || '',
@@ -210,7 +210,11 @@ export const getOrders = asyncHandler(
 					with: {
 						orders: {
 							with: {
-								items: true,
+								items: {
+									with: {
+										product: true,
+									},
+								},
 							},
 						},
 					},
@@ -220,16 +224,75 @@ export const getOrders = asyncHandler(
 					(order) => order.id === orderId
 				);
 
-				response
-					.status(200)
-					.json(new ApiResponse(200, order, 'Orders fetched successfully'));
+				// Build structured order details response
+
+				if (!order) {
+					response.status(404).json(new ApiError(404, 'Order not found'));
+				} else {
+					const orderDetails = {
+						id: order?.id,
+						name: order?.name,
+						items: order.items.map((item) => ({
+							id: item.id,
+							// thumbnail: item.product?.images?.[0]?.url ?? null,
+							productId: item.productId,
+							quantity: item.quantity,
+							price: item.priceAtPurchase,
+							currency: order.currency,
+						})),
+
+						shippingDetails: {
+							deliveredTo: order.shippingAddressName,
+							deliveredAt: order.shippedAt,
+						},
+						customerDetails: {
+							name: order?.name,
+							contactId: order.customerId,
+							shippingAddress: {
+								address1: order.shippingAddressAddress1,
+								address2: order.shippingAddressAddress2,
+								city: order.shippingAddressCity,
+								province: order.shippingAddressProvince,
+								country: order.shippingAddressCountry,
+								zip: order.shippingAddressZip,
+							},
+							billingAddress: {
+								address1: order.billingAddressAddress1,
+								address2: order.billingAddressAddress2,
+								city: order.billingAddressCity,
+								province: order.billingAddressProvince,
+								country: order.billingAddressCountry,
+								zip: order.billingAddressZip,
+							},
+						},
+						paymentDetails: {},
+						subtotal: order.subtotalPrice,
+						discount: order.totalDiscounts,
+						shipping: order.additionalPrice,
+						total: order.totalPrice,
+					};
+
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								orderDetails,
+								'Order details fetched successfully'
+							)
+						);
+				}
 			} else {
 				const customerOrders = await db.query.customer.findFirst({
 					where: eq(customer.id, authUser.id),
 					with: {
 						orders: {
 							with: {
-								items: true,
+								items: {
+									with: {
+										product: true,
+									},
+								},
 							},
 						},
 					},

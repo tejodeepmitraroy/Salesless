@@ -5,13 +5,11 @@ import OrderFilters from '@/features/Orders/components/OrderFilters';
 import { orderColumns } from '@/features/Orders/tables/OrderColumns';
 import { useQuery } from '@tanstack/react-query';
 import { getAllOrdersService } from '@/features/Orders/services';
-import { useParams } from 'react-router';
 import useSearchFilterHook from '@/hooks/useSearchFilterHook';
 // import OrderModal from '@/features/Orders/components/OrderModal';
 
 const OrderManagement = () => {
 	// const [searchQuery, setSearchQuery] = useState('');
-	const { storeId } = useParams<{ storeId: string }>();
 
 	// const getFilteredOrders = useOrderStore((state) => state.getFilteredOrders);
 
@@ -233,13 +231,17 @@ const OrderManagement = () => {
 	// };
 
 	const { data: orders } = useQuery({
-		queryKey: ['orders', storeId],
+		queryKey: ['orders'],
 		queryFn: () => getAllOrdersService(),
 	});
 
+	console.log('orders', orders);
+
 	const { filteredData, searchTerm, setSearchTerm } = useSearchFilterHook({
-		data: orders ?? [],
+		data: orders || [],
 	});
+
+	console.log('filteredData', filteredData());
 
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-6">
