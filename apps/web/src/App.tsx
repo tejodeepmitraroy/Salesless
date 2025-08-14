@@ -26,6 +26,7 @@ import AccountSecurity from './routes/accounts/AccountSecurity';
 import GatewaySlug from './routes/app/Settings/Payments/GatewaySlug';
 import ThirdPartyProviders from './routes/app/Settings/Payments/ThirdPartyProviders';
 import Settings from './routes/app/Settings/Settings';
+import Billing from './routes/app/Billing/Billing';
 
 const queryClient = new QueryClient();
 function App() {
@@ -128,6 +129,9 @@ function App() {
 										</Route>
 										<Route path="finances">
 											<Route path="payments" element={<PaymentsDashboard />} />
+										</Route>
+										<Route path="billing">
+											<Route index element={<Billing />} />
 										</Route>
 
 										{/* Settings */}

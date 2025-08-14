@@ -50,16 +50,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --vsphere-primary:oklch(0.71 0.1812 22.84);
-  --vsphere-secondary:oklch(0.78 0.1116 188.54);
-  --vsphere-accent:oklch(0.88 0.1348 86.06);
-  --vsphere-light:oklch(0.98 0.0158 73.68);
-  --vsphere-dark:oklch(0.21 0.0304 302.18);
-  --vsphere-mint:oklch(0.88 0.0811 167.93);
-  --vsphere-skyblue:oklch(0.91 0.0534 203.57);
-  --vsphere-cream:oklch(0.97 0.0708 100.68);
-  --vsphere-coral:oklch(0.76 0.1435 26.08);
-  --vsphere-lightpink:oklch(0.9 0.0533 11);
+ 
 
 }
 

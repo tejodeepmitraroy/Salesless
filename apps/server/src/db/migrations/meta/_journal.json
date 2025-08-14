@@ -15,6 +15,48 @@
 			"when": 1754686469721,
 			"tag": "0001_dusty_justin_hammer",
 			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "7",
+			"when": 1754932274837,
+			"tag": "0002_bored_junta",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "7",
+			"when": 1755082956244,
+			"tag": "0003_hot_cyclops",
+			"breakpoints": true
+		},
+		{
+			"idx": 4,
+			"version": "7",
+			"when": 1755101067655,
+			"tag": "0004_thick_corsair",
+			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "7",
+			"when": 1755103682120,
+			"tag": "0005_simple_fat_cobra",
+			"breakpoints": true
+		},
+		{
+			"idx": 6,
+			"version": "7",
+			"when": 1755110238974,
+			"tag": "0006_lethal_metal_master",
+			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "7",
+			"when": 1755191069218,
+			"tag": "0007_kind_maelstrom",
+			"breakpoints": true
 		}
 	]
 }

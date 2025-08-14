@@ -1,4 +1,5 @@
 import {
+	boolean,
 	integer,
 	pgTable,
 	primaryKey,
@@ -15,6 +16,7 @@ import { collection } from './collection';
 import { customer } from './customer';
 import { ulid } from 'ulid';
 import { order } from './order';
+import { subscription } from './subscription';
 
 export const store = pgTable('store', {
 	id: varchar('id')
@@ -33,24 +35,26 @@ export const store = pgTable('store', {
 	timezone: varchar('timezone'),
 	moneyFormat: varchar('money_format'),
 	domain: varchar('domain'),
+	isActive: boolean('is_active').notNull().default(true),
+	isTestMode: boolean('is_test_mode').notNull().default(true),
+	plan: varchar('plan').notNull().default('free'),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });
 
-export const storeRelations = relations(store, ({ many }) => ({
+export const storeRelations = relations(store, ({ one, many }) => ({
 	products: many(product),
 	collections: many(collection),
 	carts: many(cart),
 	customerStores: many(customerStore),
 	userStore: many(userStore),
-
-	// roles: many(userStore, {
-	// 	relationName: 'storeRoles',
-	// }),
 	media: many(media),
 	orders: many(order),
 	apiKeys: many(apiKey),
-	// paymentGateways: many(paymentGatewayConfig),
+	subscriptions: one(subscription, {
+		fields: [store.id],
+		references: [subscription.storeId],
+	}),
 }));
 
 export const userStore = pgTable(
@@ -62,9 +66,6 @@ export const userStore = pgTable(
 		userId: varchar('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		// roleId: integer('role_id')
-		// 	.notNull()
-		// 	.references(() => role.id, { onDelete: 'cascade' }),
 		registerAt: timestamp('register_at', { mode: 'string' })
 			.notNull()
 			.defaultNow(),

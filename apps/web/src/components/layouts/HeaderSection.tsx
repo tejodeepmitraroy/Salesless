@@ -2,6 +2,7 @@ import { FC } from 'react';
 import { Link, useParams } from 'react-router';
 import { Button } from '../ui/button';
 import { ChevronLeft } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
 	icon?: React.ReactNode;
@@ -10,6 +11,7 @@ interface HeaderProps {
 	children?: React.ReactNode;
 	BackMsg?: string;
 	BackLink?: string;
+	className?: string;
 }
 const HeaderSection: FC<HeaderProps> = ({
 	// icon,
@@ -18,6 +20,7 @@ const HeaderSection: FC<HeaderProps> = ({
 	children,
 	BackMsg,
 	BackLink,
+	className,
 }) => {
 	const { storeId } = useParams<{ storeId: string }>();
 	return (
@@ -31,14 +34,16 @@ const HeaderSection: FC<HeaderProps> = ({
 				</Link>
 			)}
 			<section className="flex w-full items-start justify-between">
-				<div className="mb-4 flex flex-col items-start">
+				<div className={cn('mb-4 flex flex-col items-start')}>
 					<h1 className="mb-2 flex items-center gap-3 text-3xl font-bold text-black">
 						{/* {icon} */}
 						{title}
 					</h1>
 					<p className="text-muted-foreground">{description}</p>
 				</div>
-				<div className="flex items-center gap-2">{children}</div>
+				<div className={cn('flex items-center gap-2', className)}>
+					{children}
+				</div>
 			</section>
 		</header>
 	);

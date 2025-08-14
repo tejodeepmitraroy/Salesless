@@ -94,7 +94,7 @@ const ProductManagement = () => {
 
 	const { data: productsData } = useQuery({
 		queryKey: ['products'],
-		queryFn: () => getAllProducts({ storeId: storeId! }),
+		queryFn: () => getAllProducts(),
 	});
 
 	useEffect(() => {

@@ -5,18 +5,30 @@ import { AppSidebar } from '../Sidebar/app-sidebar';
 import { Button } from '../ui/button';
 import { setStoreId } from '../../api/axios-custom';
 import TestModeBanner from '../TestModeBanner';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useStoreConfig } from '@/stores/useStoreConfig';
+import { getStoreByIdService } from '@/features/Store/services';
 
 const AdminLayout = () => {
 	const { storeId } = useParams<{ storeId: string }>();
 	const setStoreIdData = useStoreConfig((state) => state.setStoreId);
+	const setStoreData = useStoreConfig((state) => state.setStoreData);
 
 	// Update store ID in axios headers when it changes
 	useEffect(() => {
 		setStoreId(storeId!);
 		setStoreIdData(storeId!);
 	}, [storeId, setStoreIdData]);
+
+	const getStoreData = useCallback(async () => {
+		const data = await getStoreByIdService();
+		console.log('Store Data', data);
+		setStoreData(data.name, data.description, data.isTestMode);
+	}, [setStoreData]);
+
+	useEffect(() => {
+		getStoreData();
+	}, [getStoreData]);
 
 	const isTestMode = useStoreConfig((state) => state.isTestMode);
 	console.log('isTestMode', isTestMode);

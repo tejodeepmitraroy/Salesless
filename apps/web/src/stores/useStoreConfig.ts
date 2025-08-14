@@ -15,8 +15,11 @@ export interface StoreConfigState {
 
 export interface StoreConfigActions {
 	setStoreId: (id: string | null) => void;
-	setStoreName: (name: string) => void;
-	setStoreDescription: (description: string) => void;
+	setStoreData: (
+		name: string,
+		description: string,
+		isTestMode: boolean
+	) => void;
 	setIsTestMode: (isTest: boolean) => void;
 	setPublishableKey: (key: string | null) => void;
 	setSecretKey: (key: string | null) => void;
@@ -46,9 +49,8 @@ export const useStoreConfig = create<StoreConfigStore>()(
 		(set) => ({
 			...initialState,
 			setStoreId: (id) => set({ storeId: id }),
-			setStoreName: (name) => set({ storeName: name }),
-			setStoreDescription: (description) =>
-				set({ storeDescription: description }),
+			setStoreData: (name, description, isTestMode) =>
+				set({ storeName: name, storeDescription: description, isTestMode }),
 			setIsTestMode: (isTest) => set({ isTestMode: isTest }),
 			setPublishableKey: (key) => set({ publishableKey: key }),
 			setSecretKey: (key) => set({ secretKey: key }),

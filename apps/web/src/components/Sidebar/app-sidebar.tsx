@@ -32,15 +32,11 @@ import { NavMain } from './nav-main';
 import { NavSecondary } from './nav-secondary';
 import { useParams } from 'react-router';
 import StoreSwitcher from './store-switcher';
+import { FcBullish } from 'react-icons/fc';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { storeId } = useParams<{ storeId: string }>();
 	const data = {
-		user: {
-			name: 'shadcn',
-			email: 'm@example.com',
-			avatar: '/avatars/shadcn.jpg',
-		},
 		navMain: [
 			{
 				title: 'Dashboard',
@@ -58,11 +54,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						url: `/store/${storeId}/orders`,
 						icon: ShoppingCart,
 					},
-					// {
-					// 	title: 'Draft ',
-					// 	url: `/store/${storeId}/orders/drafts`,
-					// 	icon: ShoppingCart,
-					// },
 				],
 			},
 			{
@@ -126,6 +117,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				title: 'Settings',
 				url: `/store/${storeId}/settings`,
 				icon: <Settings />,
+			},
+			{
+				title: 'Upgrade',
+				url: `/store/${storeId}/billing`,
+				icon: <FcBullish />,
 			},
 			{
 				title: 'Get Help',

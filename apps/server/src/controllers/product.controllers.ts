@@ -23,7 +23,7 @@ export const getAllProducts = asyncHandler(
 			response.status(400).json(new ApiError(400, 'storeId is required'));
 		}
 		try {
-			const cachedProducts = await redis.get(`products:${storeId}`);
+			const cachedProducts = await redis.get(`store:${storeId}:products`);
 			console.log('cachedProducts', cachedProducts);
 
 			if (cachedProducts) {

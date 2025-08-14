@@ -8,6 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { userStore } from './store';
 import { ulid } from 'ulid';
+import { subscription } from './subscription';
 
 export const user = pgTable('user', {
 	id: varchar('id')
@@ -33,4 +34,5 @@ export const user = pgTable('user', {
 });
 export const userRelations = relations(user, ({ many }) => ({
 	userStore: many(userStore),
+	subscriptions: many(subscription),
 }));
