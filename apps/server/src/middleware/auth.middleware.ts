@@ -9,7 +9,7 @@ export const localUserAuthMiddleware = passport.authenticate('user-local', {
 export const localCustomerAuthMiddleware = passport.authenticate(
 	'customer-local',
 	{
-		failureRedirect: '/login2',
+		failureRedirect: '/login',
 		failureMessage: true,
 		session: false,
 	}

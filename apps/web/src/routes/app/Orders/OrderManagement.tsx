@@ -1,18 +1,16 @@
 import { ShoppingCart } from 'lucide-react';
-
 import HeaderSection from '@/components/layouts/HeaderSection';
 import { OrderDataTable } from '@/features/Orders/tables/OrderDataTable';
 import OrderFilters from '@/features/Orders/components/OrderFilters';
-import { useOrderStore } from '@/stores/useOrderStore';
 import { orderColumns } from '@/features/Orders/tables/OrderColumns';
+import { useQuery } from '@tanstack/react-query';
+import { getAllOrdersService } from '@/features/Orders/services';
+import useSearchFilterHook from '@/hooks/useSearchFilterHook';
 // import OrderModal from '@/features/Orders/components/OrderModal';
 
 const OrderManagement = () => {
 	// const [searchQuery, setSearchQuery] = useState('');
-	// const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-	// const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
 
-	const filteredOrders = useOrderStore((state) => state.filteredOrders);
 	// const getFilteredOrders = useOrderStore((state) => state.getFilteredOrders);
 
 	// Mock order data
@@ -232,6 +230,19 @@ const OrderManagement = () => {
 	// 	);
 	// };
 
+	const { data: orders } = useQuery({
+		queryKey: ['orders'],
+		queryFn: () => getAllOrdersService(),
+	});
+
+	console.log('orders', orders);
+
+	const { filteredData, searchTerm, setSearchTerm } = useSearchFilterHook({
+		data: orders || [],
+	});
+
+	console.log('filteredData', filteredData());
+
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-6">
 			<HeaderSection
@@ -240,8 +251,8 @@ const OrderManagement = () => {
 				description="Manage your orders"
 			/>
 			<section className="space-y-6">
-				<OrderFilters />
-				<OrderDataTable columns={orderColumns} data={filteredOrders} />
+				<OrderFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+				<OrderDataTable columns={orderColumns} data={filteredData()} />
 				{/* <Tabs defaultValue="all">
 					<section className="mb-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
 						<TabsList className="grid w-full grid-cols-5 sm:w-auto sm:grid-cols-6">

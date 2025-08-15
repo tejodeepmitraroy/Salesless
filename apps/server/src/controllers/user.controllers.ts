@@ -7,12 +7,9 @@ import ApiResponse from '../utils/ApiResponse';
 import { passwordHashed } from '../helper/hasher';
 import { user } from '../db/schema';
 import {
-	generateEmailVerifyToken,
 	generateResetPasswordToken,
 	verifyResetPasswordJwtToken,
 } from '../helper/token';
-import { forgotPasswordEmail } from '../helper/sendEmail';
-import axios from 'axios';
 
 export const registerClient = asyncHandler(
 	async (request: Request, response: Response) => {
@@ -43,25 +40,25 @@ export const registerClient = asyncHandler(
 						phone,
 					})
 					.returning();
-				const token = generateEmailVerifyToken(email);
+				// const token = generateEmailVerifyToken(email);
 
-				const dataFile = await axios.post(
-					`${process.env.EMAIL_SERVICE_URI!}/auth/verify-email`,
-					{
-						to: email,
-						data: {
-							userName: firstName,
-							verificationLink: `${process.env.FRONTEND_ENDPOINT_URL!}/verify-email?token=${token}`,
-						},
-					},
-					{
-						headers: {
-							'Content-Type': 'application/json',
-						},
-					}
-				);
+				// const dataFile = await axios.post(
+				// 	`${process.env.EMAIL_SERVICE_URI!}/auth/verify-email`,
+				// 	{
+				// 		to: email,
+				// 		data: {
+				// 			userName: firstName,
+				// 			verificationLink: `${process.env.FRONTEND_ENDPOINT_URL!}/verify-email?token=${token}`,
+				// 		},
+				// 	},
+				// 	{
+				// 		headers: {
+				// 			'Content-Type': 'application/json',
+				// 		},
+				// 	}
+				// );
 
-				console.log('Email dataFile', dataFile);
+				// console.log('Email dataFile', dataFile);
 
 				response
 					.status(200)
@@ -100,7 +97,7 @@ export const updateUserProfile = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof user>;
 
-		const { firstName, lastName, email, password, avatar, gender, age, phone } =
+		const { firstName, lastName, email, avatar, gender, age, phone } =
 			request.body;
 
 		try {
@@ -110,7 +107,6 @@ export const updateUserProfile = asyncHandler(
 					firstName,
 					lastName,
 					email,
-					password,
 					avatar,
 					gender,
 					age,
@@ -122,6 +118,35 @@ export const updateUserProfile = asyncHandler(
 			response
 				.status(200)
 				.json(new ApiResponse(200, userProfile[0], 'Profile is Updated'));
+		} catch (error) {
+			response.status(400).json(new ApiError(400, 'Error Happened', error));
+		}
+	}
+);
+
+export const updateUserSecurity = asyncHandler(
+	async (request: Request, response: Response) => {
+		const authUser = request.user as InferSelectModel<typeof user>;
+
+		const { password } = request.body;
+
+		try {
+			const hashedPassword = await passwordHashed(password);
+
+			console.log('Hashed Password', hashedPassword);
+			const userSecurity = await db
+				.update(user)
+				.set({
+					password: hashedPassword,
+				})
+				.where(eq(user.id, authUser.id))
+				.returning();
+
+			response
+				.status(200)
+				.json(
+					new ApiResponse(200, userSecurity[0], 'Security Details is Updated')
+				);
 		} catch (error) {
 			response.status(400).json(new ApiError(400, 'Error Happened', error));
 		}
@@ -161,6 +186,7 @@ export const getUserSettings = asyncHandler(
 		}
 	}
 );
+
 export const updateUserSettings = asyncHandler(
 	async (request: Request, response: Response) => {
 		const authUser = request.user as InferSelectModel<typeof user>;
@@ -241,15 +267,15 @@ export const forgetPassword = asyncHandler(
 				const token = generateResetPasswordToken(userProfile.id);
 				console.log('Token', token);
 
-				const emailInfo = await forgotPasswordEmail({
-					receiverEmail: email,
-					userFirstName: userProfile.firstName,
-					token,
-				});
+				// const emailInfo = await forgotPasswordEmail({
+				// 	receiverEmail: email,
+				// 	userFirstName: userProfile.firstName,
+				// 	token,
+				// });
 
 				response
 					.status(200)
-					.json(new ApiResponse(200, emailInfo, 'New Password Updated'));
+					.json(new ApiResponse(200, {}, 'New Password Updated'));
 			}
 		} catch (error) {
 			response.status(400).json(new ApiError(400, 'error Happens', error));
@@ -279,7 +305,7 @@ export const resetLink = asyncHandler(
 					.set({
 						password: await passwordHashed(newPassword),
 					})
-					.where(eq(user.id, parseInt(id)))
+					.where(eq(user.id, id))
 					.returning();
 
 				response
@@ -296,5 +322,42 @@ export const resetLink = asyncHandler(
 				.status(400)
 				.json(new ApiError(400, 'Please give only string value'));
 		}
+	}
+);
+
+//Logout
+export const logoutUser = asyncHandler(
+	async (request: Request, response: Response) => {
+		request.logout(async (err) => {
+			if (err) {
+				response.status(500).json({ message: 'Logout failed' });
+			}
+
+			const token = request.cookies.refresh_token;
+
+			console.log('Logout, Refresh Token--->', token);
+			try {
+				await db
+					.update(user)
+					.set({ refreshToken: null })
+					.where(eq(user.refreshToken, token));
+
+				response.clearCookie('access_token', {
+					// httpOnly: true,
+					secure: process.env.NODE_ENV === 'production', // Secure in production
+					sameSite: 'strict',
+					path: '/',
+				});
+				response.clearCookie('refresh_token', {
+					httpOnly: true,
+					secure: process.env.NODE_ENV === 'production', // Secure in production
+					sameSite: 'strict',
+					path: '/',
+				});
+				response.status(200).json({ message: 'Logged out successfully' });
+			} catch {
+				response.status(500).json({ error: 'Server error' });
+			}
+		});
 	}
 );

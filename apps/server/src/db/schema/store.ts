@@ -2,21 +2,25 @@ import {
 	integer,
 	pgTable,
 	primaryKey,
-	serial,
 	text,
 	timestamp,
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { user, customer } from './user';
-import { role } from './role';
+import { user } from './user';
 import { product } from './product';
 import { cart } from './cart';
 import { media } from './media';
 import { collection } from './collection';
+import { customer } from './customer';
+import { ulid } from 'ulid';
+import { order } from './order';
 
 export const store = pgTable('store', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	name: varchar('name').notNull(),
 	description: varchar('description'),
 	country: varchar('country').notNull(),
@@ -40,34 +44,32 @@ export const storeRelations = relations(store, ({ many }) => ({
 	customerStores: many(customerStore),
 	userStore: many(userStore),
 
-	roles: many(userStore, {
-		relationName: 'storeRoles',
-	}),
-	media: many(media, {
-		relationName: 'storeMedia',
-	}),
+	// roles: many(userStore, {
+	// 	relationName: 'storeRoles',
+	// }),
+	media: many(media),
+	orders: many(order),
 	apiKeys: many(apiKey),
+	// paymentGateways: many(paymentGatewayConfig),
 }));
 
 export const userStore = pgTable(
 	'user_store',
 	{
-		storeId: integer('store_id')
+		storeId: varchar('store_id')
 			.notNull()
 			.references(() => store.id),
-		userId: integer('user_id')
+		userId: varchar('user_id')
 			.notNull()
-			.references(() => user.id),
-		roleId: integer('role_id')
-			.notNull()
-			.references(() => role.id),
+			.references(() => user.id, { onDelete: 'cascade' }),
+		// roleId: integer('role_id')
+		// 	.notNull()
+		// 	.references(() => role.id, { onDelete: 'cascade' }),
 		registerAt: timestamp('register_at', { mode: 'string' })
 			.notNull()
 			.defaultNow(),
 	},
-	(table) => [
-		primaryKey({ columns: [table.storeId, table.userId, table.roleId] }),
-	]
+	(table) => [primaryKey({ columns: [table.storeId, table.userId] })]
 );
 
 export const userStoreRelations = relations(userStore, ({ one }) => ({
@@ -81,19 +83,19 @@ export const userStoreRelations = relations(userStore, ({ one }) => ({
 		references: [user.id],
 	}),
 
-	role: one(role, {
-		fields: [userStore.roleId],
-		references: [role.id],
-	}),
+	// role: one(role, {
+	// 	fields: [userStore.roleId],
+	// 	references: [role.id],
+	// }),
 }));
 
 export const customerStore = pgTable(
 	'customer_store',
 	{
-		storeId: integer('store_id')
+		storeId: varchar('store_id')
 			.notNull()
 			.references(() => store.id),
-		customerId: integer('customer_id')
+		customerId: varchar('customer_id')
 			.notNull()
 			.references(() => customer.id),
 		registerAt: timestamp('register_at', { mode: 'string' })
@@ -115,12 +117,15 @@ export const customerStoreRelations = relations(customerStore, ({ one }) => ({
 }));
 
 export const apiKey = pgTable('api_keys', {
-	id: serial('id').primaryKey(),
-	store_id: integer('store_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id')
 		.references(() => store.id)
 		.notNull(),
 	key: text('key').unique().notNull(),
-	secret_hash: text('secret_hash').notNull(),
+	secretHash: text('secret_hash').notNull(),
 	label: varchar('label', { length: 255 }),
 	scopes: text('scopes').default('read:store,read:orders'),
 	platform: varchar('platform', { length: 50 }),
@@ -131,7 +136,7 @@ export const apiKey = pgTable('api_keys', {
 
 export const apiKeyRelations = relations(apiKey, ({ one }) => ({
 	store: one(store, {
-		fields: [apiKey.store_id],
+		fields: [apiKey.storeId],
 		references: [store.id],
 	}),
 }));

@@ -8,13 +8,14 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
-	const { isAuthenticated, isLoading, user } = useAuth();
+	const { isAuthenticated, isLoading, user, storeId } = useAuth();
 	// const storeId = Cookies.get('storeId');
 	const location = useLocation();
 	const pathName = location.pathname;
 
 	console.log('Authenticated--->', isAuthenticated, isLoading);
 
+	console.log('storeId--->', storeId);
 	// Show loading state if authentication status is being determined
 	if (isLoading) {
 		return (
@@ -27,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = () => {
 	if (pathName === '/accounts') {
 		return (
 			<Navigate
-				to={`/accounts/${user?.id}`}
+				to={`/accounts/${user?.id}/general`}
 				state={{ from: location }}
 				replace
 			/>

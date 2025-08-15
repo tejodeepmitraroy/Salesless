@@ -1,26 +1,25 @@
 import { Router } from 'express';
-
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 import {
-	createProduct,
-	deleteProduct,
-	getAllProducts,
-	getProductById,
-	updateProduct,
-} from '../controllers/product.controllers';
+	createOrder,
+	deleteOrder,
+	getOrders,
+} from '../controllers/order.controllers';
+import { storeMiddleware } from '../middleware/store.middleware';
+
+// import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-// Product routes
+// Order routes
 router
 	.route('/')
-	.get(jwtAuthMiddleware, getAllProducts)
-	.post(jwtAuthMiddleware, createProduct);
+	.post(jwtAuthMiddleware, storeMiddleware, createOrder)
+	.get(jwtAuthMiddleware, storeMiddleware, getOrders);
 
 router
-	.route('/:id')
-	.get(jwtAuthMiddleware, getProductById)
-	.put(jwtAuthMiddleware, updateProduct)
-	.delete(jwtAuthMiddleware, deleteProduct);
+	.route('/:orderId')
+	.get(jwtAuthMiddleware, storeMiddleware, getOrders)
+	.delete(jwtAuthMiddleware, storeMiddleware, deleteOrder);
 
 export default router;

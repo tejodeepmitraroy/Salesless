@@ -6,19 +6,19 @@ import React, {
 	ReactNode,
 	useCallback,
 } from 'react';
-import { getUserData } from '@/features/users/services';
+import { getUserData } from '@/features/Account/services';
 import Cookies from 'js-cookie';
 import { logoutService } from '@/features/Auth/services';
 // Define user types
 export type UserRole = 'admin' | 'employee' | 'vendor';
 
 export interface User {
-	id: string;
+	id: number;
 	firstName: string;
 	lastName: string;
 	email: string;
 	mobile?: string;
-	role: UserRole;
+	role?: UserRole;
 	avatar?: string;
 }
 
@@ -46,7 +46,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		setIsLoading(true);
 		try {
 			const response = await getUserData();
-			setUser(response.data.data);
+			setUser({
+				id: response.id,
+				firstName: response.firstName,
+				lastName: response.lastName,
+				email: response.email,
+				mobile: response.phone,
+
+				avatar: response.avatar,
+			});
 			setIsLoading(false);
 		} catch (error) {
 			console.error('Failed to get user data:', error);

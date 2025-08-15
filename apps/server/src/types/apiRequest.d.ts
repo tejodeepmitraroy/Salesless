@@ -22,3 +22,9 @@ interface User {
 // 		type User = PassportUser // Extending Express.User with Prisma User type
 // 	}
 // }
+
+declare namespace Express {
+	export interface Request {
+		storeId?: string;
+	}
+}

@@ -11,57 +11,79 @@ import {
 	productOptionsValues,
 	productVariant,
 } from '../db/schema/product';
+import redis from '../lib/redis';
 
 // Get all products
 export const getAllProducts = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = request.query.storeId as string;
+		// const storeId = request.query.storeId as string;
+		const storeId = request.storeId!;
 
 		if (!storeId) {
 			response.status(400).json(new ApiError(400, 'storeId is required'));
 		}
 		try {
-			const products = await db.query.product.findMany({
-				where: eq(product.storeId, parseInt(storeId)),
-				with: {
-					media: {
-						with: {
-							media: true,
+			const cachedProducts = await redis.get(`products:${storeId}`);
+			console.log('cachedProducts', cachedProducts);
+
+			if (cachedProducts) {
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							JSON.parse(cachedProducts),
+							'Products fetched successfully'
+						)
+					);
+			} else {
+				const products = await db.query.product.findMany({
+					where: eq(product.storeId, storeId),
+					with: {
+						media: {
+							with: {
+								media: true,
+							},
+							columns: {
+								productId: false,
+								mediaId: false,
+							},
 						},
-						columns: {
-							productId: false,
-							mediaId: false,
-						},
+						category: true,
 					},
-					category: true,
-				},
-			});
-			if (!products) {
-				response.status(404).json(new ApiError(404, 'Products not found'));
-			}
+				});
+				if (!products) {
+					response.status(404).json(new ApiError(404, 'Products not found'));
+				}
 
-			const simplifiedProducts = products.map((product) => ({
-				...product,
-				category: product.category?.name ?? '',
+				const simplifiedProducts = products.map((product) => ({
+					...product,
+					category: product.category?.name ?? '',
 
-				media: product.media.map((m) => ({
-					index: m.index,
-					mediaId: m.media.id,
-					...m.media,
-				})), // Extract only media objects
-			}));
+					media: product.media.map((m) => ({
+						index: m.index,
+						mediaId: m.media.id,
 
-			console.log(simplifiedProducts);
+						...m.media,
+					})), // Extract only media objects
+				}));
 
-			response
-				.status(201)
-				.json(
-					new ApiResponse(
-						200,
-						simplifiedProducts,
-						'Products fetched successfully'
-					)
+				console.log(simplifiedProducts);
+
+				await redis.set(
+					`products:${storeId}`,
+					JSON.stringify(simplifiedProducts)
 				);
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							simplifiedProducts,
+							'Products fetched successfully'
+						)
+					);
+			}
 		} catch (error) {
 			response.status(500).json(new ApiError(500, 'Error Happens', error));
 		}
@@ -72,7 +94,7 @@ export const getAllProducts = asyncHandler(
 export const getProductById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const productId = parseInt(request.params.productId);
+			const productId = request.params.productId as string;
 
 			db.transaction(async (trx) => {
 				const productDetails = await trx.query.product.findFirst({
@@ -193,12 +215,12 @@ export const createProduct = asyncHandler(
 			variants,
 			seo,
 		}: {
-			storeId: number;
+			storeId: string;
 			title: string;
 			description: string;
-			categoryId: number;
+			categoryId: string;
 			status: string;
-			media: { mediaId: number; index: number }[];
+			media: { mediaId: string; index: number }[];
 			isVariantEnabled: boolean;
 			variant: {
 				sku: string;
@@ -302,7 +324,7 @@ export const createProduct = asyncHandler(
 					const variantResult = await trx
 						.insert(productVariant)
 						.values({
-							productId: Number(productId),
+							productId: productId,
 							sku: variant.sku,
 							barcode: variant.barcode,
 							price: variant.price,
@@ -337,7 +359,7 @@ export const createProduct = asyncHandler(
 						.values(
 							options.map((option) => {
 								return {
-									productId: Number(productId),
+									productId: productId,
 									name: option.name,
 									position: option.position,
 								};
@@ -366,7 +388,7 @@ export const createProduct = asyncHandler(
 						.insert(productVariant)
 						.values(
 							variants.map((variant) => ({
-								productId: Number(productId),
+								productId: productId,
 								sku: variant.sku,
 								barcode: variant.barcode,
 								price: variant.price,
@@ -421,12 +443,12 @@ export const updateProduct = asyncHandler(
 			variants,
 			seo,
 		}: {
-			storeId: number;
+			storeId: string;
 			title: string;
 			description: string;
-			categoryId: number;
+			categoryId: string;
 			status: string;
-			media: { mediaId: number; index: number }[];
+			media: { mediaId: string; index: number }[];
 			isVariantEnabled: boolean;
 			variant: {
 				variantId: number;
@@ -475,7 +497,7 @@ export const updateProduct = asyncHandler(
 			};
 		} = request.body;
 		try {
-			const productId = parseInt(request.params.productId);
+			const productId = request.params.productId as string;
 			console.log('productId', productId, media);
 
 			console.log('Body---->', request.body);
@@ -545,7 +567,7 @@ export const updateProduct = asyncHandler(
 					const variantResult = await trx
 						.insert(productVariant)
 						.values({
-							productId: Number(productId),
+							productId: productId,
 							sku: variant.sku,
 							barcode: variant.barcode,
 							price: variant.price,
@@ -600,7 +622,7 @@ export const updateProduct = asyncHandler(
 						.values(
 							options.map((option) => {
 								return {
-									productId: Number(productId),
+									productId: productId,
 									name: option.name,
 									position: option.position,
 								};
@@ -629,7 +651,7 @@ export const updateProduct = asyncHandler(
 						.insert(productVariant)
 						.values(
 							variants.map((variant) => ({
-								productId: Number(productId),
+								productId: productId,
 								sku: variant.sku,
 								barcode: variant.barcode,
 								price: variant.price,
@@ -673,7 +695,7 @@ export const updateProduct = asyncHandler(
 export const deleteProduct = asyncHandler(
 	async (req: Request, res: Response) => {
 		try {
-			const productId = parseInt(req.params.productId);
+			const productId = req.params.productId as string;
 
 			db.transaction(async (trx) => {
 				await trx

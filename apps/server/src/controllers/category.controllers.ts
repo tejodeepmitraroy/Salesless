@@ -63,7 +63,7 @@ export const createCategory = asyncHandler(
 export const getCategories = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const categoryId = parseInt(request.params.categoryId);
+			const categoryId = request.params.categoryId;
 			if (categoryId) {
 				const categories = await db.query.category.findFirst({
 					where: eq(category.id, categoryId),
@@ -89,7 +89,7 @@ export const updateCategory = asyncHandler(
 		const { name, slug, description, parentId } = request.body;
 
 		try {
-			const categoryId = parseInt(request.params.categoryId);
+			const categoryId = request.params.categoryId;
 			const [updatedCategory] = await db
 				.update(category)
 				.set({
@@ -112,7 +112,7 @@ export const updateCategory = asyncHandler(
 
 export const deleteCategory = asyncHandler(
 	async (request: Request, response: Response) => {
-		const categoryId = parseInt(request.params.categoryId);
+		const categoryId = request.params.categoryId;
 
 		try {
 			const [deletedCategory] = await db

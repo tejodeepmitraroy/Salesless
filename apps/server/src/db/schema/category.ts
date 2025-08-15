@@ -1,20 +1,18 @@
-import {
-	integer,
-	pgTable,
-	serial,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { product } from './product';
+import { ulid } from 'ulid';
 
 // Category table
 export const category = pgTable('category', {
-	id: serial('id').primaryKey(),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
 	name: varchar('name'),
 	slug: varchar('slug'),
 	description: varchar('description'),
-	parentId: integer('parent_id'),
+	parentId: varchar('parent_id'),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });

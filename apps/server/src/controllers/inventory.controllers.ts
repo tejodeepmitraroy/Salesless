@@ -15,7 +15,7 @@ export const getInventory = asyncHandler(
 		try {
 			db.transaction(async (trx) => {
 				const productData = await trx.query.product.findMany({
-					where: eq(product.storeId, parseInt(storeId)),
+					where: eq(product.storeId, storeId),
 					with: {
 						media: {
 							with: {

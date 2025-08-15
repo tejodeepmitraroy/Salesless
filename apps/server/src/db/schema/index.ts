@@ -1,11 +1,10 @@
+export { user, userRelations } from './user';
 export {
-	user,
 	customer,
-	userRelations,
 	customerRelations,
 	customerAddress,
 	customerAddressRelations,
-} from './user';
+} from './customer';
 export {
 	role,
 	roleRelations,
@@ -16,10 +15,12 @@ export {
 export {
 	store,
 	userStore,
+	apiKey,
 	customerStore,
 	customerStoreRelations,
 	storeRelations,
 	userStoreRelations,
+	apiKeyRelations,
 } from './store';
 export {
 	product,
@@ -49,6 +50,13 @@ export {
 	orderItems,
 	orderRelations,
 	orderItemsRelations,
+	orderStatusEnum,
+	paymentMethodEnum,
 } from './order';
 export { transaction, transactionRelations } from './transaction';
 export { media, mediaRelations } from './media';
+export {
+	GatewayConfigs,
+	GatewayConfigsRelations,
+	paymentGatewayEnum,
+} from './paymentGateway';

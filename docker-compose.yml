@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 services:
   db:
     container_name: postgres_db
@@ -12,15 +12,36 @@ services:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  
+
   adminer:
     image: adminer:latest
     restart: always
     container_name: adminer
     ports:
-    - "8080:8080"
+      - "8080:8080"
     depends_on:
-      - 'db'
+      - "db"
+
+  redis-stack:
+    image: redis/redis-stack:latest
+    container_name: redis_stack
+    restart: always
+    ports:
+      - "6379:6379"   # Redis core
+      - "5540:8001"   # RedisInsight built into Redis Stack
+    volumes:
+      - redis_data:/data
+
+  redis-cli:
+    image: redis:7
+    container_name: redis_cli
+    restart: always
+    entrypoint: ["sh", "-c", "while true; do sleep 1000; done"]
+    depends_on:
+      - "redis-stack"
+    networks:
+      - default
 
 volumes:
-  postgres_data: 
+  postgres_data:
+  redis_data:

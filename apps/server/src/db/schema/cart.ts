@@ -1,16 +1,20 @@
-import { integer, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { store } from './store';
-import { customer } from './user';
-import { productVariant } from './product';
+import { product } from './product';
 import { relations } from 'drizzle-orm';
-import { order } from './order';
+
+import { customer } from './customer';
+import { ulid } from 'ulid';
 
 export const cart = pgTable('cart', {
-	id: serial('id').primaryKey(),
-	storeId: integer('store_id').references(() => store.id),
-	customerId: integer('customer_id').references(() => customer.id),
-	createdAt: timestamp('created_at'),
-	updatedAt: timestamp('updated_at'),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id').references(() => store.id),
+	customerId: varchar('customer_id').references(() => customer.id),
+	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });
 
 export const cartRelations = relations(cart, ({ one, many }) => ({
@@ -23,18 +27,18 @@ export const cartRelations = relations(cart, ({ one, many }) => ({
 		references: [customer.id],
 	}),
 	items: many(cartItems),
-	orders: many(order),
 }));
 
 export const cartItems = pgTable('cart_items', {
-	id: serial('id').primaryKey(),
-	cartId: integer('cart_id').references(() => cart.id),
-	productVariantId: integer('product_variant_id').references(
-		() => productVariant.id
-	),
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	cartId: varchar('cart_id').references(() => cart.id),
+	productId: varchar('product_id').references(() => product.id),
 	quantity: integer('quantity'),
-	createdAt: timestamp('created_at'),
-	updatedAt: timestamp('updated_at'),
+	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
+	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });
 
 export const cartItemsRelations = relations(cartItems, ({ one }) => ({
@@ -42,8 +46,8 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
 		fields: [cartItems.cartId],
 		references: [cart.id],
 	}),
-	productVariant: one(productVariant, {
-		fields: [cartItems.productVariantId],
-		references: [productVariant.id],
+	product: one(product, {
+		fields: [cartItems.productId],
+		references: [product.id],
 	}),
 }));

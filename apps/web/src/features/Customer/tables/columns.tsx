@@ -71,24 +71,25 @@ export const customerColumns: ColumnDef<Customer>[] = [
 		accessorKey: 'status',
 		header: () => <div className="text-center">Status</div>,
 		cell: ({ row }) => {
-			const status = row.getValue('status') as string;
+			const emailVerified = row.getValue('emailVerified') as boolean;
+			const phoneVerified = row.getValue('phoneVerified') as boolean;
 			return (
 				<Badge
 					className={` ${
-						status === 'Active'
-							? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-							: ''
+						emailVerified &&
+						phoneVerified &&
+						'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
 					} ${
-						status === 'Draft'
+						!emailVerified || !phoneVerified
 							? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
 							: ''
 					} ${
-						status === 'Out of stock'
+						!emailVerified && !phoneVerified
 							? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
 							: ''
 					} `}
 				>
-					{status}
+					{emailVerified && phoneVerified ? 'Verified' : 'Not Verified'}
 				</Badge>
 			);
 		},

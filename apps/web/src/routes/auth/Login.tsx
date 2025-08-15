@@ -15,7 +15,7 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { loginPageSchema } from '@/features/users/schema';
+import { loginPageSchema } from '@/features/Account/schema';
 import {
 	Form,
 	FormControl,

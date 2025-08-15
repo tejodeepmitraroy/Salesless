@@ -1,6 +1,6 @@
 import { ProductVariantColumns } from '../tables/ProductVariantColumn';
 import { useFieldArray, useForm, useFormContext } from 'react-hook-form';
-import { ProductFormValues } from '@/routes/app/Products/CreateNewProduct';
+import { ProductFormValues } from '../schema';
 import { ProductVariantDataTable } from '../tables/ProductVariantDataTable';
 import { generateVariantsFromOptions } from '../hooks/generateVariantsFromOptions';
 import { useEffect, useState } from 'react';

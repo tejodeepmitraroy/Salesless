@@ -4,9 +4,11 @@ import {
 	forgetPassword,
 	getUserNotification,
 	getUserSettings,
+	logoutUser,
 	registerClient,
 	resetLink,
 	updateUserProfile,
+	updateUserSecurity,
 	updateUserSettings,
 	userProfile,
 } from '../controllers/user.controllers';
@@ -23,6 +25,8 @@ router
 	.put(jwtAuthMiddleware, updateUserProfile)
 	.delete(jwtAuthMiddleware, deleteUserProfile);
 
+router.route('/security').patch(jwtAuthMiddleware, updateUserSecurity);
+
 router
 	.route('/settings')
 	.get(jwtAuthMiddleware, getUserSettings)
@@ -31,5 +35,6 @@ router
 router.route('/notification').get(jwtAuthMiddleware, getUserNotification);
 router.route('/forget-password').post(forgetPassword);
 router.route('/reset-link').post(resetLink);
+router.route('/logout').post(logoutUser);
 
 export default router;

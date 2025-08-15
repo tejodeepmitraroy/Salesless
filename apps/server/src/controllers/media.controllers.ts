@@ -17,7 +17,7 @@ import { Request, Response } from 'express';
 export const uploadFileToS3 = asyncHandler(
 	async (request: Request, response: Response): Promise<void> => {
 		const { fileName: uploadFileName, contentType } = request.body;
-		const storeId = Number(request.query.storeId);
+		const storeId = request.query.storeId as string;
 
 		console.log(storeId);
 
@@ -32,7 +32,10 @@ export const uploadFileToS3 = asyncHandler(
 			const { uploadUrl, publicS3Url, key } = await uploadToS3({
 				fileName: uploadFileName,
 				contentType,
+				rootFolder: 'products',
 			});
+
+			const mediaUrl = await getObjectUrl({ key });
 
 			const storeMedia = await db
 				.insert(media)
@@ -49,7 +52,7 @@ export const uploadFileToS3 = asyncHandler(
 				new ApiResponse(200, {
 					uploadUrl,
 					fileName: storedObject.fileName,
-					publicS3Url: storedObject.url,
+					publicS3Url: mediaUrl,
 					key: storedObject.key,
 					mediaId: storedObject.id,
 				})
@@ -63,24 +66,71 @@ export const uploadFileToS3 = asyncHandler(
 	}
 );
 
+export const uploadProfileImage = asyncHandler(
+	async (request: Request, response: Response) => {
+		const { fileName: uploadFileName, contentType } = request.body;
+
+		if (!uploadFileName || !contentType) {
+			response
+				.status(400)
+				.json({ message: 'fileName and contentType are required' });
+		}
+
+		console.log(contentType);
+		try {
+			const { uploadUrl, publicS3Url, key } = await uploadToS3({
+				fileName: uploadFileName,
+				contentType,
+				rootFolder: 'profile',
+			});
+
+			response.status(200).json(
+				new ApiResponse(200, {
+					uploadUrl,
+					fileName: uploadFileName,
+					publicS3Url: publicS3Url,
+					key: key,
+				})
+			);
+		} catch (error) {
+			console.error('Error generating presigned URL:', error);
+			response
+				.status(500)
+				.json(new ApiError(500, 'Upload Url not generated', error));
+		}
+	}
+);
+
 export const getMediaFiles = asyncHandler(
 	async (request: Request, response: Response) => {
-		const storeId = Number(request.query.storeId);
-		const mediaId = Number(request.params.mediaId);
+		const storeId = request.query.storeId as string;
+		const mediaId = request.params.mediaId as string;
 		try {
 			if (mediaId) {
 				const mediaFile = await db.query.media.findFirst({
 					where: eq(media.id, mediaId),
 				});
+				const mediaUrl = await getObjectUrl({ key: mediaFile!.key! });
 
-				response.status(200).json(new ApiResponse(200, mediaFile));
+				response
+					.status(200)
+					.json(new ApiResponse(200, { ...mediaFile, url: mediaUrl }));
 				return;
 			} else {
 				const allMediaFiles = await db.query.media.findMany({
 					where: eq(media.storeId, storeId),
 				});
 
-				response.status(200).json(new ApiResponse(200, allMediaFiles));
+				const mediaFiles = await Promise.all(
+					allMediaFiles.map(async (media) => ({
+						id: media.id,
+						fileName: media.fileName,
+						url: await getObjectUrl({ key: media.key! }),
+						key: media.key,
+					}))
+				);
+
+				response.status(200).json(new ApiResponse(200, mediaFiles));
 			}
 		} catch (error) {
 			console.log(error);

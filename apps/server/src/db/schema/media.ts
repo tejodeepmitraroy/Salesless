@@ -1,17 +1,15 @@
 import { relations } from 'drizzle-orm';
-import {
-	integer,
-	pgTable,
-	serial,
-	timestamp,
-	varchar,
-} from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { store } from './store';
 import { productMedia } from './product';
+import { ulid } from 'ulid';
 
 export const media = pgTable('media', {
-	id: serial('id').primaryKey(),
-	storeId: integer('store_id')
+	id: varchar('id')
+		.primaryKey()
+		.notNull()
+		.$defaultFn(() => ulid()),
+	storeId: varchar('store_id')
 		.references(() => store.id)
 		.notNull(),
 	fileName: varchar('fileName'),

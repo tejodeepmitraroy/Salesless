@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 export const productMediaSchema = z.object({
-	mediaId: z.number(),
+	mediaId: z.string(),
 	index: z.number(),
 	url: z.string(),
 	key: z.string(),
 });
 
 export const productVariantSchema = z.object({
-	variantId: z.number(),
+	variantId: z.string(),
 	sku: z.string().optional(),
 	barcode: z.string().optional(),
 	price: z.coerce.number().optional(),
@@ -37,8 +37,8 @@ export const productVariantOptionSchema = z.object({
 });
 
 export const productFormSchema = z.object({
-	id: z.number().optional(),
-	storeId: z.number(),
+	id: z.string().optional(),
+	storeId: z.string(),
 	title: z.string().min(2).max(50),
 	description: z.string().optional(),
 	media: z.array(productMediaSchema).optional(),
@@ -78,3 +78,4 @@ export const productFormSchema = z.object({
 export type ProductImage = z.infer<typeof productMediaSchema>;
 export type ProductVariant = z.infer<typeof productVariantSchema>;
 export type ProductVariantOption = z.infer<typeof productVariantOptionSchema>;
+export type ProductFormValues = z.infer<typeof productFormSchema>;

@@ -5,6 +5,7 @@ import {
 	getMediaFiles,
 	listAllObjects,
 	uploadFileToS3,
+	uploadProfileImage,
 	viewUrl,
 } from '../controllers/media.controllers';
 
@@ -24,5 +25,9 @@ router.get('/upload-status/:fileName', checkUploadStatus);
 router.route('/view').get(viewUrl);
 
 router.route('/').get(listAllObjects).delete(deleteAObject);
+
+router.route('/profile-pic').post(uploadProfileImage);
+// .get(getProfileImage)
+// .put(updateProfileImage);
 
 export default router;

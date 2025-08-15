@@ -2,7 +2,6 @@ import { generateAccessToken, verifyRefreshJwtToken } from '../helper/token';
 import asyncHandler from '../utils/asyncHandler';
 
 import { Request, Response } from 'express';
-// import prisma from '../db/prismaClient';
 import ApiResponse from '../utils/ApiResponse';
 import { eq } from 'drizzle-orm';
 import { user } from '../db/schema';
@@ -64,7 +63,7 @@ export const generateRefreshToken = asyncHandler(
 
 				//Find user in DB
 				const userData = await db.query.user.findFirst({
-					where: eq(user.id, parseInt(decoded.id)),
+					where: eq(user.id, decoded.id),
 				});
 
 				if (!userData || userData.refreshToken !== refreshToken) {
@@ -128,41 +127,5 @@ export const loginUser = asyncHandler(
 		} else {
 			response.sendStatus(401);
 		}
-	}
-);
-
-export const logoutUser = asyncHandler(
-	async (request: Request, response: Response) => {
-		request.logout(async (err) => {
-			if (err) {
-				response.status(500).json({ message: 'Logout failed' });
-			}
-
-			const token = request.cookies.refresh_token;
-
-			console.log('Logout, Refresh Token--->', token);
-			try {
-				await db
-					.update(user)
-					.set({ refreshToken: null })
-					.where(eq(user.refreshToken, token));
-
-				response.clearCookie('access_token', {
-					// httpOnly: true,
-					secure: process.env.NODE_ENV === 'production', // Secure in production
-					sameSite: 'strict',
-					path: '/',
-				});
-				response.clearCookie('refresh_token', {
-					httpOnly: true,
-					secure: process.env.NODE_ENV === 'production', // Secure in production
-					sameSite: 'strict',
-					path: '/',
-				});
-				response.status(200).json({ message: 'Logged out successfully' });
-			} catch {
-				response.status(500).json({ error: 'Server error' });
-			}
-		});
 	}
 );

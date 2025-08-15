@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, X } from 'lucide-react';
-import { ProductVariantOption } from '../schema';
+import { ProductFormValues, ProductVariantOption } from '../schema';
 import {
 	Card,
 	CardContent,
@@ -24,7 +24,6 @@ import {
 import { nanoid } from 'nanoid';
 import { Label } from '@/components/ui/label';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { ProductFormValues } from '@/routes/app/Products/CreateNewProduct';
 import { useState } from 'react';
 
 const ProductVariantOptionManager = () => {

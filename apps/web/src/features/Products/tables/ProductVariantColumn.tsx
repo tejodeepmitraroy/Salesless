@@ -1,9 +1,11 @@
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Control } from 'react-hook-form';
-import { ProductVariant, ProductVariantOption } from '../schema';
-
-import { ProductFormValues } from '@/routes/app/Products/CreateNewProduct';
+import {
+	ProductFormValues,
+	ProductVariant,
+	ProductVariantOption,
+} from '../schema';
 
 export const ProductVariantColumns = (
 	control: Control<ProductFormValues>
