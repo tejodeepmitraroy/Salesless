@@ -59,6 +59,7 @@ const StoreSwitcher = () => {
 		await updateStoreTestMode({ isTestMode: !isTestMode });
 		setIsTestMode(!isTestMode);
 	};
+	const isSubscripted = useStoreConfig((state) => state.isSubscripted);
 
 	return (
 		<SidebarMenu>
@@ -81,7 +82,6 @@ const StoreSwitcher = () => {
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">{storeName}</span>
-								{/* <span className="truncate text-xs">{activeStore.plan}</span> */}
 							</div>
 							<ChevronsUpDown className="ml-auto" />
 						</SidebarMenuButton>
@@ -107,11 +107,18 @@ const StoreSwitcher = () => {
 						<DropdownMenuSeparator />
 
 						{/* Test mode toggle */}
-						<DropdownMenuItem className="flex items-center justify-between gap-2 p-2">
+						<DropdownMenuItem
+							className={
+								isSubscripted
+									? 'flex items-center justify-between gap-2 p-2'
+									: 'flex items-center justify-between gap-2 p-2 opacity-50'
+							}
+						>
 							<span className="text-sm">Test mode</span>
 							<Switch
 								aria-label="Test mode"
 								checked={isTestMode}
+								disabled={!isSubscripted}
 								onCheckedChange={() => handleTestModeChange()}
 							/>
 						</DropdownMenuItem>

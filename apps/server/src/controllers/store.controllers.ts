@@ -90,6 +90,7 @@ export const getStoreById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
 			const storeId = request.storeId!;
+			const subscription = request.subscription;
 
 			const storeDetails = await redis.get(`store:${storeId}`);
 
@@ -97,11 +98,18 @@ export const getStoreById = asyncHandler(
 				response
 					.status(200)
 					.json(
-						new ApiResponse(200, JSON.parse(storeDetails), 'Fetch all stores')
+						new ApiResponse(
+							200,
+							{ ...JSON.parse(storeDetails), subscription },
+							'Fetch all stores'
+						)
 					);
 			} else {
 				const getStore = await db.query.store.findFirst({
 					where: eq(store.id, storeId),
+					with: {
+						subscriptions: true,
+					},
 				});
 
 				if (!getStore) {
@@ -111,7 +119,13 @@ export const getStoreById = asyncHandler(
 					await redis.expire(`store:${storeId}`, 60); //
 					response
 						.status(200)
-						.json(new ApiResponse(200, getStore, 'Fetch all stores'));
+						.json(
+							new ApiResponse(
+								200,
+								{ ...getStore },
+								`Fetch ${getStore.name} store Details`
+							)
+						);
 				}
 			}
 		} catch (error) {

@@ -15,7 +15,20 @@ interface StoreServiceProps {
 	moneyFormat: string | null;
 	domain: string | null;
 	isTestMode: boolean;
-	plan: 'free';
+	isSubscribed: true;
+	subscriptions: {
+		id: string;
+		storeId: string;
+		stripeCustomerId: string;
+		subscriptionId: string;
+		tier: 'trial' | 'basic' | 'grow' | 'scale';
+		status: 'active' | 'deactivate';
+		lastRenewalDate: string;
+		currentPeriodEnd: string;
+		cancelAtPeriodEnd: boolean;
+		createdAt: string;
+		updatedAt: string;
+	};
 	createdAt: string;
 	updatedAt: string;
 }
@@ -36,7 +49,7 @@ export const getAllStoreService = async (): Promise<
 		moneyFormat: string | null;
 		domain: string | null;
 		isTestMode: boolean;
-		plan: 'free';
+
 		createdAt: string;
 		updatedAt: string;
 	}>

@@ -4,13 +4,20 @@ import stripe from '../config/stripe.config';
 import asyncHandler from '../utils/asyncHandler';
 import { Request, Response } from 'express';
 import ApiError from '../utils/ApiError';
-import { subscription, user } from '../db/schema';
+import { store, subscription, user } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import { db } from '../db';
 
+// Type for the subscription object we get from the Stripe API
+interface StripeSubscription extends Stripe.Subscription {
+	current_period_start: number;
+	current_period_end: number;
+	cancel_at_period_end: boolean;
+}
+
 const tierList = [
 	{
-		name: 'sasic',
+		name: 'basic',
 		price: 12,
 		description: 'For individuals',
 		features: ['Feature 1', 'Feature 2', 'Feature 3'],
@@ -38,7 +45,9 @@ export const checkoutSubscription = asyncHandler(
 		const storeId = request.storeId!;
 		const authUser = request.user as InferSelectModel<typeof user>;
 
+		console.log('tierName', tierName);
 		const selectedTier = tierList.find((tier) => tier.name === tierName);
+		console.log('selectedTier', selectedTier);
 
 		if (!selectedTier) {
 			response.status(400).json(new ApiError(400, 'Invalid tier'));
@@ -57,7 +66,7 @@ export const checkoutSubscription = asyncHandler(
 				userId: authUser.id,
 				storeId: storeId,
 			},
-			success_url: `http://localhost:5173/store/${storeId}/success`,
+			success_url: `http://localhost:5173/store/${storeId}/billing/success`,
 			cancel_url: `http://localhost:5173/store/${storeId}/billing`,
 		});
 
@@ -69,54 +78,118 @@ export const checkoutSubscription = asyncHandler(
 	}
 );
 
+// Type for request with raw body
+type RawBodyRequest = Request & { rawBody?: string };
+
 // Stripe webhook handler
-export const handleStripeWebhook = async (
-	request: Request,
-	response: Response
-) => {
-	// let event = request.body;
-	// Only verify the event if you have an endpoint secret defined.
-	// Otherwise use the basic event deserialized with JSON.parse
-	const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-	if (endpointSecret) {
-		// Get the signature sent by Stripe
-		const signature = request.headers['stripe-signature'];
+export const handleStripeWebhook = asyncHandler(
+	async (request: RawBodyRequest, response: Response) => {
+		const signature = request.headers['stripe-signature'] as string;
+		const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+		// try {
 		try {
+			if (!signature) {
+				console.error('No signature found in request headers');
+				response.status(400).json({ error: 'No signature found' });
+			}
+
+			console.log('Body is buffer?', Buffer.isBuffer(request.body));
+
+			if (!request.body) {
+				console.error('No raw body found in request');
+				response
+					.status(400)
+					.json({ error: 'Raw body is required for webhook verification' });
+			}
+
 			const event = stripe.webhooks.constructEvent(
 				request.body,
-				signature as string,
+				signature,
 				endpointSecret
-			) as Stripe.Event;
+			);
 
+			if (!event) {
+				console.error('Webhook signature verification failed:');
+				response.status(400).json({ error: 'Invalid event' });
+			}
+
+			// Handle the event
 			if (event.type === 'checkout.session.completed') {
-				const checkoutEvent = event.data.object as Stripe.Checkout.Session & {
-					metadata: { userId: string; storeId: string };
-				};
+				const session = event.data.object as Stripe.Checkout.Session;
+				const subscriptionId = session.subscription as string;
 
-				const subscriptionData = (await stripe.subscriptions.retrieve(
-					checkoutEvent.subscription as string
-				)) as Stripe.Subscription;
+				if (!subscriptionId || typeof subscriptionId !== 'string') {
+					response.status(400).json({
+						error: 'Invalid or missing subscription ID in checkout session',
+					});
+				}
 
-				const priceId = subscriptionData.items.data[0].price.id;
+				const subscriptionResponse =
+					await stripe.subscriptions.retrieve(subscriptionId);
+				const subscriptionData =
+					subscriptionResponse as unknown as StripeSubscription;
+				const priceId = subscriptionData.items.data[0]?.price?.id;
+
+				if (!priceId) {
+					response
+						.status(400)
+						.json({ error: 'Invalid or missing price ID in subscription' });
+				}
 
 				const selectedTier = tierList.find((tier) => tier.priceId === priceId);
+				const storeId = session.metadata?.storeId as string;
 
-				console.log(selectedTier, checkoutEvent, subscriptionData, priceId);
-
-				const storeId = checkoutEvent.metadata?.storeId;
 				if (!storeId || typeof storeId !== 'string') {
-					throw new Error(
-						'Invalid or missing storeId in checkout event metadata'
-					);
+					response.status(400).json({
+						error: 'Invalid or missing storeId in checkout session metadata',
+					});
 				}
 
 				try {
-					const response = await db
-						.insert(subscription)
-						.values({
+					await db.transaction(async (tx) => {
+						await tx.insert(subscription).values({
 							storeId: storeId,
-							stripeCustomerId: checkoutEvent.customer as string,
+							stripeCustomerId: subscriptionData.customer as string,
 							subscriptionId: subscriptionData.id,
+							tier: selectedTier!.name,
+							status: subscriptionData.status,
+							lastRenewalDate: new Date(
+								subscriptionData.items.data[0].current_period_start * 1000
+							).toISOString(),
+							currentPeriodEnd: new Date(
+								subscriptionData.items.data[0].current_period_end * 1000
+							).toISOString(),
+							cancelAtPeriodEnd: subscriptionData.cancel_at_period_end || false,
+						});
+						await tx
+							.update(store)
+							.set({
+								isSubscribed: true,
+							})
+							.where(eq(store.id, storeId));
+					});
+				} catch (error) {
+					console.error('Error saving subscription:', error);
+					response.status(500).json({ error: 'Error saving subscription' });
+				}
+			} else if (event.type === 'customer.subscription.updated') {
+				const subscriptionData = event.data
+					.object as unknown as StripeSubscription;
+				const priceId = subscriptionData.items.data[0]?.price?.id;
+
+				if (!priceId) {
+					response.status(400).json({
+						error: 'Invalid or missing price ID in subscription update',
+					});
+				}
+
+				const selectedTier = tierList.find((tier) => tier.priceId === priceId);
+
+				try {
+					await db
+						.update(subscription)
+						.set({
 							tier: selectedTier?.name,
 							status: subscriptionData.status,
 							lastRenewalDate: new Date(
@@ -127,46 +200,20 @@ export const handleStripeWebhook = async (
 							).toISOString(),
 							cancelAtPeriodEnd: subscriptionData.cancel_at_period_end || false,
 						})
-						.returning();
-
-					console.log(response);
-				} catch (error) {
-					console.log(error);
-				}
-			} else if (event.type === 'customer.subscription.updated') {
-				const subscriptionData = event.data.object as Stripe.Subscription;
-				const selectedTier = tierList.find(
-					(tier) => tier.priceId === subscriptionData.items.data[0].price.id
-				);
-
-				try {
-					await db
-						.update(subscription)
-						.set({
-							subscriptionId: subscriptionData.id,
-							status: ['active', 'trialing'].includes(subscriptionData.status)
-								? 'active'
-								: 'inactive',
-							tier: selectedTier?.name,
-							lastRenewalDate: new Date(
-								subscriptionData.items.data[0].current_period_start
-							).toISOString(),
-							currentPeriodEnd: new Date(
-								subscriptionData.items.data[0].current_period_end
-							).toISOString(),
-							cancelAtPeriodEnd: subscriptionData.cancel_at_period_end,
-						})
 						.where(eq(subscription.subscriptionId, subscriptionData.id));
 				} catch (error) {
-					console.log(error);
+					console.error('Error updating subscription:', error);
+					response.status(500).json({ error: 'Error updating subscription' });
 				}
+			} else {
+				console.log(`Unhandled event type: ${event.type}`);
 			}
-		} catch (err) {
-			console.log(`⚠️  Webhook signature verification failed.`, err as Error);
-			response.sendStatus(400);
+
+			// Return a 200 response to acknowledge receipt of the event
+			response.json({ received: true });
+		} catch (error) {
+			console.error('Error handling webhook event:', error);
+			response.status(500).json({ error: 'Internal server error ' + error });
 		}
 	}
-
-	// Return a 200 response to acknowledge receipt of the event
-	response.send().json({ received: true });
-};
+);

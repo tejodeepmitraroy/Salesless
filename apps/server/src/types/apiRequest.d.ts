@@ -26,5 +26,10 @@ interface User {
 declare namespace Express {
 	export interface Request {
 		storeId?: string;
+		subscription?: {
+			tier: string;
+			active: boolean;
+			expiresAt: string;
+		};
 	}
 }

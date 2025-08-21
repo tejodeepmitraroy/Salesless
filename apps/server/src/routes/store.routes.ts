@@ -9,8 +9,6 @@ import {
 	getStoreCustomers,
 	createCustomer,
 	changeTestMode,
-	// getStoreOrders,
-	// getStoreCustomers,
 } from '../controllers/store.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 import { storeMiddleware } from '../middleware/store.middleware';

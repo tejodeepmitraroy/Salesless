@@ -13,7 +13,7 @@ export const subscription = pgTable('subscription', {
 		.references(() => store.id, { onDelete: 'cascade' }),
 	stripeCustomerId: varchar('stripe_customer_id'),
 	subscriptionId: varchar('subscription_id'),
-	tier: varchar('tier'),
+	tier: varchar('tier').notNull(),
 	status: varchar('status'), // active, canceled, past_due
 	lastRenewalDate: timestamp('last_renewal_date', {
 		mode: 'string',

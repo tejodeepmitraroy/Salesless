@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+export interface subscription {
+	type: 'trial' | 'basic' | 'grow' | 'scale';
+}
 export interface StoreConfigState {
 	storeId: string | null;
 	storeName: string;
@@ -11,6 +14,12 @@ export interface StoreConfigState {
 	region: string | null;
 	timezone: string | null;
 	currency: CurrencyCode | null;
+	isSubscripted: boolean;
+	subscription: subscription | null;
+	settings: {
+		timezone: string;
+		currency_format: string;
+	};
 }
 
 export interface StoreConfigActions {
@@ -18,7 +27,9 @@ export interface StoreConfigActions {
 	setStoreData: (
 		name: string,
 		description: string,
-		isTestMode: boolean
+		isTestMode: boolean,
+		isSubscripted: boolean,
+		tier: 'trial' | 'basic' | 'grow' | 'scale'
 	) => void;
 	setIsTestMode: (isTest: boolean) => void;
 	setPublishableKey: (key: string | null) => void;
@@ -38,9 +49,17 @@ const initialState: StoreConfigState = {
 	isTestMode: true,
 	publishableKey: null,
 	secretKey: null,
+	isSubscripted: false,
+	subscription: {
+		type: 'trial',
+	},
 	region: null,
 	timezone: null,
 	currency: null,
+	settings: {
+		timezone: '',
+		currency_format: '',
+	},
 };
 
 export const useStoreConfig = create<StoreConfigStore>()(
@@ -49,8 +68,16 @@ export const useStoreConfig = create<StoreConfigStore>()(
 		(set) => ({
 			...initialState,
 			setStoreId: (id) => set({ storeId: id }),
-			setStoreData: (name, description, isTestMode) =>
-				set({ storeName: name, storeDescription: description, isTestMode }),
+			setStoreData: (name, description, isTestMode, isSubscripted, tier) =>
+				set({
+					storeName: name,
+					storeDescription: description,
+					isTestMode,
+					isSubscripted,
+					subscription: {
+						type: tier,
+					},
+				}),
 			setIsTestMode: (isTest) => set({ isTestMode: isTest }),
 			setPublishableKey: (key) => set({ publishableKey: key }),
 			setSecretKey: (key) => set({ secretKey: key }),

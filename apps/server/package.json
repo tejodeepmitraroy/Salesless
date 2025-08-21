@@ -22,7 +22,8 @@
 		"lint:fix": "eslint . --fix",
 		"prettier": "prettier . --check",
 		"prettier:fix": "prettier . --write",
-		"fix:all": "yarn lint:fix && yarn prettier:fix && yarn prettier && yarn lint && yarn build"
+		"fix:all": "yarn lint:fix && yarn prettier:fix && yarn prettier && yarn lint && yarn build",
+		"stripe:listen": "stripe listen --forward-to http://localhost:8000/api/v1/webhooks/subscription"
 	},
 	"author": "webflexrr labs",
 	"license": "ISC",

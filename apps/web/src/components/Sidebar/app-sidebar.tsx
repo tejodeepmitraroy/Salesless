@@ -33,6 +33,8 @@ import { NavSecondary } from './nav-secondary';
 import { useParams } from 'react-router';
 import StoreSwitcher from './store-switcher';
 import { FcBullish } from 'react-icons/fc';
+import { Badge } from '../ui/badge';
+import { useStoreConfig } from '@/stores/useStoreConfig';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	const { storeId } = useParams<{ storeId: string }>();
@@ -160,6 +162,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 		],
 	};
 
+	const subscription = useStoreConfig((state) => state.subscription);
+
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
@@ -173,6 +177,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						<span className="flex items-center gap-2 text-lg font-bold text-black md:text-xl">
 							SalesLess
 						</span>
+						{subscription?.type === 'trial' ? (
+							<Badge className="truncate bg-gray-400 text-xs text-white">
+								Trial
+							</Badge>
+						) : (
+							<Badge className="truncate text-xs">
+								{subscription?.type === 'basic'
+									? 'Basic'
+									: subscription?.type === 'grow'
+										? 'Grow'
+										: subscription?.type === 'scale'
+											? 'Scale'
+											: 'Unknown'}
+							</Badge>
+						)}
 					</SidebarMenuButton>
 				</SidebarMenuItem>
 

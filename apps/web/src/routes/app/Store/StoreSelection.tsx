@@ -11,22 +11,18 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Label } from '@radix-ui/react-dropdown-menu';
 import ChatButton from '@/components/ChatButton';
-import { useStoreStore } from '@/stores/useStore-Store';
+import { useQuery } from '@tanstack/react-query';
+import { getAllStoreService } from '@/features/Store/services';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const StoreSelection: React.FC = () => {
 	const { user, storeId } = useAuth();
 	const navigate = useNavigate();
 
-	const stores = useStoreStore((state) => state.stores);
-	const fetchStores = useStoreStore((state) => state.fetchStores);
-	// const setStores = useStoreStore((state) => state.setStores);
-	const setSelectedStore = useStoreStore((state) => state.setSelectedStore);
-
 	const handleStoreSelected = (storeId: string) => {
-		setSelectedStore(storeId);
 		navigate(`/store/${storeId}`);
 	};
 
@@ -34,17 +30,10 @@ const StoreSelection: React.FC = () => {
 		navigate('/store/create');
 	};
 
-	// const { data } = useQuery({
-	// 	queryKey: ['storeData'],
-	// 	queryFn: async () => await getAllStoreService(),
-	// });
-	const fetchStoresData = useCallback(async () => {
-		await fetchStores();
-	}, [fetchStores]);
-
-	useEffect(() => {
-		fetchStoresData();
-	}, [fetchStoresData]);
+	const { data: stores, isLoading } = useQuery({
+		queryKey: ['storeData'],
+		queryFn: async () => await getAllStoreService(),
+	});
 
 	useEffect(() => {
 		if (user && storeId) {
@@ -89,31 +78,64 @@ const StoreSelection: React.FC = () => {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="px-10">
-					<section className="mt-6 flex flex-col gap-4">
-						{stores.map((store: unknown) => (
-							<div
-								key={(store as { id: string }).id}
-								className={`flex w-full cursor-pointer items-center rounded p-3 transition-all hover:shadow-md`}
-								onClick={() =>
-									handleStoreSelected((store as { id: string }).id)
-								}
-							>
-								<div className="bg-primary mr-4 flex h-12 w-12 items-center justify-center rounded-md font-bold text-white">
-									{(store as { name: string }).name
-										.substring(0, 2)
-										.toUpperCase()}
-								</div>
-								<div className="flex-1 justify-items-start">
-									<h3 className="text font-semibold">
-										{(store as { name: string }).name}
-									</h3>
-									<p className="text-muted-foreground text-sm">
-										id:{(store as { id: string }).id}
-									</p>
+					{isLoading ? (
+						<section className="mt-6 flex flex-col space-y-4">
+							<div className="mr-4 flex items-center gap-4">
+								<Skeleton className="flex h-12 w-12 items-center justify-center rounded-md" />
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-[250px]" />
+									<Skeleton className="h-4 w-[200px]" />
 								</div>
 							</div>
-						))}
-					</section>
+							<div className="mr-4 flex items-center gap-4">
+								<Skeleton className="flex h-12 w-12 items-center justify-center rounded-md" />
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-[250px]" />
+									<Skeleton className="h-4 w-[200px]" />
+								</div>
+							</div>
+							<div className="mr-4 flex items-center gap-4">
+								<Skeleton className="flex h-12 w-12 items-center justify-center rounded-md" />
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-[250px]" />
+									<Skeleton className="h-4 w-[200px]" />
+								</div>
+							</div>
+							<div className="mr-4 flex items-center gap-4">
+								<Skeleton className="flex h-12 w-12 items-center justify-center rounded-md" />
+								<div className="space-y-2">
+									<Skeleton className="h-4 w-[250px]" />
+									<Skeleton className="h-4 w-[200px]" />
+								</div>
+							</div>
+						</section>
+					) : (
+						<section className="mt-6 flex flex-col">
+							{stores?.map((store: unknown) => (
+								<div
+									key={(store as { id: string }).id}
+									className={`flex w-full cursor-pointer items-center rounded p-2 transition-all hover:shadow-md`}
+									onClick={() =>
+										handleStoreSelected((store as { id: string }).id)
+									}
+								>
+									<div className="bg-primary mr-4 flex h-12 w-12 items-center justify-center rounded-md font-bold text-white">
+										{(store as { name: string }).name
+											.substring(0, 2)
+											.toUpperCase()}
+									</div>
+									<div className="flex-1 justify-items-start">
+										<h3 className="text font-semibold">
+											{(store as { name: string }).name}
+										</h3>
+										<p className="text-muted-foreground text-sm">
+											id:{(store as { id: string }).id}
+										</p>
+									</div>
+								</div>
+							))}
+						</section>
+					)}
 				</CardContent>
 			</Card>
 		</section>

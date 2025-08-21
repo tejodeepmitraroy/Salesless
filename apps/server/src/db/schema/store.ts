@@ -37,7 +37,7 @@ export const store = pgTable('store', {
 	domain: varchar('domain'),
 	isActive: boolean('is_active').notNull().default(true),
 	isTestMode: boolean('is_test_mode').notNull().default(true),
-	plan: varchar('plan').notNull().default('free'),
+	isSubscribed: boolean('is_subscribed').notNull().default(false),
 	createdAt: timestamp('created_at', { mode: 'string' }).notNull().defaultNow(),
 	updatedAt: timestamp('updated_at', { mode: 'string' }).notNull().defaultNow(),
 });

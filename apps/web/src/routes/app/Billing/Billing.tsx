@@ -77,20 +77,14 @@ const Billing = () => {
 	// 	'Projects',
 	// 	'Storage',
 	// 	'Support',
-	// 	'API Access',
-	// 	'Advanced Analytics',
-	// 	'Priority Support',
-	// 	'Custom Domain',
-	// ];
-
 	const handleCheckoutSubscription = async (tierName: string) => {
 		try {
 			const response = await checkoutSubscription(tierName);
-			console.log(response);
-
+			// Redirect to Stripe Checkout
 			window.location.href = response.url;
 		} catch (error) {
-			console.log(error);
+			console.error('Checkout failed:', error);
+			// Handle error (e.g., show error toast)
 		}
 	};
 
