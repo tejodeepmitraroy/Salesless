@@ -14,6 +14,7 @@ import {
 } from '../db/schema';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
+import redis from '../lib/redis';
 
 export const createStore = asyncHandler(
 	async (request: Request, response: Response) => {
@@ -88,19 +89,84 @@ export const getStores = asyncHandler(
 export const getStoreById = asyncHandler(
 	async (request: Request, response: Response) => {
 		try {
-			const getStore = await db.query.store.findFirst({
-				where: eq(store.id, request.params.storeId),
-			});
-			if (!getStore) {
-				response.status(200).json(new ApiError(400, `Store not found`));
+			const storeId = request.storeId!;
+			const subscription = request.subscription;
+
+			const storeDetails = await redis.get(`store:${storeId}`);
+
+			if (storeDetails) {
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							{ ...JSON.parse(storeDetails), subscription },
+							'Fetch all stores'
+						)
+					);
+			} else {
+				const getStore = await db.query.store.findFirst({
+					where: eq(store.id, storeId),
+					with: {
+						subscriptions: true,
+					},
+				});
+
+				if (!getStore) {
+					response.status(400).json(new ApiError(400, `Store not found`));
+				} else {
+					await redis.set(`store:${storeId}`, JSON.stringify(getStore));
+					await redis.expire(`store:${storeId}`, 60); //
+					response
+						.status(200)
+						.json(
+							new ApiResponse(
+								200,
+								{ ...getStore },
+								`Fetch ${getStore.name} store Details`
+							)
+						);
+				}
 			}
-			response
-				.status(200)
-				.json(new ApiResponse(200, getStore, 'Fetch all stores'));
 		} catch (error) {
 			response
 				.status(400)
 				.json(new ApiError(400, `Error fetching store`, error));
+		}
+	}
+);
+
+export const changeTestMode = asyncHandler(
+	async (request: Request, response: Response) => {
+		const { isTestMode } = request.body;
+		const storeId = request.storeId!;
+		try {
+			const [updatedStore] = await db
+				.update(store)
+				.set({
+					isTestMode,
+				})
+				.where(eq(store.id, storeId))
+				.returning();
+
+			if (!updatedStore) {
+				response.status(404).json(new ApiError(404, 'Store not found'));
+			} else {
+				await redis.del(`store:${storeId}`);
+				response
+					.status(200)
+					.json(
+						new ApiResponse(
+							200,
+							updatedStore,
+							'Store Test Mode updated successfully'
+						)
+					);
+			}
+		} catch (error) {
+			response
+				.status(500)
+				.json(new ApiError(500, 'Error updating store', error));
 		}
 	}
 );
@@ -206,6 +272,18 @@ export const getStoreOrders = asyncHandler(
 
 				const orderItemsData = await db.query.orderItems.findMany({
 					where: eq(orderItems.orderId, orderId),
+					with: {
+						product: {
+							with: {
+								media: {
+									with: {
+										media: true,
+									},
+								},
+								variant: true,
+							},
+						},
+					},
 				});
 
 				const orderDetails = {
@@ -213,12 +291,16 @@ export const getStoreOrders = asyncHandler(
 					name: storeOrder?.name,
 					items: orderItemsData.map((item) => ({
 						id: item.id,
-						// name: item.name,
-						// thumbnail: item.product?.images?.[0]?.url ?? null,
+						title: item.product?.title,
+						image: item.product?.media?.[0]?.media.url ?? null,
 						productId: item.productId,
+						variant: {
+							id: item.product?.variant?.[0]?.id,
+						},
 						quantity: item.quantity,
 						price: item.priceAtPurchase,
 						currency: storeOrder?.currency,
+						total: item.priceAtPurchase * item.quantity,
 					})),
 					status: storeOrder?.status,
 
@@ -254,11 +336,20 @@ export const getStoreOrders = asyncHandler(
 						phone: storeOrder?.billingAddressPhone,
 						company: storeOrder?.billingAddressCompany,
 					},
-					paymentDetails: {},
-					subtotal: storeOrder?.subtotalPrice,
-					discount: storeOrder?.totalDiscounts,
+					totalItems: orderItemsData.length,
+					subtotal: orderItemsData.reduce(
+						(acc, item) => acc + item.priceAtPurchase * item.quantity,
+						0
+					),
+					discount: orderItemsData.reduce(
+						(acc, item) => acc + item.priceAtPurchase * item.quantity,
+						0
+					),
 					shipping: storeOrder?.additionalPrice,
-					total: storeOrder?.totalPrice,
+					total: orderItemsData.reduce(
+						(acc, item) => acc + item.priceAtPurchase * item.quantity,
+						0
+					),
 				};
 
 				response

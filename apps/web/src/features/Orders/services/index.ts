@@ -51,40 +51,56 @@ interface OrderServiceProps {
 interface OrderDetailsData {
 	id: string;
 	name: string;
-	status: string;
 	items: Array<{
 		id: string;
+		title: string;
+		image: string;
 		productId: string;
-		name: string;
+		variant: {
+			id: string;
+		};
 		quantity: number;
 		price: number;
 		currency: string;
+		total: number;
 	}>;
-	shippingAddress: {
-		name: string;
-		phone: string;
-		address1: string;
-		address2: string;
-		city: string;
-		province: string;
-		country: string;
-		zip: string;
-	};
-	billingAddress: {
-		name: string;
-		phone: string;
-		address1: string;
-		address2: string;
-		city: string;
-		province: string;
-		country: string;
-		zip: string;
+	status: string;
+	shippingDetails: {
+		deliveredTo: string;
+		deliveredAt: string;
 	};
 	customerDetails: {
 		name: string;
 		contactEmail: string;
 		contactPhone: string;
 	};
+	shippingAddress: {
+		name: string;
+		address1: string;
+		address2: string;
+		city: string;
+		zip: string;
+		province: string;
+		country: string;
+		phone: string;
+		company: string;
+	};
+	billingAddress: {
+		name: string;
+		address1: string;
+		address2: string;
+		city: string;
+		zip: string;
+		province: string;
+		country: string;
+		phone: string;
+		company: string;
+	};
+	totalItems: number;
+	subtotal: number;
+	discount: number;
+	shipping: number;
+	total: number;
 }
 
 export const getAllOrdersService = async (): Promise<OrderServiceProps[]> => {

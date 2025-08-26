@@ -29,10 +29,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { useStoreStore } from '@/stores/useStore-Store';
+import { useStoreConfig } from '@/stores/useStoreConfig';
 
 const RegionalSettings = () => {
-	const selectedStore = useStoreStore((state) => state.selectedStore);
+	const settings = useStoreConfig((state) => state.settings);
 	// Timezone options for the store settings
 	const timezoneOptions = [
 		{ value: 'UTC', label: 'UTC (Coordinated Universal Time)' },
@@ -58,8 +58,8 @@ const RegionalSettings = () => {
 		// mode: 'onChange',
 		resolver: zodResolver(regionalSettingsSchema),
 		defaultValues: {
-			timezone: selectedStore?.timezone || '',
-			currency_format: selectedStore?.moneyFormat || '',
+			timezone: settings?.timezone || '',
+			currency_format: settings?.currency_format || '',
 		},
 	});
 

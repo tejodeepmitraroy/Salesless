@@ -60,8 +60,8 @@ export const createProductService = async (formData: any) => {
 	return response;
 };
 
-export const getAllProducts = async ({ storeId }: { storeId: string }) => {
-	const response = await customAxios.get(`/products/?storeId=${storeId}`);
+export const getAllProducts = async () => {
+	const response = await customAxios.get(`/products`);
 	return response.data.data;
 };
 

@@ -60,3 +60,5 @@ export {
 	GatewayConfigsRelations,
 	paymentGatewayEnum,
 } from './paymentGateway';
+
+export { subscription, subscriptionRelations } from './subscription';

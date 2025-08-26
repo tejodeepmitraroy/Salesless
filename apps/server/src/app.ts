@@ -15,6 +15,8 @@ import inventoryRouter from './routes/inventory.routes';
 import cartRouter from './routes/cart.routes';
 import paymentRouter from './routes/payment.routes';
 import settingsRouter from './routes/settings.routes';
+import subscriptionRouter from './routes/subscription.routes';
+import webhooksRouter from './routes/webhooks.routes';
 // import eventsRouter from "./routes/events.routes";
 // import bookingRouter from "./routes/booking.routes";
 import cors from 'cors';
@@ -46,7 +48,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
-app.use(express.json({ limit: '16kb' })); //accept JSON data
+//accept JSON data
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static('public'));
 
@@ -67,6 +69,9 @@ app.enable('trust proxy');
 // Custom middleware to extract storeId
 // app.use(storeMiddleware);
 
+app.use('/api/v1/webhooks', webhooksRouter);
+
+app.use(express.json({ limit: '20kb' }));
 // Routes Declaration
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/role', roleRouter);
@@ -82,6 +87,7 @@ app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/media', mediaRouter);
 app.use('/api/v1/payment', paymentRouter);
 app.use('/api/v1/settings', settingsRouter);
+app.use('/api/v1/subscription', subscriptionRouter);
 
 app.get('/', async (req, res) => {
 	res.json({ message: 'Server is 100% up running' });

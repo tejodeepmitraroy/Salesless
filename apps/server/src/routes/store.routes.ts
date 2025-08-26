@@ -8,8 +8,7 @@ import {
 	getStoreOrders,
 	getStoreCustomers,
 	createCustomer,
-	// getStoreOrders,
-	// getStoreCustomers,
+	changeTestMode,
 } from '../controllers/store.controllers';
 import { jwtAuthMiddleware } from '../middleware/auth.middleware';
 import { storeMiddleware } from '../middleware/store.middleware';
@@ -38,9 +37,13 @@ router
 	.post(jwtAuthMiddleware, createStore)
 	.put(jwtAuthMiddleware, storeMiddleware, updateStore);
 
+router.route('/details').get(jwtAuthMiddleware, storeMiddleware, getStoreById);
+router
+	.route('/testMode')
+	.patch(jwtAuthMiddleware, storeMiddleware, changeTestMode);
+
 router
 	.route('/:storeId')
-	.get(jwtAuthMiddleware, storeMiddleware, getStoreById)
 	.delete(jwtAuthMiddleware, storeMiddleware, deleteStore);
 
 export default router;

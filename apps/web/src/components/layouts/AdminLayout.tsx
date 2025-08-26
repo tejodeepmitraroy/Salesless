@@ -5,12 +5,14 @@ import { AppSidebar } from '../Sidebar/app-sidebar';
 import { Button } from '../ui/button';
 import { setStoreId } from '../../api/axios-custom';
 import TestModeBanner from '../TestModeBanner';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useStoreConfig } from '@/stores/useStoreConfig';
+import { getStoreByIdService } from '@/features/Store/services';
 
 const AdminLayout = () => {
 	const { storeId } = useParams<{ storeId: string }>();
 	const setStoreIdData = useStoreConfig((state) => state.setStoreId);
+	const setStoreData = useStoreConfig((state) => state.setStoreData);
 
 	// Update store ID in axios headers when it changes
 	useEffect(() => {
@@ -18,8 +20,27 @@ const AdminLayout = () => {
 		setStoreIdData(storeId!);
 	}, [storeId, setStoreIdData]);
 
+	const getStoreData = useCallback(async () => {
+		try {
+			const data = await getStoreByIdService();
+			console.log('Store Data', data);
+			setStoreData(
+				data.name,
+				data.description,
+				data.isTestMode,
+				data.isSubscribed,
+				data.isSubscribed ? data.subscriptions.tier : 'trial'
+			);
+		} catch (error) {
+			console.log(error);
+		}
+	}, [setStoreData]);
+
+	useEffect(() => {
+		getStoreData();
+	}, [getStoreData]);
+
 	const isTestMode = useStoreConfig((state) => state.isTestMode);
-	console.log('isTestMode', isTestMode);
 
 	return (
 		<>
@@ -28,10 +49,10 @@ const AdminLayout = () => {
 
 			{/* Main application shell with rounded top corners */}
 			<section
-				className={`bg-background text-foreground relative flex min-h-screen w-full rounded-t-2xl ${isTestMode ? 'mt-8' : ''}`}
+				className={`bg-background text-foreground relative flex min-h-screen w-full rounded-t-2xl ${isTestMode ? 'mt-10' : ''}`}
 			>
 				<SidebarProvider>
-					<AppSidebar className={isTestMode ? 'pt-8' : undefined} />
+					<AppSidebar className={isTestMode ? 'pt-12' : 'pt-2'} />
 					<main
 						className={`relative min-h-dvh w-full overflow-hidden bg-white transition-all duration-300 md:flex-1`}
 					>

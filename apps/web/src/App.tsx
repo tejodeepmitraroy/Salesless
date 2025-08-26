@@ -26,6 +26,9 @@ import AccountSecurity from './routes/accounts/AccountSecurity';
 import GatewaySlug from './routes/app/Settings/Payments/GatewaySlug';
 import ThirdPartyProviders from './routes/app/Settings/Payments/ThirdPartyProviders';
 import Settings from './routes/app/Settings/Settings';
+import Billing from './routes/app/Billing/Billing';
+import SuccessPage from './routes/app/Billing/SuccessPage';
+import StoreSelection from './routes/app/Store/StoreSelection';
 
 const queryClient = new QueryClient();
 function App() {
@@ -34,9 +37,9 @@ function App() {
 		() => import('./routes/auth/ForgotPassword')
 	);
 	const Unauthorized = React.lazy(() => import('./routes/Unauthorized'));
-	const StoreSelection = React.lazy(
-		() => import('./routes/app/Store/StoreSelection')
-	);
+	// const StoreSelection = React.lazy(
+	// 	() => import('./routes/app/Store/StoreSelection')
+	// );
 	const CreateStore = React.lazy(
 		() => import('./routes/app/Store/CreateStore')
 	);
@@ -128,6 +131,10 @@ function App() {
 										</Route>
 										<Route path="finances">
 											<Route path="payments" element={<PaymentsDashboard />} />
+										</Route>
+										<Route path="billing">
+											<Route index element={<Billing />} />
+											<Route path="success" element={<SuccessPage />} />
 										</Route>
 
 										{/* Settings */}

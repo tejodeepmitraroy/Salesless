@@ -1,0 +1,1 @@
+ALTER TABLE "store" RENAME COLUMN "is_subscripted" TO "is_subscribed";

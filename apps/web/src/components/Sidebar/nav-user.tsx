@@ -47,7 +47,13 @@ export function NavUser() {
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
 								<AvatarImage src={user?.avatar} alt={user?.firstName} />
-								<AvatarFallback className="rounded-lg">CN</AvatarFallback>
+								<AvatarFallback className="rounded-lg">
+									{`${user?.firstName} ${user?.lastName}`
+										.split(' ', 2)
+										.map((word) => word[0])
+										.join('')
+										.toUpperCase()}
+								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">
